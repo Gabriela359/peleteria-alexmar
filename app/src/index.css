@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Sura Sans";
+  src: url("./assets/fonts/SuraSans-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sura Sans";
+  src: url("./assets/fonts/SuraSans-Negrita.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sura Sans";
+  src: url("./assets/fonts/SuraSans-Negrita.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Tokens del sistema de diseño Sura Evoluciona, como variables de tema de
+   Tailwind v4 (generan las utilidades bg-, text- y border- automáticamente). */
+@theme {
+  --font-display: "Sura Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --color-sura-azul-cielo: #2D6DF6;
+  --color-sura-azul-cielo-hover: #255FDE;
+  --color-sura-azul-cielo-press: #1E4FB8;
+  --color-sura-azul-prof: #0033A0;
+  --color-sura-azul-prof-hover: #001E6C;
+  --color-sura-azul-oscuro: #00003F;
+  --color-sura-azul-oscuro-hover: #0B0B5A;
+  --color-sura-azul-soft: #DFEAFF;
+  --color-sura-azul-chip: #C8D9F3;
+  --color-sura-azul-tint: #EEF4FF;
+  --color-sura-azul-tint-light: #F6F9FF;
+  --color-sura-azul-divider: #E0E8FB;
+
+  --color-sura-amarillo: #E3E829;
+  --color-sura-amarillo-hover: #C5CB15;
+
+  --color-sura-blanco: #FFFFFF;
+  --color-sura-negro: #0D0D0D;
+
+  --color-gris-100: #F4F4F4;
+  --color-gris-150: #F4F6FA;
+  --color-gris-200: #E7E7E7;
+  --color-gris-300: #B4B4B5;
+  --color-gris-350: #888B8D;
+  --color-gris-500: #3F3F41;
+  --color-gris-900: #0D0D0D;
+
+  --color-success-1: #067014;
+  --color-success-2: #E6FAEF;
+  --color-success-border: #C5E9CA;
+
+  --color-warning-1: #ED8B00;
+  --color-warning-2: #FFF5EC;
+  --color-warning-border: #FCD9B6;
+
+  --color-danger-1: #D12D35;
+  --color-danger-2: #FFF4F3;
+  --color-danger-border: #F5C2C7;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-gris-150);
+  font-family: var(--font-display);
+  color: var(--color-gris-900);
+  -webkit-font-smoothing: antialiased;
+}
+#root { min-height: 100vh; }
+* { box-sizing: border-box; }
+input, button, select, textarea { font-family: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+a { color: var(--color-sura-azul-cielo); text-decoration: none; }
+a:hover { color: var(--color-sura-azul-cielo-hover); text-decoration: underline; }
+::placeholder { color: var(--color-gris-350); }
+
+@media print {
+  body * { visibility: hidden !important; }
+  #tirilla, #tirilla * { visibility: visible !important; }
+  #tirilla { position: absolute !important; left: 0; top: 0; box-shadow: none !important; }
+}

@@ -1,0 +1,376 @@
+/* ============================================================
+   Evoluciona Admin · Design Tokens
+   Versión 1.0 · Mayo 2026
+   ------------------------------------------------------------
+   Sistema consolidado para herramientas internas SURA Evoluciona:
+   Portal de Agentes, Cobranza, Claims, Underwriting, Ops.
+
+   Hereda de "Sura Evoluciona Design System" (sub-tema Tool) y
+   absorbe los patrones de tabla densa / identificadores mono /
+   pendientes-de-validar / hero-strip / doc-card del proyecto
+   Cobranza (FCDD-02.x). El sub-tema Brand queda fuera del scope.
+
+   Decisiones zanjadas (vs. versión anterior):
+   · Primario interacción .................. Azul cielo #2D6DF6
+                                            (botones primary, headers, footers,
+                                            focus, links, selección)
+   · CTA principal de pantalla ............. Amarillo sol #E3E829
+                                            (la acción más importante de la pantalla,
+                                            1 por surface)
+   · Secundario ............................ Azul institucional #0033A0
+                                            (sub-títulos, section titles uppercase,
+                                            botones secondary outline, info)
+   · Botones ................................ Pill 999px siempre
+   · Inputs ................................. 12px solo arriba
+   · Cards .................................. 16px
+   · Escala espaciado ....................... 4-pt (admin denso)
+   · Tipografía ............................. Sura Sans + mono ID
+   · H1 ..................................... Neutro #0D0D0D
+   · Section titles ......................... Azul institucional uppercase
+   · Iconografía ............................ Solo SVG monoline
+   · Voz .................................... Informal "tú" siempre
+   · .ptag / pending-banner ................. Prototipado, no producción
+   ============================================================ */
+
+/* ---------- Fuentes ---------- */
+@font-face {
+  font-family: "Sura Sans";
+  src: url("./fonts/SuraSans-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Sura Sans";
+  src: url("./fonts/SuraSans-Negrita.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+/* Seminegrita (600) no entregada: cae sobre Negrita. */
+@font-face {
+  font-family: "Sura Sans";
+  src: url("./fonts/SuraSans-Negrita.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ============================================================
+     1 · COLOR · Paleta principal
+     ============================================================ */
+
+  /* Azul cielo — primario de interacción (CTAs, links, focus, selección) */
+  --sura-azul-cielo:       #2D6DF6;
+  --sura-azul-cielo-hover: #255FDE;  /* hover de botones primarios */
+  --sura-azul-cielo-press: #1E4FB8;  /* press */
+
+  /* Azul institucional — marca, headers, secundario, info estados */
+  --sura-azul-prof:        #0033A0;
+  --sura-azul-prof-hover:  #001E6C;
+
+  /* Azul oscuro — superficies dark (modales especiales, doc-card head) */
+  --sura-azul-oscuro:      #00003F;
+  --sura-azul-oscuro-hover:#0B0B5A;
+
+  /* Tints azules (selección, info soft, hero strip) */
+  --sura-azul-soft:        #DFEAFF;  /* fondo seleccionado / info soft */
+  --sura-azul-chip:        #C8D9F3;  /* bordes de chips activos */
+  --sura-azul-tint:        #EEF4FF;  /* info tint medio */
+  --sura-azul-tint-light:  #F6F9FF;  /* lightest info */
+  --sura-azul-divider:     #E0E8FB;
+
+  /* Amarillo sol — CTA FINAL (acción más importante de la pantalla) */
+  --sura-amarillo:         #E3E829;
+  --sura-amarillo-hover:   #C5CB15;
+  --sura-amarillo-text:    var(--sura-azul-oscuro);  /* texto sobre amarillo */
+
+  /* Acentos puntuales — usar máximo uno por surface */
+  --sura-aqua:    #00AEC7;
+  --sura-morado:  #662D83;
+
+  --sura-blanco:  #FFFFFF;
+  --sura-negro:   #0D0D0D;
+
+  /* ============================================================
+     2 · COLOR · Grises y superficies
+     ============================================================ */
+  --gris-100:  #F4F4F4;
+  --gris-150:  #F4F6FA;   /* page bg (más frío que F8F8F8) */
+  --gris-200:  #E7E7E7;
+  --gris-300:  #B4B4B5;
+  --gris-350:  #888B8D;
+  --gris-500:  #3F3F41;
+  --gris-900:  #0D0D0D;
+
+  --bg-app:        #FAFAFB;        /* chrome de la app (tool) */
+  --bg-page:       var(--gris-150); /* fondo de página de trabajo */
+  --bg-surface:    #FFFFFF;        /* cards, modales */
+  --bg-subtle:     #F4F4F4;        /* table headers, toolbars, chips inactivos */
+  --bg-row-hover:  #FAFBFD;        /* hover de fila en tablas */
+  --bg-row-select: linear-gradient(90deg, var(--sura-azul-soft) 0%, #F4F8FF 100%);
+
+  /* ============================================================
+     3 · COLOR · Texto
+     ============================================================ */
+  --fg-1: var(--sura-negro);   /* texto principal, valores */
+  --fg-2: var(--gris-500);     /* secundario, descripciones */
+  --fg-3: var(--gris-350);     /* labels, metadatos, placeholders */
+  --fg-disabled:   var(--gris-300);
+  --fg-on-primary: #FFFFFF;
+  --fg-link:       var(--sura-azul-cielo);
+
+  /* ============================================================
+     4 · COLOR · Semántica de estados
+     Cada estado: strong (-1) / soft (-2) / border
+     ============================================================ */
+  --success-1:      #067014;
+  --success-2:      #E6FAEF;
+  --success-border: #C5E9CA;
+
+  --warning-1:      #ED8B00;
+  --warning-2:      #FFF5EC;
+  --warning-3:      #FFF3E0;
+  --warning-border: #FCD9B6;
+
+  --danger-1:       #D12D35;
+  --danger-2:       #FFF4F3;
+  --danger-border:  #F5C2C7;
+
+  --info-1:         var(--sura-azul-prof);
+  --info-2:         var(--sura-azul-soft);
+  --info-border:    var(--sura-azul-chip);
+
+  /* ============================================================
+     5 · COLOR · Reglas de uso (resumen — ver design-rules.md)
+     ============================================================
+     · Primario --sura-azul-cielo  → CTAs primarios, links, focus, selección,
+                                     HEADERS de app (nav-top), FOOTERS,
+                                     iconografía activa.
+     · CTA princ.--sura-amarillo    → La acción más importante de la pantalla
+                                     (1 por surface). No es "final del flujo":
+                                     puede ser "Guardar póliza", "Crear endoso",
+                                     "Confirmar pago", "Liberar", etc.
+     · Secund.  --sura-azul-prof   → Sub-títulos (H2), section titles uppercase,
+                                     botones secondary outline, estados info,
+                                     marca dentro de doc-card head.
+     · Oscuro   --sura-azul-oscuro → Solo superficies dark muy puntuales:
+                                     doc-card head, ref-block. Texto blanco /
+                                     amarillo.
+     · Success                     → "Terminal OK" (Aplicado, Liberado,
+                                     HABER contable).
+     · Warning                     → "Atención del usuario" (saldo > 0,
+                                     pendiente). NUNCA terminal.
+     · Danger                      → "Terminal mal" (Anulado, Rechazado,
+                                     DEBE, errores bloqueantes).
+     · Info                        → Estado neutro con acción (Pendiente,
+                                     Aplicación parcial).
+  */
+
+  /* ============================================================
+     6 · BORDES
+     ============================================================ */
+  --border-faint:  var(--gris-100);   /* row dividers dentro de tablas/cards */
+  --border-subtle: var(--gris-200);   /* card borders, separadores */
+  --border-strong: var(--gris-300);   /* inputs, focusable controls */
+  --border-input:  var(--gris-300);
+
+  --border-w:        1px;
+  --border-w-strong: 2px;             /* fila seleccionada bottom */
+  --border-w-accent: 3px;             /* underline de tab activa */
+  --border-w-select: 4px;             /* left-border de fila seleccionada */
+
+  /* ============================================================
+     7 · RADIOS
+     ============================================================ */
+  --radius-xs:    6px;
+  --radius-sm:    8px;
+  --radius-md:    12px;        /* controls medianos, doc-card body */
+  --radius-lg:    16px;        /* CARD STANDARD admin */
+  --radius-xl:    20px;        /* MODAL */
+  --radius-pill:  999px;       /* BOTONES + status pills */
+  --radius-tag:   16px;        /* badges/tags half-pill */
+  --radius-input: 12px 12px 0 0; /* INPUTS — solo arriba (firma de marca) */
+
+  /* ============================================================
+     8 · SOMBRAS
+     ============================================================ */
+  --shadow-sm:      0 1px 2px rgba(15,23,42,.04);
+  --shadow-card:    0 1px 2px rgba(15,23,42,.04),
+                    0 8px 24px rgba(15,23,42,.04);  /* card admin default */
+  --shadow-popover: 0 16px 40px rgba(0,0,0,.18);
+  --shadow-modal:   0 24px 60px rgba(0,0,0,.28);
+  --shadow-focus:   0 0 0 3px rgba(45,109,246,.32); /* anillo focus universal */
+  --shadow-elev-warn: 0 0 0 3px rgba(237,139,0,.20);
+
+  /* ============================================================
+     9 · ESPACIADO · Escala 4-pt
+     Densidad alta para herramientas operativas.
+     ============================================================ */
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-7:   32px;
+  --space-8:   40px;
+  --space-9:   48px;
+  --space-10:  64px;
+
+  /* Paddings semánticos */
+  --pad-card:        20px;     /* interno de card admin */
+  --pad-card-head:   14px 20px;
+  --pad-section:     28px;     /* workspace / modal body */
+  --pad-page-x:      32px;
+  --pad-cell-y:      12px;     /* tabla — vertical */
+  --pad-cell-x:      14px;     /* tabla — horizontal */
+  --pad-input-y:     8px;
+  --pad-input-x:     12px;
+
+  /* Max-width contenido
+     -------------------------------------------------------
+     · --max-content      → product screens: SIN máximo. Las pantallas
+                            admin usan full-width (con padding lateral).
+     · --max-readable     → contenido de lectura larga (docs, mood-board,
+                            release notes): 1440px centrado.
+     ------------------------------------------------------- */
+  --max-content:     100%;
+  --max-readable:    1440px;
+
+  /* ============================================================
+     10 · TIPOGRAFÍA
+     ============================================================ */
+  --font-display: "Sura Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-body:    "Sura Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  /* Escala admin (densa, neutra) */
+  --fs-h1:           24px;  --lh-h1: 1.15;  /* page title — NEUTRO */
+  --fs-h2:           20px;  --lh-h2: 1.2;
+  --fs-h3:           17px;  --lh-h3: 1.25;  /* modal title */
+  --fs-h4:           15px;  --lh-h4: 1.3;
+  --fs-section:      14px;  /* section title (uppercase azul institucional) */
+  --fs-body-lg:      15px;  /* form input value */
+  --fs-body:         14px;
+  --fs-table:        13px;
+  --fs-meta:         12px;
+  --fs-label:        11px;  /* uppercase tracking */
+  --fs-eyebrow:      10px;
+  --fs-amount-hero:  28px;  /* monto destacado en hero-strip */
+
+  /* Letter-spacing */
+  --tracking-label:   .4px;
+  --tracking-eyebrow: .08em;
+  --tracking-tight:   -.01em;
+
+  /* Font weights — solo 400/600/700 */
+  --fw-regular: 400;
+  --fw-medium:  600;  /* cae a 700 si no hay Seminegrita */
+  --fw-bold:    700;
+
+  /* ============================================================
+     11 · TRANSICIONES
+     ============================================================ */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-instant: 100ms;
+  --dur-fast:    120ms;
+  --dur-base:    200ms;
+  --dur-slow:    320ms;
+
+  /* ============================================================
+     12 · BREAKPOINTS
+     ============================================================ */
+  --bp-mobile:  640px;
+  --bp-tablet:  1024px;
+  --bp-desk:    1280px;
+  --bp-wide:    1440px;
+
+  /* ============================================================
+     13 · Z-INDEX
+     ============================================================ */
+  --z-base:           1;
+  --z-sticky:         10;
+  --z-dropdown:       50;
+  --z-nav:            100;
+  --z-modal-backdrop: 200;
+  --z-modal:          201;
+  --z-toast:          300;
+}
+
+/* ---------- Mapeo semántico base ---------- */
+html { font-family: var(--font-body); color: var(--fg-1); }
+body {
+  margin: 0;
+  background: var(--bg-app);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+
+/* H1 NEUTRO — nunca azul (regla admin) */
+h1, .h1 {
+  font-family: var(--font-display);
+  font-weight: var(--fw-bold);
+  font-size: var(--fs-h1);
+  line-height: var(--lh-h1);
+  color: var(--fg-1);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+/* H2 · sub-título secundario — azul institucional (regla actualizada) */
+h2, .h2 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h2); line-height: var(--lh-h2); color: var(--sura-azul-prof); margin: 0; }
+h3, .h3 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h3); line-height: var(--lh-h3); color: var(--fg-1); margin: 0; }
+h4, .h4 { font-family: var(--font-display); font-weight: var(--fw-bold); font-size: var(--fs-h4); line-height: var(--lh-h4); color: var(--fg-1); margin: 0; }
+p  { margin: 0; }
+a  { color: var(--fg-link); text-decoration: none; transition: color var(--dur-fast) var(--ease-out); }
+a:hover { text-decoration: underline; }
+
+/* Section title — azul institucional uppercase (regla admin) */
+.section-title {
+  font-size: var(--fs-section);
+  font-weight: var(--fw-bold);
+  color: var(--sura-azul-prof);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Eyebrow — micro-label uppercase muy denso */
+.eyebrow {
+  font-size: var(--fs-eyebrow);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--fg-3);
+  line-height: 1.2;
+}
+
+/* Label de campo */
+.label {
+  font-size: var(--fs-label);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* Focus universal */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: 6px;
+}
+
+/* Identificadores en mono — regla del sistema admin */
+.mono,
+.text-mono     { font-family: var(--font-mono); }
+.tabular,
+.text-tabular  { font-variant-numeric: tabular-nums; }
+.text-muted    { color: var(--fg-3); }
+.text-strong   { font-weight: var(--fw-medium); }

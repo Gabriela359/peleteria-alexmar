@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/sistema-de-diseno-administrativo-evoluci-019e21c1-e72f-778b-9fb9-022c958caf30/tokens.css">
+<script src="_ds/sistema-de-diseno-administrativo-evoluci-019e21c1-e72f-778b-9fb9-022c958caf30/_ds_bundle.js"></script>
+<style>
+@font-face { font-family: "Sura Sans"; src: url("_ds/sistema-de-diseno-administrativo-evoluci-019e21c1-e72f-778b-9fb9-022c958caf30/fonts/SuraSans-Regular.woff") format("woff"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Sura Sans"; src: url("_ds/sistema-de-diseno-administrativo-evoluci-019e21c1-e72f-778b-9fb9-022c958caf30/fonts/SuraSans-Negrita.woff") format("woff"); font-weight: 700; font-display: swap; }
+html, body { margin: 0; padding: 0; background: var(--gris-150); font-family: "Sura Sans", -apple-system, sans-serif; color: var(--gris-900); -webkit-font-smoothing: antialiased; }
+* { box-sizing: border-box; }
+input, button, select, textarea { font-family: inherit; }
+a { color: var(--sura-azul-cielo); text-decoration: none; }
+a:hover { color: var(--sura-azul-cielo-hover); text-decoration: underline; }
+::placeholder { color: var(--gris-350); }
+@media print {
+  body * { visibility: hidden !important; }
+  #tirilla, #tirilla * { visibility: visible !important; }
+  #tirilla { position: absolute !important; left: 0; top: 0; box-shadow: none !important; }
+}
+</style>
+</helmet>
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Ingreso" style="min-height: 100vh; display: grid; place-items: center; background: linear-gradient(160deg, var(--sura-azul-oscuro) 0%, var(--sura-azul-prof) 100%); padding: 40px;">
+  <div style="width: 460px; background: var(--sura-blanco); border-radius: 16px; padding: clamp(20px, 5vw, 36px); box-shadow: 0 24px 60px rgba(0,0,51,0.35);">
+    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 28px;">
+      <div style="width: 44px; height: 44px; border-radius: 12px; background: var(--sura-azul-cielo); display: grid; place-items: center;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c2 0 3-1 5-1s3 1 6 1c3 0 6-1 7-3-1-3-4-5-8-6-3-1-6-1-8 1-2 2-2 6-2 8z"></path><path d="M3 15v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"></path></svg>
+      </div>
+      <div>
+        <div style="font-size: 18px; font-weight: 700; line-height: 1.2;">Peletería El Progreso</div>
+        <div style="font-size: 13px; color: var(--gris-350);">Inventario y ventas de suelas · Bucaramanga</div>
+      </div>
+    </div>
+    <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 12px;">Entra con tu perfil</div>
+    <div style="display: grid; gap: 10px; margin-bottom: 24px;">
+      <sc-for list="{{ perfiles }}" as="p" hint-placeholder-count="2">
+        <button onClick="{{ p.onPick }}" style="{{ p.style }}">
+          <div style="display: flex; align-items: center; gap: 14px;">
+            <div style="{{ p.avatarStyle }}">{{ p.iniciales }}</div>
+            <div style="text-align: left;">
+              <div style="font-size: 15px; font-weight: 700;">{{ p.nombre }}</div>
+              <div style="font-size: 13px; color: var(--gris-500);">{{ p.desc }}</div>
+            </div>
+          </div>
+        </button>
+      </sc-for>
+    </div>
+    <div style="font-size: 12px; color: var(--gris-350); line-height: 1.5;">Prototipo · los datos son de demostración y viven solo en esta sesión.</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isApp }}">
+<div style="min-height: 100vh; background: var(--gris-150);">
+
+  <header style="background: var(--sura-azul-cielo); color: var(--sura-blanco); padding: 10px clamp(12px, 3vw, 24px); display: flex; align-items: center; gap: 12px 20px; min-height: 60px; flex-wrap: wrap; position: sticky; top: 0; z-index: 40;">
+    <div style="display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; white-space: nowrap;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c2 0 3-1 5-1s3 1 6 1c3 0 6-1 7-3-1-3-4-5-8-6-3-1-6-1-8 1-2 2-2 6-2 8z"></path><path d="M3 15v2a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"></path></svg>
+      Peletería El Progreso
+    </div>
+    <nav style="display: flex; align-items: center; gap: 4px; flex: 1; flex-wrap: wrap;">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="5">
+        <button onClick="{{ n.onClick }}" style="{{ n.style }}">{{ n.label }}</button>
+      </sc-for>
+    </nav>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="text-align: right; line-height: 1.25; margin-left: auto;">
+        <div style="font-size: 13px; font-weight: 700;">{{ userNombre }}</div>
+        <div style="font-size: 11px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.5px;">{{ userRol }}</div>
+      </div>
+      <button onClick="{{ onLogout }}" style="border: 1px solid rgba(255,255,255,0.5); background: transparent; color: var(--sura-blanco); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="background: rgba(255,255,255,0.15);">Salir</button>
+    </div>
+  </header>
+
+  <main style="padding: clamp(14px, 2.5vw, 24px) clamp(12px, 3vw, 32px) 56px;">
+
+    <sc-if value="{{ isPanel }}">
+    <div data-screen-label="Panel">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px;">
+        <div>
+          <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Panel del día</h1>
+          <div style="font-size: 14px; color: var(--gris-500);">{{ hoyLargo }} · corte automático a las {{ horaCorte }}</div>
+        </div>
+        <button onClick="{{ onPreviewCorreo }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Ver reporte diario</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 16px; margin-bottom: 20px;">
+        <sc-for list="{{ heroMetrics }}" as="m" hint-placeholder-count="4">
+          <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof);">{{ m.label }}</div>
+            <div style="font-size: 30px; font-weight: 700; margin: 8px 0 4px; font-variant-numeric: tabular-nums;">{{ m.valor }}</div>
+            <div style="font-size: 13px; color: {{ m.deltaColor }};">{{ m.delta }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 16px; align-items: start;">
+        <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">Últimos 5 días</div>
+          <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="background: var(--gris-100); text-align: left;">
+                <th style="padding: 10px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Día</th>
+                <th style="padding: 10px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Facturas</th>
+                <th style="padding: 10px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Pares</th>
+                <th style="padding: 10px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Vendido</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ dias7 }}" as="d" hint-placeholder-count="5">
+                <tr style="border-bottom: 1px solid var(--sura-azul-divider);">
+                  <td style="padding: 10px 14px;"><span style="font-weight: 700;">{{ d.diaNom }}</span> <span style="color: var(--gris-350);">{{ d.fecha }}</span></td>
+                  <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; color: var(--gris-500);">{{ d.facturas }}</td>
+                  <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums;">{{ d.pares }}</td>
+                  <td style="padding: 10px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700;">{{ d.totalFmt }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table></div>
+        </div>
+
+        <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">Alertas de stock</div>
+          <div style="display: grid; gap: 10px;">
+            <sc-for list="{{ alertas }}" as="a" hint-placeholder-count="3">
+              <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: {{ a.bg }}; border: 1px solid {{ a.border }};">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{ a.fg }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+                <div style="flex: 1;">
+                  <div style="font-size: 14px; font-weight: 700;">{{ a.nombre }}</div>
+                  <div style="font-size: 12px; color: var(--gris-500);">{{ a.detalle }}</div>
+                </div>
+                <div style="font-size: 18px; font-weight: 700; color: {{ a.fg }}; font-variant-numeric: tabular-nums;">{{ a.pares }}</div>
+              </div>
+            </sc-for>
+            <sc-if value="{{ sinAlertas }}">
+              <div style="font-size: 13px; color: var(--gris-350); padding: 8px 0;">Todo el catálogo está por encima del mínimo.</div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px); margin-top: 16px;">
+        <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">{{ ventasHoyTitulo }}</div>
+        <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: var(--gris-100); text-align: left;">
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Factura</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Hora</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Vendedor</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Detalle</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Pares</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Total</th>
+              <th style="padding: 12px 14px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ ventasHoy }}" as="v" hint-placeholder-count="4">
+              <tr style="border-bottom: 1px solid var(--sura-azul-divider);">
+                <td style="padding: 12px 14px; font-family: 'SF Mono', ui-monospace, monospace; font-size: 13px;">{{ v.id }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ v.hora }}</td>
+                <td style="padding: 12px 14px;">{{ v.vendedor }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ v.detalle }}</td>
+                <td style="padding: 12px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700;">{{ v.pares }}</td>
+                <td style="padding: 12px 14px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700;">{{ v.totalFmt }}</td>
+                <td style="padding: 12px 14px; text-align: right;"><button onClick="{{ v.onFactura }}" style="border: 1px solid var(--sura-azul-cielo); color: var(--sura-azul-cielo); background: var(--sura-blanco); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-azul-tint);">Factura</button></td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table></div>
+        <sc-if value="{{ sinVentasHoy }}">
+          <div style="font-size: 13px; color: var(--gris-350); padding: 16px 0 4px;">Todavía no hay ventas registradas hoy.</div>
+        </sc-if>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isVenta }}">
+    <div data-screen-label="Nueva venta">
+      <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Nueva venta</h1>
+      <div style="font-size: 14px; color: var(--gris-500); margin-bottom: 20px;">Paso 1: elige el modelo. Paso 2: toca la talla para sumar pares. Paso 3: cobra.</div>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start;">
+        <div style="flex: 4 1 440px; min-width: 0; display: grid; gap: 16px;">
+          <sc-if value="{{ selPorTalla }}">
+          <div style="background: var(--sura-blanco); border: 2px solid var(--sura-azul-cielo); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+              <div>
+                <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof);">Paso 2 · toca la talla para agregar un par</div>
+                <div style="font-size: 17px; font-weight: 700; margin-top: 4px;">{{ selNombre }}</div>
+                <div style="font-size: 13px; color: var(--gris-500); margin-top: 2px;">{{ selPrecio }} por par · toca la talla o usa + y − para ajustar los pares</div>
+              </div>
+              <button onClick="{{ onLimpiarSel }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;" style-hover="border-color: var(--sura-azul-cielo); color: var(--sura-azul-cielo);">Cambiar modelo</button>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              <sc-for list="{{ tallas }}" as="t" hint-placeholder-count="7">
+                <div onClick="{{ t.onAdd }}" style="{{ t.wrapStyle }}">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                    <span style="font-size: 22px; font-weight: 700; line-height: 1;">{{ t.talla }}</span>
+                    <span style="font-size: 12px; font-weight: 700; color: {{ t.stockColor }}; font-variant-numeric: tabular-nums;">{{ t.stock }}</span>
+                  </div>
+                  <div style="font-size: 11px; color: var(--gris-350); margin: 2px 0 10px;">pares en bodega</div>
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <button onClick="{{ t.onSub }}" title="Quitar un par" style="width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--gris-300); background: var(--sura-blanco); cursor: pointer; font-size: 16px; font-weight: 700; line-height: 1;">−</button>
+                    <div style="flex: 1; text-align: center; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ t.enCarrito }}</div>
+                    <button onClick="{{ t.onMas }}" title="Agregar un par" style="width: 28px; height: 28px; border-radius: 999px; border: none; background: var(--sura-azul-cielo); color: var(--sura-blanco); cursor: pointer; font-size: 16px; font-weight: 700; line-height: 1;">+</button>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ selPorUnidad }}">
+          <div style="background: var(--sura-blanco); border: 2px solid var(--sura-azul-cielo); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px); display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;">
+            <div style="min-width: 0;">
+              <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof);">Paso 2 · cuántas unidades</div>
+              <div style="font-size: 17px; font-weight: 700; margin-top: 4px;">{{ selNombre }}</div>
+              <div style="font-size: 13px; color: var(--gris-500); margin-top: 2px;">{{ selPrecio }} por unidad · {{ selStockTxt }}</div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 14px;">
+              <button onClick="{{ onUnidadSub }}" style="width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--gris-300); background: var(--sura-blanco); cursor: pointer; font-size: 20px; font-weight: 700; line-height: 1;">−</button>
+              <div style="min-width: 56px; text-align: center; font-size: 26px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ selEnCarrito }}</div>
+              <button onClick="{{ onUnidadAdd }}" style="width: 40px; height: 40px; border-radius: 999px; border: none; background: var(--sura-azul-cielo); color: var(--sura-blanco); cursor: pointer; font-size: 20px; font-weight: 700; line-height: 1;">+</button>
+              <button onClick="{{ onLimpiarSel }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;" style-hover="border-color: var(--sura-azul-cielo); color: var(--sura-azul-cielo);">Cambiar producto</button>
+            </div>
+          </div>
+          </sc-if>
+
+          <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+            <div style="display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; margin-bottom: 12px;">
+              <div style="flex: 1 1 240px; min-width: 0; position: relative;">
+                <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Paso 1 · escribe la referencia o el nombre del producto" style="width: 100%; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 12px 14px 12px 40px; font-size: 14px; background: var(--sura-blanco); outline: none;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888B8D" stroke-width="2" stroke-linecap="round" style="position: absolute; left: 14px; top: 13px;"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+              </div>
+              <sc-if value="{{ hayQ }}">
+                <button onClick="{{ onLimpiarQ }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap;" style-hover="border-color: var(--sura-azul-cielo); color: var(--sura-azul-cielo);">Limpiar</button>
+              </sc-if>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap;">
+              <sc-for list="{{ filtrosVenta }}" as="f" hint-placeholder-count="4">
+                <button onClick="{{ f.onPick }}" style="{{ f.style }}">{{ f.label }}</button>
+              </sc-for>
+              <div style="flex: 1;"></div>
+              <div style="font-size: 13px; color: var(--gris-350); white-space: nowrap;">{{ catalogoResumen }}</div>
+            </div>
+
+            <div style="max-height: 384px; overflow-y: auto; border: 1px solid var(--sura-azul-divider); border-radius: 12px;">
+              <sc-for list="{{ catalogo }}" as="c" hint-placeholder-count="8">
+                <div onClick="{{ c.onSel }}" style="{{ c.style }}">
+                  <span style="flex: 1 1 190px; min-width: 0; display: grid; gap: 2px;">
+                    <span style="font-size: 14px; font-weight: 700; overflow-wrap: anywhere;">{{ c.nombre }}</span>
+                    <span style="font-size: 12px; color: var(--gris-500);"><span style="font-family: 'SF Mono', ui-monospace, monospace; color: var(--sura-azul-prof);">{{ c.ref }}</span> · {{ c.sub }}</span>
+                  </span>
+                  <span style="flex: 0 0 auto; text-align: right; font-size: 13px; color: {{ c.stockColor }}; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ c.paresTxt }}</span>
+                  <span style="flex: 0 0 auto; text-align: right; font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ c.precioFmt }}</span>
+                  <span style="{{ c.ctaStyle }}">{{ c.cta }}</span>
+                </div>
+              </sc-for>
+              <sc-if value="{{ sinCatalogo }}">
+                <div style="padding: 28px 16px; text-align: center; font-size: 14px; color: var(--gris-350);">No encontramos modelos con esa búsqueda. Revisa la referencia o limpia los filtros.</div>
+              </sc-if>
+            </div>
+          </div>
+
+        </div>
+
+        <div style="flex: 1 1 320px; min-width: 0; max-width: 420px; background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px); position: sticky; top: 84px;">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">Carrito</div>
+          <div style="display: grid; gap: 10px; margin-bottom: 16px;">
+            <sc-for list="{{ carrito }}" as="i" hint-placeholder-count="2">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center; padding-bottom: 10px; border-bottom: 1px solid var(--sura-azul-divider);">
+                <div style="flex: 1 1 130px; min-width: 0;">
+                  <div style="font-size: 14px; font-weight: 700;">{{ i.nombre }}</div>
+                  <div style="font-size: 12px; color: var(--gris-500);">{{ i.detalle }}</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <button onClick="{{ i.onSub }}" style="width: 24px; height: 24px; border-radius: 999px; border: 1px solid var(--gris-300); background: var(--sura-blanco); cursor: pointer; font-weight: 700;">−</button>
+                  <div style="min-width: 22px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums;">{{ i.pares }}</div>
+                  <button onClick="{{ i.onAdd }}" style="width: 24px; height: 24px; border-radius: 999px; border: none; background: var(--sura-azul-cielo); color: var(--sura-blanco); cursor: pointer; font-weight: 700;">+</button>
+                </div>
+                <div style="flex: 0 0 auto; margin-left: auto; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px;">{{ i.subtotalFmt }}</div>
+                <button onClick="{{ i.onRm }}" title="Quitar" style="border: none; background: transparent; cursor: pointer; color: var(--danger-1); font-size: 16px; line-height: 1;">×</button>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ carritoVacio }}">
+            <div style="font-size: 13px; color: var(--gris-350); padding: 12px 0 20px;">Agrega productos desde el catálogo.</div>
+          </sc-if>
+
+          <div style="display: grid; gap: 8px; padding: 14px 0; border-top: 1px dashed var(--gris-300);">
+            <div style="display: flex; justify-content: space-between; font-size: 14px;"><span style="color: var(--gris-500);">{{ carritoConteoLabel }}</span><span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ carritoPares }}</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px;"><span style="color: var(--gris-500);">Subtotal</span><span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ carritoTotalFmt }}</span></div>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin: 6px 0 8px;">Forma de pago</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+            <sc-for list="{{ metodos }}" as="m" hint-placeholder-count="3">
+              <button onClick="{{ m.onPick }}" style="{{ m.style }}">{{ m.label }}</button>
+            </sc-for>
+          </div>
+          <input value="{{ cliente }}" onChange="{{ onCliente }}" placeholder="Cliente (opcional)" style="width: 100%; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 11px 14px; font-size: 14px; margin-bottom: 14px; outline: none;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+          <button onClick="{{ onCobrar }}" style="{{ cobrarStyle }}">Cobrar y facturar · {{ carritoTotalFmt }}</button>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isInventario }}">
+    <div data-screen-label="Inventario">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px;">
+        <div>
+          <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Inventario</h1>
+          <div style="font-size: 14px; color: var(--gris-500);">{{ invResumen }}</div>
+        </div>
+        <sc-if value="{{ isAdmin }}">
+          <div style="display: flex; gap: 10px;">
+            <button onClick="{{ onNuevaEntrada }}" style="border: 1px solid var(--sura-azul-prof); color: var(--sura-azul-prof); background: var(--sura-blanco); border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-azul-tint);">Entrada de mercancía</button>
+            <button onClick="{{ onNuevoModelo }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Nuevo producto</button>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: center; margin-bottom: 16px;">
+          <input value="{{ qInv }}" onChange="{{ onQInv }}" placeholder="Buscar referencia, producto, tipo o color" style="flex: 1 1 220px; min-width: 0; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 11px 14px; font-size: 14px; outline: none;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+          <sc-for list="{{ filtrosInv }}" as="f" hint-placeholder-count="3">
+            <button onClick="{{ f.onPick }}" style="{{ f.style }}">{{ f.label }}</button>
+          </sc-for>
+        </div>
+        <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: var(--gris-100); text-align: left;">
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Ref.</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Producto</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Tipo · color</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Presentación</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Stock</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Precio</th>
+              <sc-if value="{{ isAdmin }}">
+                <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Utilidad</th>
+              </sc-if>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Estado</th>
+              <sc-if value="{{ isAdmin }}">
+                <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Acciones</th>
+              </sc-if>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ invRows }}" as="r" hint-placeholder-count="6">
+              <tr style="border-bottom: 1px solid var(--sura-azul-divider);" style-hover="background: var(--bg-row-hover);">
+                <td style="padding: 12px 14px; font-family: 'SF Mono', ui-monospace, monospace; font-size: 13px; color: var(--sura-azul-prof);">{{ r.ref }}</td>
+                <td style="padding: 12px 14px; font-weight: 700;">{{ r.nombre }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ r.matcolor }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500); font-size: 13px;">{{ r.tallasTxt }}</td>
+                <td style="padding: 12px 14px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums;">{{ r.pares }}</td>
+                <td style="padding: 12px 14px; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap;">{{ r.precioFmt }} <span style="font-size: 12px; color: var(--gris-350);">{{ r.precioSuf }}</span></td>
+                <sc-if value="{{ isAdmin }}">
+                  <td style="padding: 12px 14px; text-align: right; font-variant-numeric: tabular-nums; color: var(--success-1);">{{ r.utilFmt }}</td>
+                </sc-if>
+                <td style="padding: 12px 14px;"><span style="{{ r.badgeStyle }}">{{ r.estado }}</span></td>
+                <sc-if value="{{ isAdmin }}">
+                  <td style="padding: 12px 14px; text-align: right; white-space: nowrap;">
+                    <div style="display: flex; gap: 6px; justify-content: flex-end;">
+                      <button onClick="{{ r.onEdit }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="border-color: var(--sura-azul-cielo); color: var(--sura-azul-cielo);">Actualizar</button>
+                      <button onClick="{{ r.onAjuste }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="border-color: var(--sura-azul-cielo); color: var(--sura-azul-cielo);">Ajustar</button>
+                      <button onClick="{{ r.onArchivar }}" style="{{ r.archStyle }}">{{ r.archLabel }}</button>
+                      <button onClick="{{ r.onDel }}" style="border: 1px solid var(--danger-border); color: var(--danger-1); background: var(--sura-blanco); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="background: var(--danger-2);">Eliminar</button>
+                    </div>
+                  </td>
+                </sc-if>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table></div>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding-top: 14px; margin-top: 4px; border-top: 1px solid var(--sura-azul-divider);">
+          <div style="font-size: 13px; color: var(--gris-500);">{{ invPagerTxt }}</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+            <button onClick="{{ onInvPrev }}" style="{{ invPrevStyle }}">Anterior</button>
+            <sc-for list="{{ invPaginas }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.onPick }}" style="{{ p.style }}">{{ p.label }}</button>
+            </sc-for>
+            <button onClick="{{ onInvNext }}" style="{{ invNextStyle }}">Siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isMovs }}">
+    <div data-screen-label="Movimientos">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px;">
+        <div>
+          <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Movimientos de inventario</h1>
+          <div style="font-size: 14px; color: var(--gris-500);">Entradas de proveedor, ajustes con motivo y devoluciones.</div>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button onClick="{{ onNuevoAjuste }}" style="border: 1px solid var(--sura-azul-prof); color: var(--sura-azul-prof); background: var(--sura-blanco); border-radius: 999px; padding: 11px 20px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-azul-tint);">Registrar ajuste</button>
+          <button onClick="{{ onNuevaEntrada }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Entrada de mercancía</button>
+        </div>
+      </div>
+      <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+        <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: var(--gris-100); text-align: left;">
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Fecha</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Tipo</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Producto</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Detalle</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Responsable</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Pares</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ movRows }}" as="m" hint-placeholder-count="5">
+              <tr style="border-bottom: 1px solid var(--sura-azul-divider);">
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ m.fecha }}</td>
+                <td style="padding: 12px 14px;"><span style="{{ m.badgeStyle }}">{{ m.tipo }}</span></td>
+                <td style="padding: 12px 14px; font-weight: 700;">{{ m.modelo }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ m.detalle }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ m.quien }}</td>
+                <td style="padding: 12px 14px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; color: {{ m.color }};">{{ m.pares }}</td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table></div>
+        <sc-if value="{{ sinMovs }}">
+          <div style="font-size: 13px; color: var(--gris-350); padding: 16px 0 4px;">Aún no hay movimientos registrados.</div>
+        </sc-if>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isReportes }}">
+    <div data-screen-label="Reportes">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px;">
+        <div>
+          <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">{{ repTitulo }}</h1>
+          <div style="font-size: 14px; color: var(--gris-500);">{{ repRango }}</div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 999px; padding: 4px;">
+          <sc-for list="{{ periodos }}" as="p" hint-placeholder-count="3">
+            <button onClick="{{ p.onPick }}" style="{{ p.style }}">{{ p.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 16px; margin-bottom: 16px;">
+        <sc-for list="{{ repMetrics }}" as="m" hint-placeholder-count="4">
+          <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof);">{{ m.label }}</div>
+            <div style="font-size: 28px; font-weight: 700; margin: 8px 0 4px; font-variant-numeric: tabular-nums;">{{ m.valor }}</div>
+            <div style="font-size: 13px; color: {{ m.deltaColor }};">{{ m.delta }}</div>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 16px; margin-bottom: 16px; align-items: start;">
+        <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">Estadísticas del periodo</div>
+          <div style="display: grid; gap: 2px;">
+            <sc-for list="{{ stats }}" as="s" hint-placeholder-count="7">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 9px 0; border-bottom: 1px solid var(--gris-100); font-size: 14px;">
+                <span style="color: var(--gris-500);">{{ s.label }}</span>
+                <span style="flex: 1; border-bottom: 1px dotted var(--gris-300); transform: translateY(-3px);"></span>
+                <span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ s.valor }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin: 20px 0 10px;">Cómo pagaron</div>
+          <div style="display: grid; gap: 2px;">
+            <sc-for list="{{ pagos }}" as="p" hint-placeholder-count="3">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 9px 0; border-bottom: 1px solid var(--gris-100); font-size: 14px;">
+                <span style="color: var(--gris-500);">{{ p.metodo }}</span>
+                <span style="color: var(--gris-350); font-size: 13px;">{{ p.n }}</span>
+                <span style="flex: 1; border-bottom: 1px dotted var(--gris-300); transform: translateY(-3px);"></span>
+                <span style="color: var(--gris-350); font-size: 13px; font-variant-numeric: tabular-nums;">{{ p.pct }}</span>
+                <span style="font-weight: 700; font-variant-numeric: tabular-nums; min-width: 96px; text-align: right;">{{ p.totalFmt }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">Modelos más vendidos</div>
+          <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="background: var(--gris-100); text-align: left;">
+                <th style="padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">#</th>
+                <th style="padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Producto</th>
+                <th style="padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Pares</th>
+                <th style="padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Vendido</th>
+                <th style="padding: 10px 12px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">% del total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ topModelos }}" as="t" hint-placeholder-count="5">
+                <tr style="border-bottom: 1px solid var(--sura-azul-divider);">
+                  <td style="padding: 10px 12px; color: var(--gris-350); font-variant-numeric: tabular-nums;">{{ t.pos }}</td>
+                  <td style="padding: 10px 12px; font-weight: 700;">{{ t.nombre }}</td>
+                  <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums;">{{ t.pares }}</td>
+                  <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums; font-weight: 700;">{{ t.totalFmt }}</td>
+                  <td style="padding: 10px 12px; text-align: right; font-variant-numeric: tabular-nums; color: var(--gris-500);">{{ t.pct }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table></div>
+          <sc-if value="{{ sinRepVentas }}">
+            <div style="font-size: 13px; color: var(--gris-350); padding: 16px 0 4px;">Sin ventas en el periodo, aún no hay ranking.</div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof);">Detalle de ventas · {{ repCount }}</div>
+          <button onClick="{{ onExportar }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="border-color: var(--sura-azul-cielo); color: var(--sura-azul-cielo);">Exportar CSV</button>
+        </div>
+        <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: var(--gris-100); text-align: left;">
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Factura</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Fecha</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Vendedor</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Detalle</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Pago</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Pares</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Total</th>
+              <th style="padding: 12px 14px;"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ repVentas }}" as="v" hint-placeholder-count="8">
+              <tr style="border-bottom: 1px solid var(--sura-azul-divider);" style-hover="background: var(--bg-row-hover);">
+                <td style="padding: 12px 14px; font-family: 'SF Mono', ui-monospace, monospace; font-size: 13px;">{{ v.id }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ v.fechaHora }}</td>
+                <td style="padding: 12px 14px;">{{ v.vendedor }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ v.detalle }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ v.metodo }}</td>
+                <td style="padding: 12px 14px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums;">{{ v.pares }}</td>
+                <td style="padding: 12px 14px; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums;">{{ v.totalFmt }}</td>
+                <td style="padding: 12px 14px; text-align: right; white-space: nowrap;">
+                  <button onClick="{{ v.onFactura }}" style="border: 1px solid var(--sura-azul-cielo); color: var(--sura-azul-cielo); background: var(--sura-blanco); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer; margin-right: 6px;" style-hover="background: var(--sura-azul-tint);">Factura</button>
+                  <sc-if value="{{ isAdmin }}">
+                    <button onClick="{{ v.onDevolver }}" style="{{ v.devStyle }}">{{ v.devLabel }}</button>
+                  </sc-if>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table></div>
+        <sc-if value="{{ sinRepVentas }}">
+          <div style="font-size: 13px; color: var(--gris-350); padding: 16px 0 4px;">No hay ventas en este periodo.</div>
+        </sc-if>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; padding-top: 14px; margin-top: 4px; border-top: 1px solid var(--sura-azul-divider);">
+          <div style="font-size: 13px; color: var(--gris-500);">{{ repPagerTxt }}</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+            <button onClick="{{ onRepPrev }}" style="{{ repPrevStyle }}">Anterior</button>
+            <sc-for list="{{ repPaginas }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.onPick }}" style="{{ p.style }}">{{ p.label }}</button>
+            </sc-for>
+            <button onClick="{{ onRepNext }}" style="{{ repNextStyle }}">Siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isUsuarios }}">
+    <div data-screen-label="Usuarios">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px;">
+        <div>
+          <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Usuarios y roles</h1>
+          <div style="font-size: 14px; color: var(--gris-500);">El vendedor solo registra ventas y consulta inventario. El administrador ve y edita todo.</div>
+        </div>
+        <button onClick="{{ onNuevoUsuario }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Nuevo usuario</button>
+      </div>
+      <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+        <div style="overflow-x: auto;"><table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+          <thead>
+            <tr style="background: var(--gris-100); text-align: left;">
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Nombre</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Correo</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Rol</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500);">Permisos</th>
+              <th style="padding: 12px 14px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gris-500); text-align: right;">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <sc-for list="{{ usuarios }}" as="u" hint-placeholder-count="3">
+              <tr style="border-bottom: 1px solid var(--sura-azul-divider);">
+                <td style="padding: 12px 14px; font-weight: 700;">{{ u.nombre }}</td>
+                <td style="padding: 12px 14px; color: var(--gris-500);">{{ u.correo }}</td>
+                <td style="padding: 12px 14px;"><span style="{{ u.rolStyle }}">{{ u.rol }}</span></td>
+                <td style="padding: 12px 14px; color: var(--gris-500); font-size: 13px;">{{ u.permisos }}</td>
+                <td style="padding: 12px 14px; text-align: right;">
+                  <button onClick="{{ u.onToggle }}" style="{{ u.estadoStyle }}">{{ u.estado }}</button>
+                </td>
+              </tr>
+            </sc-for>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isCorreo }}">
+    <div data-screen-label="Correo diario">
+      <h1 style="font-size: 24px; font-weight: 700; margin: 0 0 4px;">Correo diario</h1>
+      <div style="font-size: 14px; color: var(--gris-500); margin-bottom: 20px;">Cada noche sale un correo con el PDF del cierre: lo vendido, cuánto se facturó en pesos y cómo quedó el inventario.</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 16px; align-items: start;">
+        <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">Destinatarios</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+            <sc-for list="{{ correos }}" as="c" hint-placeholder-count="2">
+              <div style="display: flex; align-items: center; gap: 8px; background: var(--sura-azul-tint); border: 1px solid var(--sura-azul-chip); border-radius: 999px; padding: 7px 12px 7px 14px; font-size: 13px;">
+                {{ c.email }}
+                <button onClick="{{ c.onRm }}" style="border: none; background: transparent; cursor: pointer; color: var(--sura-azul-prof); font-size: 15px; line-height: 1;">×</button>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+            <input value="{{ nuevoCorreo }}" onChange="{{ onNuevoCorreoChange }}" placeholder="correo@ejemplo.com" style="flex: 1 1 200px; min-width: 0; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 11px 14px; font-size: 14px; outline: none;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+            <button onClick="{{ onAddCorreo }}" style="border: 1px solid var(--sura-azul-prof); color: var(--sura-azul-prof); background: var(--sura-blanco); border-radius: 999px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-azul-tint);">Agregar</button>
+          </div>
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 12px;">Hora de envío</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px;">
+            <sc-for list="{{ horas }}" as="h" hint-placeholder-count="3">
+              <button onClick="{{ h.onPick }}" style="{{ h.style }}">{{ h.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display: flex; gap: 10px;">
+            <button onClick="{{ onPreviewCorreo }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Ver y enviar prueba</button>
+          </div>
+        </div>
+        <div style="background: var(--sura-blanco); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: clamp(14px, 2.6vw, 20px);">
+          <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 14px;">Últimos envíos</div>
+          <div style="display: grid; gap: 2px;">
+            <sc-for list="{{ envios }}" as="e" hint-placeholder-count="5">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 10px 0; border-bottom: 1px solid var(--sura-azul-divider); font-size: 14px;">
+                <span style="color: var(--gris-500);">{{ e.fecha }}</span>
+                <span style="flex: 1; border-bottom: 1px dotted var(--gris-300); transform: translateY(-3px);"></span>
+                <span style="font-weight: 700; font-variant-numeric: tabular-nums;">{{ e.total }}</span>
+                <span style="color: var(--success-1); font-size: 12px; font-weight: 700;">Enviado</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+  </main>
+</div>
+</sc-if>
+
+<sc-if value="{{ showFactura }}">
+<div onClick="{{ onCloseModal }}" style="position: fixed; inset: 0; background: rgba(0,0,63,0.55); z-index: 90; display: grid; place-items: center; padding: clamp(8px, 3vw, 32px); overflow: auto;">
+  <div onClick="{{ stop }}" style="display: grid; gap: 16px; justify-items: center;">
+    <div id="tirilla" style="width: 302px; background: var(--sura-blanco); padding: 20px 18px; font-family: 'SF Mono', ui-monospace, monospace; font-size: 12px; color: var(--gris-900); line-height: 1.45; box-shadow: 0 20px 50px rgba(0,0,63,0.4);">
+      <div style="text-align: center; margin-bottom: 10px;">
+        <div style="font-family: 'Sura Sans', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.5px;">PELETERÍA EL PROGRESO</div>
+        <div>NIT 901.442.118-3</div>
+        <div>Cra 15 # 34-22, Bucaramanga</div>
+        <div>Tel. 607 645 2210</div>
+      </div>
+      <div style="border-top: 1px dashed var(--gris-900); border-bottom: 1px dashed var(--gris-900); padding: 8px 0; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between;"><span>Factura</span><span>{{ fac.id }}</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Fecha</span><span>{{ fac.fechaHora }}</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Vendedor</span><span>{{ fac.vendedor }}</span></div>
+        <div style="display: flex; justify-content: space-between;"><span>Cliente</span><span>{{ fac.cliente }}</span></div>
+      </div>
+      <div style="display: flex; font-weight: 700; border-bottom: 1px dashed var(--gris-900); padding-bottom: 4px; margin-bottom: 6px;">
+        <span style="flex: 1;">DESCRIPCIÓN</span>
+        <span style="width: 42px; text-align: right;">CANT.</span>
+        <span style="width: 62px; text-align: right;">TOTAL</span>
+      </div>
+      <sc-for list="{{ fac.items }}" as="it" hint-placeholder-count="2">
+        <div style="margin-bottom: 6px;">
+          <div style="display: flex;">
+            <span style="flex: 1;">{{ it.nombre }}</span>
+            <span style="width: 42px; text-align: right; font-weight: 700;">{{ it.pares }}</span>
+            <span style="width: 62px; text-align: right;">{{ it.subtotalFmt }}</span>
+          </div>
+          <div style="color: var(--gris-500);">{{ it.linea2 }}</div>
+        </div>
+      </sc-for>
+      <div style="border-top: 1px dashed var(--gris-900); padding-top: 8px; margin-top: 4px;">
+        <div style="display: flex; justify-content: space-between; font-weight: 700;"><span>{{ fac.conteoLabel }}</span><span>{{ fac.pares }}</span></div>
+        <div style="display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; margin-top: 4px;"><span>TOTAL</span><span>{{ fac.totalFmt }}</span></div>
+        <div style="display: flex; justify-content: space-between; margin-top: 4px;"><span>Forma de pago</span><span>{{ fac.metodo }}</span></div>
+      </div>
+      <div style="text-align: center; margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--gris-900);">
+        <div>Precios en pesos colombianos.</div>
+        <div>Cambios dentro de 8 días con esta tirilla.</div>
+        <div style="font-weight: 700; margin-top: 6px;">¡Gracias por su compra!</div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <button onClick="{{ onCloseModal }}" style="border: 1px solid var(--sura-blanco); color: var(--sura-blanco); background: transparent; border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;">Cerrar</button>
+      <button onClick="{{ onImprimir }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;">Imprimir tirilla 80mm</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showModelo }}">
+<div onClick="{{ onCloseModal }}" style="position: fixed; inset: 0; background: rgba(0,0,63,0.6); backdrop-filter: blur(3px); z-index: 90; display: grid; place-items: center; padding: clamp(8px, 3vw, 24px); overflow: auto;">
+  <div onClick="{{ stop }}" style="width: min(820px, 100%); max-height: 92vh; display: flex; flex-direction: column; background: var(--sura-blanco); border-radius: 20px; overflow: hidden; box-shadow: 0 30px 70px rgba(0,0,63,0.45);">
+
+    <div style="display: flex; align-items: center; gap: 16px; padding: clamp(12px, 2.5vw, 16px) clamp(12px, 3vw, 20px); background: var(--sura-azul-oscuro); color: var(--sura-blanco);">
+      <div style="width: 44px; height: 44px; border-radius: 14px; background: rgba(255,255,255,0.14); display: grid; place-items: center; flex-shrink: 0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7 12 3 4 7v10l8 4 8-4z"></path><path d="m4 7 8 4 8-4"></path><path d="M12 21V11"></path></svg>
+      </div>
+      <div style="flex: 1; min-width: 0;">
+        <div style="font-size: 19px; font-weight: 700;">{{ formTitulo }}</div>
+        <div style="font-size: 13px; opacity: 0.8;">Suelas, plantillas, pegantes, herrajes: todo lo que se vende en el local.</div>
+      </div>
+      <button onClick="{{ onCloseModal }}" title="Cerrar" style="width: 34px; height: 34px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.4); background: transparent; color: var(--sura-blanco); cursor: pointer; font-size: 17px; line-height: 1;">×</button>
+    </div>
+
+    <div style="flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-wrap: wrap; gap: 16px; padding: clamp(12px, 3vw, 20px); align-items: flex-start;">
+
+      <div style="flex: 3 1 380px; min-width: 0; display: grid; gap: 16px;">
+
+        <div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 8px;">1 · Tipo de producto</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+            <sc-for list="{{ tiposProducto }}" as="t" hint-placeholder-count="7">
+              <span onClick="{{ t.onPick }}" style="{{ t.style }}">
+                {{ t.label }}
+                <sc-if value="{{ t.borrable }}">
+                  <button onClick="{{ t.onDel }}" title="Eliminar tipo" style="{{ t.xStyle }}">×</button>
+                </sc-if>
+              </span>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+            <input value="{{ nuevoTipo }}" onChange="{{ onNuevoTipo }}" placeholder="Crear otro tipo: cremalleras, tintes…" style="flex: 1 1 200px; min-width: 0; border: 1px dashed var(--gris-300); border-radius: 12px; padding: 9px 12px; font-size: 13px; outline: none;" style-focus="border-color: var(--sura-azul-cielo);" />
+            <button onClick="{{ onAddTipo }}" style="border: 1px solid var(--sura-azul-prof); color: var(--sura-azul-prof); background: var(--sura-blanco); border-radius: 999px; padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;" style-hover="background: var(--sura-azul-tint);">Agregar tipo</button>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 8px;">2 · Cómo se vende</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <sc-for list="{{ unidadesVenta }}" as="u" hint-placeholder-count="2">
+              <button onClick="{{ u.onPick }}" style="{{ u.style }}">
+                <div style="font-size: 14px; font-weight: 700;">{{ u.label }}</div>
+                <div style="font-size: 12px; color: var(--gris-500); margin-top: 2px;">{{ u.desc }}</div>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 8px;">3 · Datos del producto</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 12px;">
+            <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Referencia</span><input value="{{ form.ref }}" onChange="{{ onFormRef }}" placeholder="SU-101" style="border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 14px; outline: none; min-width: 0; width: 100%; font-family: 'SF Mono', ui-monospace, monospace;" style-focus="border-bottom-color: var(--sura-azul-cielo);" /></label>
+            <label style="display: grid; gap: 6px; min-width: 0; grid-column: 1 / -1;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Nombre</span><input value="{{ form.nombre }}" onChange="{{ onFormNombre }}" placeholder="Suela Clásica Ranger" style="border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 14px; outline: none; min-width: 0; width: 100%;" style-focus="border-bottom-color: var(--sura-azul-cielo);" /></label>
+            <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Color</span><input value="{{ form.color }}" onChange="{{ onFormColor }}" placeholder="Negro" style="border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 14px; outline: none; min-width: 0; width: 100%;" style-focus="border-bottom-color: var(--sura-azul-cielo);" /></label>
+            <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Costo {{ formPorUnidadTxt }}</span><input value="{{ form.costo }}" onChange="{{ onFormCosto }}" placeholder="0" style="border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 14px; outline: none; min-width: 0; width: 100%; text-align: right; font-variant-numeric: tabular-nums;" style-focus="border-bottom-color: var(--sura-azul-cielo);" /></label>
+            <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Precio {{ formPorUnidadTxt }}</span><input value="{{ form.precio }}" onChange="{{ onFormPrecio }}" placeholder="0" style="border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 14px; outline: none; min-width: 0; width: 100%; text-align: right; font-variant-numeric: tabular-nums;" style-focus="border-bottom-color: var(--sura-azul-cielo);" /></label>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 8px;">4 · Existencias y stock mínimo</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; background: var(--sura-azul-tint-light); border: 1px solid var(--sura-azul-divider); border-radius: 14px; padding: 12px 14px; margin-bottom: 12px;">
+            <div style="flex: 1 1 170px; min-width: 0;">
+              <div style="font-size: 13px; font-weight: 700;">Stock mínimo</div>
+              <div style="font-size: 12px; color: var(--gris-500);">{{ formMinHint }}</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button onClick="{{ onMinMenos }}" style="width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--gris-300); background: var(--sura-blanco); cursor: pointer; font-size: 18px; font-weight: 700; line-height: 1;">−</button>
+              <input value="{{ form.min }}" onChange="{{ onFormMin }}" placeholder="10" style="width: 72px; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 8px 10px; font-size: 15px; outline: none; text-align: right; font-variant-numeric: tabular-nums;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+              <button onClick="{{ onMinMas }}" style="width: 36px; height: 36px; border-radius: 999px; border: none; background: var(--sura-azul-cielo); color: var(--sura-blanco); cursor: pointer; font-size: 18px; font-weight: 700; line-height: 1;">+</button>
+            </div>
+          </div>
+
+          <sc-if value="{{ formPorUnidad }}">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <input value="{{ form.stock }}" onChange="{{ onFormStock }}" placeholder="0" style="width: 150px; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 11px 12px; font-size: 16px; outline: none; text-align: right; font-variant-numeric: tabular-nums;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+              <span style="font-size: 13px; color: var(--gris-500);">unidades en bodega</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ formPorTalla }}">
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start;">
+              <sc-for list="{{ formTallas }}" as="t" hint-placeholder-count="6">
+                <div style="width: 92px; border: 1px solid var(--sura-azul-divider); border-radius: 14px; padding: 10px; background: var(--sura-azul-tint-light);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 13px; font-weight: 700;">Talla {{ t.talla }}</span>
+                    <button onClick="{{ t.onRm }}" title="Quitar talla" style="border: none; background: transparent; cursor: pointer; color: var(--danger-1); line-height: 1; font-size: 15px;">×</button>
+                  </div>
+                  <input value="{{ t.pares }}" onChange="{{ t.onChange }}" style="width: 100%; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 7px 9px; font-size: 14px; outline: none; text-align: right; font-variant-numeric: tabular-nums;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+                </div>
+              </sc-for>
+              <div style="width: 92px; display: grid; gap: 6px;">
+                <input value="{{ nuevaTalla }}" onChange="{{ onNuevaTalla }}" placeholder="Talla" style="width: 100%; border: 1px dashed var(--gris-300); border-radius: 12px 12px 0 0; padding: 9px; font-size: 13px; outline: none; text-align: center;" style-focus="border-color: var(--sura-azul-cielo);" />
+                <button onClick="{{ onAddTalla }}" style="border: 1px solid var(--sura-azul-prof); color: var(--sura-azul-prof); background: var(--sura-blanco); border-radius: 999px; padding: 7px 10px; font-size: 12px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-azul-tint);">Agregar talla</button>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="flex: 1 1 220px; min-width: 0; background: var(--sura-azul-tint-light); border: 1px solid var(--sura-azul-divider); border-radius: 16px; padding: 14px;">
+        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 10px;">Resumen</div>
+        <div style="font-size: 15px; font-weight: 700; margin-bottom: 2px;">{{ resumenNombre }}</div>
+        <div style="font-size: 12px; color: var(--gris-500); margin-bottom: 16px;">{{ resumenSub }}</div>
+        <div style="display: grid; gap: 2px;">
+          <sc-for list="{{ resumenLineas }}" as="l" hint-placeholder-count="4">
+            <div style="display: flex; align-items: baseline; gap: 8px; font-size: 13px; padding: 7px 0; border-bottom: 1px solid var(--sura-azul-divider);">
+              <span style="color: var(--gris-500);">{{ l.label }}</span>
+              <span style="flex: 1; border-bottom: 1px dotted var(--gris-300); transform: translateY(-3px);"></span>
+              <span style="font-weight: 700; font-variant-numeric: tabular-nums; color: {{ l.color }};">{{ l.valor }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; padding: 12px clamp(12px, 3vw, 20px); border-top: 1px solid var(--sura-azul-divider); background: var(--gris-100);">
+      <div style="font-size: 13px; color: var(--gris-500);">{{ formHint }}</div>
+      <div style="display: flex; gap: 10px;">
+        <button onClick="{{ onCloseModal }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;">Cancelar</button>
+        <button onClick="{{ onGuardarModelo }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 26px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">{{ formCta }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showEntrada }}">
+<div onClick="{{ onCloseModal }}" style="position: fixed; inset: 0; background: rgba(0,0,63,0.55); z-index: 90; display: grid; place-items: center; padding: clamp(8px, 3vw, 32px); overflow: auto;">
+  <div onClick="{{ stop }}" style="width: min(560px, 95vw); max-height: 92vh; overflow-y: auto; background: var(--sura-blanco); border-radius: 16px; padding: clamp(12px, 3vw, 20px); box-shadow: 0 24px 60px rgba(0,0,63,0.4);">
+    <h2 style="font-size: 20px; color: var(--sura-azul-prof); margin: 0 0 4px;">Entrada de mercancía</h2>
+    <div style="font-size: 13px; color: var(--gris-500); margin-bottom: 20px;">Registra lo que llegó del proveedor. Suma al stock del producto.</div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px; margin-bottom: 16px;">
+      <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Modelo</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <sc-for list="{{ modeloPicker }}" as="m" hint-placeholder-count="6">
+            <button onClick="{{ m.onPick }}" style="{{ m.style }}">{{ m.ref }}</button>
+          </sc-for>
+        </div>
+      </label>
+      <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Proveedor</span><input value="{{ entrada.proveedor }}" onChange="{{ onEntradaProv }}" placeholder="Suelas del Oriente S.A.S." style="border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 14px; outline: none; min-width: 0; width: 100%;" style-focus="border-bottom-color: var(--sura-azul-cielo);" /></label>
+    </div>
+    <div style="font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 10px;">{{ entradaTitulo }}</div>
+    <sc-if value="{{ entradaPorUnidad }}">
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 18px;">
+        <input value="{{ entradaUnidades }}" onChange="{{ onEntradaUnidades }}" placeholder="0" style="width: 140px; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 16px; outline: none; text-align: right; font-variant-numeric: tabular-nums;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+        <span style="font-size: 13px; color: var(--gris-500);">{{ entradaStockTxt }}</span>
+      </div>
+    </sc-if>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px;">
+      <sc-for list="{{ entradaTallas }}" as="t" hint-placeholder-count="6">
+        <div style="width: 84px; border: 1px solid var(--sura-azul-divider); border-radius: 12px; padding: 10px; background: var(--sura-azul-tint-light);">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 2px;">Talla {{ t.talla }}</div>
+          <div style="font-size: 11px; color: var(--gris-350); margin-bottom: 6px;">hoy {{ t.actual }}</div>
+          <input value="{{ t.valor }}" onChange="{{ t.onChange }}" style="width: 100%; border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 7px 9px; font-size: 14px; outline: none; text-align: right;" style-focus="border-bottom-color: var(--sura-azul-cielo);" />
+        </div>
+      </sc-for>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding-top: 18px; border-top: 1px solid var(--sura-azul-divider);">
+      <div style="font-size: 14px; color: var(--gris-500);">Total a ingresar: <strong style="font-size: 18px; color: var(--gris-900);">{{ entradaTotalTxt }}</strong></div>
+      <div style="display: flex; gap: 10px;">
+        <button onClick="{{ onCloseModal }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;">Cancelar</button>
+        <button onClick="{{ onGuardarEntrada }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 26px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Registrar entrada</button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showAjuste }}">
+<div onClick="{{ onCloseModal }}" style="position: fixed; inset: 0; background: rgba(0,0,63,0.55); z-index: 90; display: grid; place-items: center; padding: clamp(8px, 3vw, 32px); overflow: auto;">
+  <div onClick="{{ stop }}" style="width: min(480px, 95vw); max-height: 92vh; overflow-y: auto; background: var(--sura-blanco); border-radius: 16px; padding: clamp(16px, 4vw, 28px); box-shadow: 0 24px 60px rgba(0,0,63,0.4);">
+    <h2 style="font-size: 20px; color: var(--sura-azul-prof); margin: 0 0 4px;">Ajuste de inventario</h2>
+    <div style="font-size: 13px; color: var(--gris-500); margin-bottom: 20px;">Corrige el stock dejando el motivo por escrito.</div>
+    <div style="display: grid; gap: 6px; margin-bottom: 14px;">
+      <span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Modelo</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <sc-for list="{{ modeloPicker }}" as="m" hint-placeholder-count="6">
+          <button onClick="{{ m.onPick }}" style="{{ m.style }}">{{ m.ref }}</button>
+        </sc-for>
+      </div>
+    </div>
+    <sc-if value="{{ ajustePorTalla }}">
+    <div style="display: grid; gap: 6px; margin-bottom: 14px;">
+      <span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Talla</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <sc-for list="{{ ajusteTallas }}" as="t" hint-placeholder-count="6">
+          <button onClick="{{ t.onPick }}" style="{{ t.style }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+    </sc-if>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 14px; margin-bottom: 14px;">
+      <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">{{ ajusteLabel }}</span><input value="{{ ajuste.valor }}" onChange="{{ onAjusteValor }}" style="border: 1px solid var(--gris-300); border-bottom: 2px solid var(--gris-500); border-radius: 12px 12px 0 0; padding: 10px 12px; font-size: 14px; outline: none; min-width: 0; width: 100%; text-align: right;" style-focus="border-bottom-color: var(--sura-azul-cielo);" /></label>
+      <label style="display: grid; gap: 6px; min-width: 0;"><span style="font-size: 12px; font-weight: 700; color: var(--gris-500);">Motivo</span>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+          <sc-for list="{{ motivos }}" as="m" hint-placeholder-count="4">
+            <button onClick="{{ m.onPick }}" style="{{ m.style }}">{{ m.label }}</button>
+          </sc-for>
+        </div>
+      </label>
+    </div>
+    <div style="background: var(--sura-azul-tint); border: 1px solid var(--sura-azul-chip); border-radius: 12px; padding: 12px 14px; font-size: 13px; color: var(--sura-azul-prof); margin-bottom: 18px;">{{ ajusteResumen }}</div>
+    <div style="display: flex; justify-content: flex-end; gap: 10px; padding-top: 18px; border-top: 1px solid var(--sura-azul-divider);">
+      <button onClick="{{ onCloseModal }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;">Cancelar</button>
+      <button onClick="{{ onGuardarAjuste }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 26px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Guardar ajuste</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showConfirm }}">
+<div onClick="{{ onCloseModal }}" style="position: fixed; inset: 0; background: rgba(0,0,63,0.55); z-index: 95; display: grid; place-items: center; padding: clamp(8px, 3vw, 32px);">
+  <div onClick="{{ stop }}" style="width: min(440px, 100%); max-height: 92vh; overflow-y: auto; background: var(--sura-blanco); border-radius: 16px; padding: clamp(16px, 4vw, 28px); box-shadow: 0 24px 60px rgba(0,0,63,0.4);">
+    <h2 style="font-size: 20px; color: var(--danger-1); margin: 0 0 8px;">{{ confirmTitulo }}</h2>
+    <div style="font-size: 14px; color: var(--gris-500); line-height: 1.5; margin-bottom: 24px;">{{ confirmTexto }}</div>
+    <div style="display: flex; justify-content: flex-end; gap: 10px;">
+      <button onClick="{{ onCloseModal }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;">Cancelar</button>
+      <button onClick="{{ onConfirmar }}" style="background: var(--danger-1); color: var(--sura-blanco); border: none; border-radius: 999px; padding: 11px 26px; font-size: 14px; font-weight: 700; cursor: pointer;">{{ confirmCta }}</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showCorreoPrev }}">
+<div onClick="{{ onCloseModal }}" style="position: fixed; inset: 0; background: rgba(0,0,63,0.55); z-index: 90; display: grid; place-items: center; padding: clamp(8px, 3vw, 32px); overflow: auto;">
+  <div onClick="{{ stop }}" style="width: min(620px, 100%); max-height: 92vh; display: flex; flex-direction: column; background: var(--sura-blanco); border-radius: 16px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,63,0.4);">
+    <div style="background: var(--sura-azul-oscuro); color: var(--sura-blanco); padding: clamp(16px, 4vw, 20px) clamp(16px, 4vw, 28px);">
+      <div style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.75;">Vista previa del correo automático</div>
+      <div style="font-size: 18px; font-weight: 700; margin-top: 4px;">{{ mailAsunto }}</div>
+    </div>
+    <div style="flex: 1; min-height: 0; overflow-y: auto; padding: clamp(14px, 3vw, 20px);">
+      <div style="display: grid; gap: 4px; font-size: 13px; color: var(--gris-500); padding-bottom: 16px; border-bottom: 1px solid var(--sura-azul-divider); margin-bottom: 18px;">
+        <div><strong style="color: var(--gris-900);">Para:</strong> {{ mailPara }}</div>
+        <div><strong style="color: var(--gris-900);">Envío:</strong> automático a las {{ horaCorte }}</div>
+      </div>
+      <div style="border: 1px solid var(--sura-azul-divider); border-radius: 16px; overflow: hidden; margin-bottom: 20px;">
+        <div style="background: var(--sura-azul-oscuro); color: var(--sura-blanco); padding: 14px 18px; display: flex; align-items: center; gap: 10px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5"></path></svg>
+          <div style="flex: 1;">
+            <div style="font-size: 14px; font-weight: 700;">{{ mailPdf }}</div>
+            <div style="font-size: 12px; opacity: 0.75;">PDF adjunto · cierre del {{ mailFecha }}</div>
+          </div>
+        </div>
+        <div style="padding: 18px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 12px; margin-bottom: 16px;">
+            <div style="background: var(--sura-azul-tint-light); border-radius: 12px; padding: 12px;"><div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); font-weight: 700;">Vendido</div><div style="font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ mailTotal }}</div></div>
+            <div style="background: var(--sura-azul-tint-light); border-radius: 12px; padding: 12px;"><div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); font-weight: 700;">Pares</div><div style="font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ mailPares }}</div></div>
+            <div style="background: var(--sura-azul-tint-light); border-radius: 12px; padding: 12px;"><div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); font-weight: 700;">En inventario</div><div style="font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums;">{{ mailStock }}</div></div>
+          </div>
+          <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--sura-azul-prof); margin-bottom: 8px;">Inventario al cierre</div>
+          <div style="display: grid; gap: 2px;">
+            <sc-for list="{{ mailInv }}" as="m" hint-placeholder-count="6">
+              <div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--gris-100);">
+                <span style="flex: 1 1 150px; min-width: 0;">{{ m.nombre }}</span>
+                <span style="flex: 1; border-bottom: 1px dotted var(--gris-300); transform: translateY(-3px);"></span>
+                <span style="color: var(--gris-500);">vendidos {{ m.vendidos }}</span>
+                <span style="font-weight: 700; font-variant-numeric: tabular-nums; min-width: 96px; text-align: right;">{{ m.quedan }}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end; gap: 10px;">
+        <button onClick="{{ onCloseModal }}" style="border: 1px solid var(--gris-300); background: var(--sura-blanco); border-radius: 999px; padding: 11px 22px; font-size: 14px; font-weight: 700; cursor: pointer;">Cerrar</button>
+        <button onClick="{{ onEnviarPrueba }}" style="background: var(--sura-amarillo); color: var(--sura-azul-oscuro); border: none; border-radius: 999px; padding: 11px 26px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: var(--sura-amarillo-hover);">Enviar ahora</button>
+      </div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ toast }}">
+<div style="position: fixed; right: 28px; bottom: 28px; z-index: 120; background: var(--sura-azul-oscuro); color: var(--sura-blanco); padding: 14px 20px; border-radius: 12px; font-size: 14px; font-weight: 700; box-shadow: 0 12px 32px rgba(0,0,63,0.35);">{{ toast }}</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const modelos = [
+      { ref: 'SU-101', nombre: 'Suela Clásica Ranger', tipo: 'Suelas', unidad: 'par', color: 'Negro', precio: 28000, costo: 18500, min: 12, tallas: { '38': 24, '39': 30, '40': 28, '41': 22, '42': 16, '43': 9, '44': 6 } },
+      { ref: 'SU-204', nombre: 'Suela Urbana Flex', tipo: 'Suelas', unidad: 'par', color: 'Café', precio: 34500, costo: 22000, min: 10, tallas: { '38': 14, '39': 18, '40': 20, '41': 12, '42': 8, '43': 5 } },
+      { ref: 'SU-310', nombre: 'Suela Bota Andina', tipo: 'Suelas', unidad: 'par', color: 'Negro', precio: 41000, costo: 27000, min: 8, tallas: { '39': 10, '40': 12, '41': 9, '42': 7, '43': 4, '44': 3 } },
+      { ref: 'SU-415', nombre: 'Suela Dama Confort', tipo: 'Suelas', unidad: 'par', color: 'Beige', precio: 26500, costo: 16000, min: 12, tallas: { '34': 16, '35': 22, '36': 26, '37': 20, '38': 14, '39': 8 } },
+      { ref: 'SU-520', nombre: 'Suela Deportiva Air', tipo: 'Suelas', unidad: 'par', color: 'Blanco', precio: 38000, costo: 24500, min: 10, tallas: { '36': 6, '37': 9, '38': 11, '39': 13, '40': 10, '41': 7, '42': 4 } },
+      { ref: 'SU-630', nombre: 'Suela Colegial Fuerte', tipo: 'Suelas', unidad: 'par', color: 'Negro', precio: 23000, costo: 14000, min: 15, tallas: { '32': 18, '33': 20, '34': 24, '35': 22, '36': 17, '37': 11 } },
+      { ref: 'SU-712', nombre: 'Suela Trabajo Pesado', tipo: 'Suelas', unidad: 'par', color: 'Negro', precio: 45000, costo: 30000, min: 8, tallas: { '39': 8, '40': 11, '41': 10, '42': 8, '43': 5 } },
+      { ref: 'PL-120', nombre: 'Plantilla Memory Foam', tipo: 'Plantillas', unidad: 'par', color: 'Gris', precio: 12000, costo: 6500, min: 20, tallas: { '35': 18, '36': 22, '37': 25, '38': 24, '39': 19, '40': 15, '41': 11 } },
+      { ref: 'PL-240', nombre: 'Plantilla Cuero Natural', tipo: 'Plantillas', unidad: 'par', color: 'Miel', precio: 16500, costo: 9000, min: 15, tallas: { '36': 12, '37': 16, '38': 14, '39': 10, '40': 7 } },
+      { ref: 'TC-310', nombre: 'Tacón Bloque 5 cm', tipo: 'Tacones', unidad: 'par', color: 'Negro', precio: 14500, costo: 8200, min: 12, tallas: { '35': 9, '36': 14, '37': 16, '38': 12, '39': 6 } },
+      { ref: 'PG-010', nombre: 'Pegante amarillo x 1 galón', tipo: 'Pegantes', unidad: 'unidad', color: 'Ámbar', precio: 62000, costo: 44000, min: 6, stock: 14 },
+      { ref: 'PG-025', nombre: 'Pegante blanco x 1/4', tipo: 'Pegantes', unidad: 'unidad', color: 'Blanco', precio: 19000, costo: 12500, min: 8, stock: 23 },
+      { ref: 'HL-400', nombre: 'Hilo encerado 100 m', tipo: 'Hilos y adornos', unidad: 'unidad', color: 'Negro', precio: 8500, costo: 4600, min: 20, stock: 46 },
+      { ref: 'HR-505', nombre: 'Hebilla metálica dorada', tipo: 'Herrajes', unidad: 'unidad', color: 'Dorado', precio: 3200, costo: 1500, min: 40, stock: 128 },
+      { ref: 'CH-088', nombre: 'Cordón plano 120 cm', tipo: 'Cordones', unidad: 'unidad', color: 'Negro', precio: 4500, costo: 2100, min: 30, stock: 12 },
+      { ref: 'HM-700', nombre: 'Lija para desbaste', tipo: 'Insumos', unidad: 'unidad', color: '—', precio: 5500, costo: 2800, min: 15, stock: 34 }
+    ];
+    this.state = {
+      role: null, user: '', screen: 'panel', modelos: modelos.map((m) => Object.assign({ archivado: false }, m)), ventas: this.seed(modelos),
+      carrito: [], selRef: null, q: '', qInv: '', metodo: 'Efectivo', cliente: '',
+      periodo: 'dia', invPag: 1, repPag: 1, tiposExtra: [], tiposOcultos: [], nuevoTipo: '', modal: null, form: null, nuevaTalla: '', entrada: null, ajuste: null, filtroInv: 'activos', filtroVenta: 'todos',
+      confirm: null, toast: null, nuevoCorreo: '', hora: '19:00',
+      correos: ['gerencia@elprogreso.co', 'contabilidad@elprogreso.co'],
+      usuarios: [
+        { nombre: 'Ana Márquez', correo: 'ana@elprogreso.co', rol: 'Administrador', activo: true },
+        { nombre: 'Carlos Rueda', correo: 'carlos@elprogreso.co', rol: 'Vendedor', activo: true },
+        { nombre: 'Yined Ortega', correo: 'yined@elprogreso.co', rol: 'Vendedor', activo: false }
+      ],
+      movs: [], factura: null, seq: 0
+    };
+    this.state.seq = this.state.ventas.length;
+    this.state.movs = this.seedMovs();
+  }
+
+  rnd() { this._s = ((this._s || 20260818) * 1664525 + 1013904223) % 4294967296; return this._s / 4294967296; }
+
+  seed(modelos) {
+    const ventas = [];
+    const vendedores = ['Carlos Rueda', 'Yined Ortega', 'Ana Márquez'];
+    const metodos = ['Efectivo', 'Transferencia', 'Tarjeta'];
+    let n = 0;
+    for (let d = 44; d >= 0; d--) {
+      const base = new Date(); base.setHours(0, 0, 0, 0); base.setDate(base.getDate() - d);
+      if (base.getDay() === 0) continue;
+      const cuantas = 2 + Math.floor(this.rnd() * 4);
+      for (let k = 0; k < cuantas; k++) {
+        const f = new Date(base); f.setHours(8 + Math.floor(this.rnd() * 10), Math.floor(this.rnd() * 60));
+        const items = [];
+        const cuantosItems = 1 + Math.floor(this.rnd() * 2);
+        for (let i = 0; i < cuantosItems; i++) {
+          const m = modelos[Math.floor(this.rnd() * modelos.length)];
+          const tallas = m.tallas ? Object.keys(m.tallas) : [];
+          const talla = tallas.length ? tallas[Math.floor(this.rnd() * tallas.length)] : null;
+          const pares = 1 + Math.floor(this.rnd() * 5);
+          items.push({ ref: m.ref, nombre: m.nombre, talla: talla, unidad: m.unidad || 'par', pares: pares, precio: m.precio, costo: m.costo });
+        }
+        n++;
+        ventas.push({
+          id: 'F-' + String(1000 + n), fecha: f.toISOString(), vendedor: vendedores[Math.floor(this.rnd() * 3)],
+          metodo: metodos[Math.floor(this.rnd() * 3)], cliente: '', items: items,
+          total: items.reduce((a, b) => a + b.pares * b.precio, 0),
+          costo: items.reduce((a, b) => a + b.pares * b.costo, 0), devuelta: false
+        });
+      }
+    }
+    return ventas;
+  }
+
+  seedMovs() {
+    const hoy = new Date();
+    const d = (n) => { const x = new Date(hoy); x.setDate(x.getDate() - n); return x.toISOString(); };
+    return [
+      { fecha: d(1), tipo: 'Entrada', modelo: 'SU-101 · Clásica Ranger', detalle: 'Suelas del Oriente S.A.S. · tallas 39 a 42', quien: 'Ana Márquez', pares: 60 },
+      { fecha: d(3), tipo: 'Ajuste', modelo: 'SU-520 · Deportiva Air', detalle: 'Conteo físico · faltaban pares', quien: 'Ana Márquez', pares: -3 },
+      { fecha: d(6), tipo: 'Entrada', modelo: 'SU-415 · Dama Confort', detalle: 'Cauchos Andinos Ltda. · tallas 35 a 38', quien: 'Ana Márquez', pares: 48 },
+      { fecha: d(9), tipo: 'Ajuste', modelo: 'SU-310 · Bota Andina', detalle: 'Rotura en bodega', quien: 'Ana Márquez', pares: -2 }
+    ];
+  }
+
+  cop(n) { return '$ ' + Math.round(n).toLocaleString('es-CO'); }
+  fecha(iso) { const d = new Date(iso); return String(d.getDate()).padStart(2, '0') + '/' + String(d.getMonth() + 1).padStart(2, '0') + '/' + d.getFullYear(); }
+  hhmm(iso) { const d = new Date(iso); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  porTalla(m) { return m.unidad !== 'unidad'; }
+  unidadTxt(m) { return this.porTalla(m) ? 'pares' : 'unidades'; }
+  unidadSing(m) { return this.porTalla(m) ? 'par' : 'unidad'; }
+  paresDe(m) { return this.porTalla(m) ? Object.keys(m.tallas || {}).reduce((a, k) => a + Number(m.tallas[k] || 0), 0) : Number(m.stock || 0); }
+  activos() { return this.state.modelos.filter((m) => !m.archivado); }
+  stockTotal() { return this.activos().reduce((a, m) => a + this.paresDe(m), 0); }
+  archivar(ref) {
+    const m = this.state.modelos.find((x) => x.ref === ref);
+    const nuevo = !m.archivado;
+    this.setState({
+      modelos: this.state.modelos.map((x) => (x.ref === ref ? Object.assign({}, x, { archivado: nuevo }) : x)),
+      movs: [{ fecha: new Date().toISOString(), tipo: nuevo ? 'Archivado' : 'Reactivado', modelo: m.ref + ' · ' + m.nombre, detalle: nuevo ? 'Sale del catálogo de venta, conserva su historial y sus ' + this.paresDe(m) + ' pares' : 'Vuelve al catálogo de venta', quien: this.state.user, pares: 0 }].concat(this.state.movs)
+    });
+    this.toast(nuevo ? 'Modelo archivado · ya no aparece en ventas' : 'Modelo reactivado');
+  }
+  toast(t) { this.setState({ toast: t }); clearTimeout(this._t); this._t = setTimeout(() => this.setState({ toast: null }), 2600); }
+  esHoy(iso) { const d = new Date(iso), h = new Date(); return d.toDateString() === h.toDateString(); }
+  detalle(v) { return v.items.map((i) => i.nombre + ' T' + i.talla + ' ×' + i.pares).join(' · '); }
+
+  pill(active, activeBg, activeFg) {
+    return 'border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 120ms cubic-bezier(0.22,1,0.36,1); border: 1px solid ' +
+      (active ? (activeBg || 'var(--sura-azul-cielo)') : 'var(--gris-300)') + '; background: ' + (active ? (activeBg || 'var(--sura-azul-cielo)') : 'var(--sura-blanco)') + '; color: ' + (active ? (activeFg || 'var(--sura-blanco)') : 'var(--gris-500)') + ';';
+  }
+
+  badge(fg, bg, border) {
+    return 'display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; color: ' + fg + '; background: ' + bg + '; border: 1px solid ' + border + ';';
+  }
+
+  rango() {
+    const p = this.state.periodo, hoy = new Date(); hoy.setHours(23, 59, 59, 999);
+    const dias = p === 'dia' ? 1 : p === 'semana' ? 7 : 30;
+    const desde = new Date(hoy); desde.setDate(desde.getDate() - (dias - 1)); desde.setHours(0, 0, 0, 0);
+    const desdePrev = new Date(desde); desdePrev.setDate(desdePrev.getDate() - dias);
+    const hastaPrev = new Date(desde); hastaPrev.setMilliseconds(-1);
+    return { desde: desde, hasta: hoy, desdePrev: desdePrev, hastaPrev: hastaPrev, dias: dias };
+  }
+
+  entre(v, a, b) { const d = new Date(v.fecha); return d >= a && d <= b && !v.devuelta; }
+  agg(list) {
+    return {
+      total: list.reduce((a, v) => a + v.total, 0),
+      pares: list.reduce((a, v) => a + v.items.reduce((x, i) => x + i.pares, 0), 0),
+      util: list.reduce((a, v) => a + (v.total - v.costo), 0),
+      n: list.length
+    };
+  }
+  delta(a, b) {
+    if (!b) return { txt: a > 0 ? 'Sin dato del periodo anterior' : 'Sin movimiento', color: 'var(--gris-350)' };
+    const p = Math.round(((a - b) / b) * 100);
+    return { txt: (p >= 0 ? '▲ ' : '▼ ') + Math.abs(p) + '% vs. periodo anterior', color: p >= 0 ? 'var(--success-1)' : 'var(--danger-1)' };
+  }
+
+  setScreen(s) { this.setState({ screen: s, modal: null }); }
+  pager(total, porPag, actual, onGo) {
+    const paginas = Math.max(1, Math.ceil(total / porPag));
+    const p = Math.min(actual, paginas);
+    const nums = [];
+    for (let i = 1; i <= paginas; i++) {
+      if (paginas <= 7 || i === 1 || i === paginas || Math.abs(i - p) <= 1) nums.push(i);
+      else if (nums[nums.length - 1] !== '…') nums.push('…');
+    }
+    const btn = (activo) => 'min-width: 34px; border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; cursor: pointer; border: 1px solid ' +
+      (activo ? 'var(--sura-azul-cielo)' : 'var(--gris-300)') + '; background: ' + (activo ? 'var(--sura-azul-cielo)' : 'var(--sura-blanco)') + '; color: ' + (activo ? 'var(--sura-blanco)' : 'var(--gris-500)') + ';';
+    const nav = (habil) => 'border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; border: 1px solid var(--gris-300); background: var(--sura-blanco); color: ' +
+      (habil ? 'var(--gris-500)' : 'var(--gris-300)') + '; cursor: ' + (habil ? 'pointer' : 'not-allowed') + ';';
+    const desde = total === 0 ? 0 : (p - 1) * porPag + 1;
+    return {
+      pagina: p, desde: desde, hasta: Math.min(p * porPag, total),
+      texto: total === 0 ? 'Sin registros' : 'Mostrando ' + desde + '–' + Math.min(p * porPag, total) + ' de ' + total,
+      paginas: nums.map((n) => ({ label: String(n), style: btn(n === p) + (n === '…' ? ' cursor: default; border-color: transparent;' : ''), onPick: () => (n === '…' ? null : onGo(n)) })),
+      prevStyle: nav(p > 1), nextStyle: nav(p < paginas),
+      onPrev: () => onGo(Math.max(1, p - 1)), onNext: () => onGo(Math.min(paginas, p + 1))
+    };
+  }
+  close() { this.setState({ modal: null, confirm: null }); }
+
+  addCarrito(ref, talla, n) {
+    const c = this.state.carrito.slice();
+    const m = this.state.modelos.find((x) => x.ref === ref);
+    const i = c.findIndex((x) => x.ref === ref && x.talla === talla);
+    const stock = this.porTalla(m) ? Number(m.tallas[talla] || 0) : Number(m.stock || 0);
+    const un = this.unidadTxt(m);
+    const donde = talla ? ' en la talla ' + talla : ' de ' + m.nombre;
+    if (i >= 0) {
+      let q = c[i].pares + n;
+      if (q > stock) { q = stock; this.toast('Solo quedan ' + stock + ' ' + un + donde); }
+      if (q <= 0) c.splice(i, 1); else c[i] = Object.assign({}, c[i], { pares: q });
+    } else if (n > 0) {
+      if (stock <= 0) { this.toast('Sin ' + un + ' disponibles' + donde); return; }
+      const q = Math.min(n, stock);
+      if (q < n) this.toast('Solo quedan ' + stock + ' ' + un + donde);
+      c.push({ ref: ref, nombre: m.nombre, talla: talla, unidad: m.unidad || 'par', pares: q, precio: m.precio, costo: m.costo });
+    }
+    this.setState({ carrito: c });
+  }
+
+  cobrar() {
+    const s = this.state;
+    if (!s.carrito.length) { this.toast('El carrito está vacío'); return; }
+    const seq = s.seq + 1;
+    const venta = {
+      id: 'F-' + String(1000 + seq), fecha: new Date().toISOString(), vendedor: s.user, metodo: s.metodo,
+      cliente: s.cliente || 'Consumidor final', items: s.carrito.slice(),
+      total: s.carrito.reduce((a, b) => a + b.pares * b.precio, 0),
+      costo: s.carrito.reduce((a, b) => a + b.pares * b.costo, 0), devuelta: false
+    };
+    const modelos = s.modelos.map((m) => {
+      const it = s.carrito.filter((c) => c.ref === m.ref);
+      if (!it.length) return m;
+      if (!this.porTalla(m)) return Object.assign({}, m, { stock: Math.max(0, Number(m.stock || 0) - it.reduce((a, c) => a + c.pares, 0)) });
+      const tallas = Object.assign({}, m.tallas);
+      it.forEach((c) => { tallas[c.talla] = Math.max(0, Number(tallas[c.talla] || 0) - c.pares); });
+      return Object.assign({}, m, { tallas: tallas });
+    });
+    this.setState({ ventas: s.ventas.concat([venta]), modelos: modelos, seq: seq, carrito: [], cliente: '', selRef: null, factura: venta, modal: 'factura' });
+  }
+
+  devolver(id) {
+    const s = this.state;
+    const v = s.ventas.find((x) => x.id === id);
+    if (!v || v.devuelta) return;
+    const modelos = s.modelos.map((m) => {
+      const it = v.items.filter((c) => c.ref === m.ref);
+      if (!it.length) return m;
+      if (!this.porTalla(m)) return Object.assign({}, m, { stock: Number(m.stock || 0) + it.reduce((a, c) => a + c.pares, 0) });
+      const tallas = Object.assign({}, m.tallas);
+      it.forEach((c) => { tallas[c.talla] = Number(tallas[c.talla] || 0) + c.pares; });
+      return Object.assign({}, m, { tallas: tallas });
+    });
+    const pares = v.items.reduce((a, i) => a + i.pares, 0);
+    this.setState({
+      modelos: modelos,
+      ventas: s.ventas.map((x) => (x.id === id ? Object.assign({}, x, { devuelta: true }) : x)),
+      movs: [{ fecha: new Date().toISOString(), tipo: 'Devolución', modelo: v.items[0].ref + ' · ' + v.items[0].nombre, detalle: 'Devolución de la factura ' + v.id, quien: s.user, pares: pares }].concat(s.movs),
+      confirm: null, modal: null
+    });
+    this.toast('Devolución registrada · ' + pares + ' pares al inventario');
+  }
+
+  guardarModelo() {
+    const f = this.state.form;
+    if (!f.ref.trim() || !f.nombre.trim()) { this.toast('Referencia y nombre son obligatorios'); return; }
+    if (!f.tipo) { this.toast('Elige el tipo de producto'); return; }
+    const tallas = {};
+    f.tallas.forEach((t) => { tallas[t.talla] = Number(t.pares) || 0; });
+    if (f.unidad === 'par' && !f.tallas.length) { this.toast('Agrega al menos una talla con sus pares'); return; }
+    const nuevo = { ref: f.ref.trim().toUpperCase(), nombre: f.nombre.trim(), tipo: f.tipo, unidad: f.unidad, color: f.color, precio: Number(f.precio) || 0, costo: Number(f.costo) || 0, min: Number(f.min) || 0, tallas: f.unidad === 'par' ? tallas : {}, stock: f.unidad === 'par' ? 0 : Number(f.stock) || 0, archivado: !!f.archivado };
+    const ms = this.state.modelos.slice();
+    const i = ms.findIndex((m) => m.ref === f.original);
+    if (i >= 0) ms[i] = nuevo; else ms.push(nuevo);
+    this.setState({ modelos: ms, modal: null, form: null });
+    this.toast(i >= 0 ? 'Producto actualizado' : 'Producto creado');
+  }
+
+  abrirModelo(ref) {
+    const m = this.state.modelos.find((x) => x.ref === ref);
+    const form = m
+      ? { original: m.ref, ref: m.ref, nombre: m.nombre, tipo: m.tipo, unidad: m.unidad || 'par', color: m.color, precio: String(m.precio), costo: String(m.costo), min: String(m.min), stock: String(m.stock || 0), archivado: !!m.archivado, tallas: Object.keys(m.tallas || {}).map((k) => ({ talla: k, pares: String(m.tallas[k]) })) }
+      : { original: null, ref: '', nombre: '', tipo: '', unidad: 'par', color: '', precio: '', costo: '', min: '10', stock: '', archivado: false, tallas: [] };
+    this.setState({ modal: 'modelo', form: form, nuevaTalla: '' });
+  }
+
+  guardarEntrada() {
+    const e = this.state.entrada;
+    const base = this.state.modelos.find((x) => x.ref === e.ref);
+    const total = this.porTalla(base) ? Object.keys(e.tallas).reduce((a, k) => a + (Number(e.tallas[k]) || 0), 0) : Number(e.tallas.__u) || 0;
+    if (!total) { this.toast('Indica cuántas ' + this.unidadTxt(base) + ' entran'); return; }
+    const modelos = this.state.modelos.map((m) => {
+      if (m.ref !== e.ref) return m;
+      if (!this.porTalla(m)) return Object.assign({}, m, { stock: Number(m.stock || 0) + total });
+      const tallas = Object.assign({}, m.tallas);
+      Object.keys(e.tallas).forEach((k) => { tallas[k] = Number(tallas[k] || 0) + (Number(e.tallas[k]) || 0); });
+      return Object.assign({}, m, { tallas: tallas });
+    });
+    const m = this.state.modelos.find((x) => x.ref === e.ref);
+    const detTallas = this.porTalla(m) ? Object.keys(e.tallas).filter((k) => Number(e.tallas[k]) > 0).map((k) => 'T' + k).join(', ') : total + ' ' + this.unidadTxt(m);
+    const mov = { fecha: new Date().toISOString(), tipo: 'Entrada', modelo: m.ref + ' · ' + m.nombre, detalle: (e.proveedor || 'Proveedor sin nombre') + ' · ' + detTallas, quien: this.state.user, pares: total };
+    this.setState({ modelos: modelos, movs: [mov].concat(this.state.movs), modal: null, entrada: null });
+    this.toast('Entrada registrada · +' + total + ' ' + this.unidadTxt(m));
+  }
+
+  guardarAjuste() {
+    const a = this.state.ajuste;
+    const m = this.state.modelos.find((x) => x.ref === a.ref);
+    const porT = this.porTalla(m);
+    const actual = porT ? Number(m.tallas[a.talla] || 0) : Number(m.stock || 0);
+    const nuevo = Number(a.valor);
+    if (isNaN(nuevo) || a.valor === '') { this.toast('Escribe las ' + this.unidadTxt(m) + ' que contaste'); return; }
+    const modelos = this.state.modelos.map((x) => (x.ref !== a.ref ? x : porT ? Object.assign({}, x, { tallas: Object.assign({}, x.tallas, { [a.talla]: nuevo }) }) : Object.assign({}, x, { stock: nuevo })));
+    const mov = { fecha: new Date().toISOString(), tipo: 'Ajuste', modelo: m.ref + ' · ' + m.nombre, detalle: a.motivo + ' · ' + (porT ? 'talla ' + a.talla : this.unidadTxt(m)) + ': ' + actual + ' → ' + nuevo, quien: this.state.user, pares: nuevo - actual };
+    this.setState({ modelos: modelos, movs: [mov].concat(this.state.movs), modal: null, ajuste: null });
+    this.toast('Ajuste guardado');
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isAdmin = s.role === 'admin';
+    const stop = (e) => e.stopPropagation();
+
+    if (!s.role) {
+      return {
+        isLogin: true, isApp: false, stop: stop,
+        perfiles: [
+          { nombre: 'Ana Márquez', desc: 'Administradora · ve y edita todo', iniciales: 'AM', onPick: () => this.setState({ role: 'admin', user: 'Ana Márquez', screen: 'panel' }), style: 'width: 100%; border: 1px solid var(--sura-azul-divider); background: var(--sura-azul-tint-light); border-radius: 16px; padding: 16px; cursor: pointer; text-align: left;', avatarStyle: 'width: 42px; height: 42px; border-radius: 999px; background: var(--sura-azul-prof); color: var(--sura-blanco); display: grid; place-items: center; font-weight: 700; font-size: 15px;' },
+          { nombre: 'Carlos Rueda', desc: 'Vendedor · registra ventas y consulta stock', iniciales: 'CR', onPick: () => this.setState({ role: 'vendedor', user: 'Carlos Rueda', screen: 'venta' }), style: 'width: 100%; border: 1px solid var(--sura-azul-divider); background: var(--sura-azul-tint-light); border-radius: 16px; padding: 16px; cursor: pointer; text-align: left;', avatarStyle: 'width: 42px; height: 42px; border-radius: 999px; background: var(--sura-azul-cielo); color: var(--sura-blanco); display: grid; place-items: center; font-weight: 700; font-size: 15px;' }
+        ]
+      };
+    }
+
+    const navDefs = isAdmin
+      ? [['panel', 'Panel'], ['venta', 'Nueva venta'], ['inventario', 'Inventario'], ['movs', 'Movimientos'], ['reportes', 'Reportes'], ['usuarios', 'Usuarios'], ['correo', 'Correo diario']]
+      : [['venta', 'Nueva venta'], ['inventario', 'Inventario'], ['reportes', 'Mis ventas']];
+    const navItems = navDefs.map((d) => ({
+      label: d[1], onClick: () => this.setScreen(d[0]),
+      style: 'border: none; border-radius: 999px; padding: 8px 16px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 120ms; background: ' + (s.screen === d[0] ? 'rgba(255,255,255,0.22)' : 'transparent') + '; color: var(--sura-blanco);'
+    }));
+
+    // ---- inventario
+    const q = s.q.toLowerCase(), qi = s.qInv.toLowerCase();
+    const match = (m, t) => (m.ref + ' ' + m.nombre + ' ' + m.tipo + ' ' + m.color).toLowerCase().indexOf(t) >= 0;
+    const disponibles = this.activos().filter((m) => match(m, q)).filter((m) => {
+      if (s.filtroVenta === 'todos') return true;
+      if (s.filtroVenta === 'disponibles') return this.paresDe(m) > 0;
+      return m.tipo === s.filtroVenta;
+    });
+    const catalogo = disponibles.map((m, idx) => {
+      const pares = this.paresDe(m);
+      const activo = s.selRef === m.ref;
+      return {
+        ref: m.ref, nombre: m.nombre, sub: m.tipo + ' · ' + m.color,
+        paresTxt: pares === 0 ? 'agotado' : pares + ' ' + this.unidadTxt(m),
+        stockColor: pares === 0 ? 'var(--danger-1)' : pares <= m.min ? 'var(--warning-1)' : 'var(--gris-500)',
+        precioFmt: this.cop(m.precio),
+        cta: activo ? 'Elegido' : 'Elegir',
+        ctaStyle: 'flex: 0 0 auto; min-width: 76px; text-align: center; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700; border: 1px solid ' + (activo ? 'var(--sura-azul-cielo)' : 'var(--gris-300)') + '; background: ' + (activo ? 'var(--sura-azul-cielo)' : 'var(--sura-blanco)') + '; color: ' + (activo ? 'var(--sura-blanco)' : 'var(--gris-500)') + ';',
+        onSel: () => this.setState({ selRef: m.ref }),
+        style: 'display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 11px 14px; cursor: pointer; user-select: none; transition: background 120ms; border-top: ' + (idx === 0 ? 'none' : '1px solid var(--sura-azul-divider)') + '; background: ' + (activo ? 'var(--sura-azul-tint)' : 'var(--sura-blanco)') + '; opacity: ' + (pares === 0 ? '0.55' : '1') + ';'
+      };
+    });
+    const tiposCat = [];
+    this.activos().forEach((m) => { if (tiposCat.indexOf(m.tipo) < 0) tiposCat.push(m.tipo); });
+    const filtrosVenta = [['todos', 'Todos'], ['disponibles', 'Con stock']].concat(tiposCat.map((x) => [x, x])).map((f) => ({
+      label: f[1], onPick: () => this.setState({ filtroVenta: f[0] }),
+      style: this.pill(s.filtroVenta === f[0], 'var(--sura-azul-prof)') + ' padding: 7px 14px; font-size: 13px;'
+    }));
+    const sel = s.modelos.find((m) => m.ref === s.selRef);
+    const enCarrito = (ref, talla) => { const c = s.carrito.find((x) => x.ref === ref && x.talla === talla); return c ? c.pares : 0; };
+    const tallas = sel && this.porTalla(sel) ? Object.keys(sel.tallas).sort().map((t) => {
+      const stock = Number(sel.tallas[t]);
+      return {
+        talla: t, stock: stock, enCarrito: enCarrito(sel.ref, t),
+        stockColor: stock === 0 ? 'var(--danger-1)' : stock < 6 ? 'var(--warning-1)' : 'var(--gris-350)',
+        wrapStyle: 'width: 108px; border-radius: 12px; padding: 12px; cursor: pointer; user-select: none; transition: all 120ms cubic-bezier(0.22,1,0.36,1); border: 1px solid ' + (enCarrito(sel.ref, t) ? 'var(--sura-azul-cielo)' : 'var(--sura-azul-divider)') + '; background: ' + (enCarrito(sel.ref, t) ? 'var(--sura-azul-tint)' : 'var(--sura-azul-tint-light)') + '; opacity: ' + (stock === 0 ? '0.55' : '1') + ';',
+        onAdd: () => this.addCarrito(sel.ref, t, 1),
+        onSub: (ev) => { ev.stopPropagation(); this.addCarrito(sel.ref, t, -1); },
+        onMas: (ev) => { ev.stopPropagation(); this.addCarrito(sel.ref, t, 1); }
+      };
+    }) : [];
+
+    const carrito = s.carrito.map((c) => ({
+      nombre: c.nombre, pares: c.pares, precioFmt: this.cop(c.precio), subtotalFmt: this.cop(c.pares * c.precio),
+      detalle: (c.talla ? 'Talla ' + c.talla : 'Por unidad') + ' · ' + this.cop(c.precio) + ' / ' + (c.unidad === 'unidad' ? 'unidad' : 'par'),
+      onAdd: () => this.addCarrito(c.ref, c.talla, 1), onSub: () => this.addCarrito(c.ref, c.talla, -1),
+      onRm: () => this.setState({ carrito: s.carrito.filter((x) => !(x.ref === c.ref && x.talla === c.talla)) })
+    }));
+    const carritoPares = s.carrito.reduce((a, c) => a + c.pares, 0);
+    const carritoTotal = s.carrito.reduce((a, c) => a + c.pares * c.precio, 0);
+
+    const invFiltrados = s.modelos.filter((m) => match(m, qi)).filter((m) => {
+      if (s.filtroInv === 'archivados') return m.archivado;
+      if (m.archivado) return false;
+      if (s.filtroInv === 'bajo') return this.paresDe(m) <= m.min;
+      if (s.filtroInv === 'agotado') return this.porTalla(m) ? Object.keys(m.tallas).some((k) => Number(m.tallas[k]) === 0) : this.paresDe(m) === 0;
+      return true;
+    });
+    const invPager = this.pager(invFiltrados.length, 8, s.invPag, (n) => this.setState({ invPag: n }));
+    const invRows = invFiltrados.slice((invPager.pagina - 1) * 8, invPager.pagina * 8).map((m) => {
+      const pares = this.paresDe(m);
+      const bajo = pares <= m.min;
+      const porT = this.porTalla(m);
+      const agotadas = porT ? Object.keys(m.tallas).filter((k) => Number(m.tallas[k]) === 0).length : 0;
+      const keys = porT ? Object.keys(m.tallas).sort() : [];
+      return {
+        ref: m.ref, nombre: m.nombre, matcolor: m.tipo + ' · ' + m.color,
+        pares: pares.toLocaleString('es-CO') + ' ' + this.unidadTxt(m),
+        tallasTxt: porT ? 'Tallas ' + keys[0] + '–' + keys[keys.length - 1] + ' (' + keys.length + ')' : 'Por unidad',
+        precioFmt: this.cop(m.precio), utilFmt: this.cop(m.precio - m.costo),
+        estado: m.archivado ? 'Archivado' : bajo ? 'Stock bajo' : agotadas ? agotadas + ' talla(s) en cero' : 'Disponible',
+        precioSuf: porT ? '/ par' : '/ und',
+        badgeStyle: m.archivado ? this.badge('var(--gris-500)', 'var(--gris-100)', 'var(--gris-200)') : bajo ? this.badge('var(--danger-1)', 'var(--danger-2)', 'var(--danger-border)') : agotadas ? this.badge('var(--warning-1)', 'var(--warning-2)', 'var(--warning-border)') : this.badge('var(--success-1)', 'var(--success-2)', 'var(--success-border)'),
+        archLabel: m.archivado ? 'Reactivar' : 'Archivar',
+        archStyle: 'border: 1px solid ' + (m.archivado ? 'var(--success-border)' : 'var(--gris-300)') + '; color: ' + (m.archivado ? 'var(--success-1)' : 'var(--gris-500)') + '; background: var(--sura-blanco); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer;',
+        onArchivar: () => this.archivar(m.ref),
+        onEdit: () => this.abrirModelo(m.ref),
+        onAjuste: () => this.setState({ modal: 'ajuste', ajuste: { ref: m.ref, talla: porT ? keys[0] : null, valor: '', motivo: 'Conteo físico' } }),
+        onDel: () => this.setState({ confirm: { tipo: 'del', ref: m.ref, nombre: m.nombre } })
+      };
+    });
+    const filtrosInv = [['activos', 'Activos'], ['bajo', 'Stock bajo'], ['agotado', 'Agotados'], ['archivados', 'Archivados']].map((f) => ({
+      label: f[1], onPick: () => this.setState({ filtroInv: f[0], invPag: 1 }), style: this.pill(s.filtroInv === f[0], 'var(--sura-azul-prof)')
+    }));
+
+    // ---- reportes
+    const r = this.rango();
+    const visibles = isAdmin ? s.ventas : s.ventas.filter((v) => v.vendedor === s.user);
+    const enPeriodo = visibles.filter((v) => this.entre(v, r.desde, r.hasta));
+    const prev = visibles.filter((v) => this.entre(v, r.desdePrev, r.hastaPrev));
+    const A = this.agg(enPeriodo), B = this.agg(prev);
+    const dTot = this.delta(A.total, B.total), dPar = this.delta(A.pares, B.pares), dN = this.delta(A.n, B.n);
+    const repMetrics = [
+      { label: 'Vendido', valor: this.cop(A.total), delta: dTot.txt, deltaColor: dTot.color },
+      { label: 'Pares vendidos', valor: String(A.pares), delta: dPar.txt, deltaColor: dPar.color },
+      { label: 'Facturas', valor: String(A.n), delta: dN.txt, deltaColor: dN.color }
+    ];
+    if (isAdmin) repMetrics.push({ label: 'Utilidad bruta', valor: this.cop(A.util), delta: 'Precio menos costo', deltaColor: 'var(--gris-350)' });
+    else repMetrics.push({ label: 'Ticket promedio', valor: this.cop(A.n ? A.total / A.n : 0), delta: 'Por factura del periodo', deltaColor: 'var(--gris-350)' });
+
+    const nomDia = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    const diasSerie = (dias, list) => {
+      const out = [], hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      for (let i = dias - 1; i >= 0; i--) {
+        const d = new Date(hoy); d.setDate(d.getDate() - i);
+        const dv = list.filter((v) => !v.devuelta && new Date(v.fecha).toDateString() === d.toDateString());
+        out.push({
+          d: d, diaNom: nomDia[d.getDay()], fecha: this.fecha(d.toISOString()).slice(0, 5), facturas: dv.length,
+          pares: dv.reduce((a, v) => a + v.items.reduce((x, i) => x + i.pares, 0), 0),
+          total: dv.reduce((a, v) => a + v.total, 0)
+        });
+      }
+      return out;
+    };
+    const dias7 = diasSerie(7, s.ventas).reverse().slice(0, 5).map((o) => ({ diaNom: o.diaNom, fecha: o.fecha, facturas: o.facturas, pares: o.pares, totalFmt: this.cop(o.total) }));
+
+    const serieP = diasSerie(r.dias, visibles);
+    const conVenta = serieP.filter((o) => o.total > 0);
+    const mejor = serieP.slice().sort((a, b) => b.total - a.total)[0];
+    const dif = A.total - B.total;
+    const stats = [
+      { label: 'Ticket promedio por factura', valor: this.cop(A.n ? A.total / A.n : 0) },
+      { label: 'Precio promedio por par', valor: this.cop(A.pares ? A.total / A.pares : 0) },
+      { label: 'Mejor día', valor: mejor && mejor.total ? this.fecha(mejor.d.toISOString()) + ' · ' + this.cop(mejor.total) : '—' },
+      { label: 'Diferencia vs. periodo anterior', valor: (dif >= 0 ? '+ ' : '− ') + this.cop(Math.abs(dif)) }
+    ];
+    if (isAdmin) stats.push({ label: 'Utilidad bruta · margen', valor: this.cop(A.util) + ' · ' + (A.total ? Math.round((A.util / A.total) * 100) : 0) + '%' });
+
+    const pagosMap = {};
+    enPeriodo.forEach((v) => { pagosMap[v.metodo] = pagosMap[v.metodo] || { total: 0, n: 0 }; pagosMap[v.metodo].total += v.total; pagosMap[v.metodo].n++; });
+    const pagos = ['Efectivo', 'Transferencia', 'Tarjeta'].map((k) => ({
+      metodo: k, n: (pagosMap[k] ? pagosMap[k].n : 0) + ' facturas',
+      pct: (A.total && pagosMap[k] ? Math.round((pagosMap[k].total / A.total) * 100) : 0) + '%',
+      totalFmt: this.cop(pagosMap[k] ? pagosMap[k].total : 0)
+    }));
+
+    const porModelo = {};
+    enPeriodo.forEach((v) => v.items.forEach((i) => {
+      porModelo[i.nombre] = porModelo[i.nombre] || { pares: 0, total: 0 };
+      porModelo[i.nombre].pares += i.pares; porModelo[i.nombre].total += i.pares * i.precio;
+    }));
+    const topModelos = Object.keys(porModelo).map((k) => ({ nombre: k, pares: porModelo[k].pares, total: porModelo[k].total }))
+      .sort((a, b) => b.total - a.total).slice(0, 6)
+      .map((t, i) => ({ pos: i + 1, nombre: t.nombre, pares: t.pares, totalFmt: this.cop(t.total), pct: (A.total ? Math.round((t.total / A.total) * 100) : 0) + '%' }));
+
+    const repOrden = enPeriodo.slice().sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    const repPager = this.pager(repOrden.length, 10, s.repPag, (n) => this.setState({ repPag: n }));
+    const repVentas = repOrden.slice((repPager.pagina - 1) * 10, repPager.pagina * 10).map((v) => ({
+      id: v.id, fechaHora: this.fecha(v.fecha) + ' ' + this.hhmm(v.fecha), vendedor: v.vendedor, metodo: v.metodo,
+      detalle: this.detalle(v), pares: v.items.reduce((a, i) => a + i.pares, 0), totalFmt: this.cop(v.total),
+      onFactura: () => this.setState({ factura: v, modal: 'factura' }),
+      onDevolver: () => (v.devuelta ? null : this.setState({ confirm: { tipo: 'dev', id: v.id } })),
+      devLabel: v.devuelta ? 'Devuelta' : 'Devolver',
+      devStyle: 'border: 1px solid ' + (v.devuelta ? 'var(--gris-300)' : 'var(--danger-border)') + '; color: ' + (v.devuelta ? 'var(--gris-350)' : 'var(--danger-1)') + '; background: var(--sura-blanco); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 700; cursor: pointer;'
+    }));
+
+    const ventasHoyAll = s.ventas.filter((v) => this.esHoy(v.fecha) && !v.devuelta).sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    const ventasHoy = ventasHoyAll.slice(0, 6).map((v) => ({
+      id: v.id, hora: this.hhmm(v.fecha), vendedor: v.vendedor, detalle: this.detalle(v),
+      pares: v.items.reduce((a, i) => a + i.pares, 0), totalFmt: this.cop(v.total),
+      onFactura: () => this.setState({ factura: v, modal: 'factura' })
+    }));
+    const hoyAgg = this.agg(s.ventas.filter((v) => this.esHoy(v.fecha) && !v.devuelta));
+    const ayer = new Date(); ayer.setDate(ayer.getDate() - 1);
+    const ayerAgg = this.agg(s.ventas.filter((v) => !v.devuelta && new Date(v.fecha).toDateString() === ayer.toDateString()));
+    const dh = this.delta(hoyAgg.total, ayerAgg.total);
+    const alertasArr = this.activos().filter((m) => this.paresDe(m) <= m.min);
+    const heroMetrics = [
+      { label: 'Vendido hoy', valor: this.cop(hoyAgg.total), delta: dh.txt, deltaColor: dh.color },
+      { label: 'Pares vendidos hoy', valor: String(hoyAgg.pares), delta: hoyAgg.n + (hoyAgg.n === 1 ? ' factura' : ' facturas'), deltaColor: 'var(--gris-350)' },
+      { label: 'Stock en bodega', valor: this.stockTotal().toLocaleString('es-CO'), delta: alertasArr.length + ' productos en alerta', deltaColor: alertasArr.length ? 'var(--warning-1)' : 'var(--success-1)' }
+    ];
+    if (isAdmin) heroMetrics.splice(2, 0, { label: 'Utilidad hoy', valor: this.cop(hoyAgg.util), delta: 'Precio menos costo', deltaColor: 'var(--gris-350)' });
+    const alertas = alertasArr.map((m) => ({
+      nombre: m.nombre, pares: this.paresDe(m), detalle: 'Mínimo ' + m.min + ' pares · ' + m.ref,
+      bg: '#FFF5EC', border: '#FCD9B6', fg: '#ED8B00'
+    }));
+
+    // ---- modales
+    const f = s.form || { ref: '', nombre: '', tipo: '', unidad: 'par', color: '', precio: '', costo: '', min: '', stock: '', tallas: [] };
+    const setForm = (k, v) => this.setState({ form: Object.assign({}, s.form, { [k]: v }) });
+    const formTallas = (s.form ? s.form.tallas : []).map((t, idx) => ({
+      talla: t.talla, pares: t.pares,
+      onChange: (e) => { const arr = s.form.tallas.slice(); arr[idx] = { talla: t.talla, pares: e.target.value.replace(/[^0-9]/g, '') }; setForm('tallas', arr); },
+      onRm: () => setForm('tallas', s.form.tallas.filter((_, i) => i !== idx))
+    }));
+    const tiposBase = ['Suelas', 'Plantillas', 'Tacones', 'Pegantes', 'Hilos y adornos', 'Herrajes', 'Cordones', 'Insumos'];
+    const tiposLista = tiposBase.slice();
+    s.modelos.forEach((m) => { if (m.tipo && tiposLista.indexOf(m.tipo) < 0) tiposLista.push(m.tipo); });
+    (s.tiposExtra || []).forEach((t) => { if (tiposLista.indexOf(t) < 0) tiposLista.push(t); });
+    const ocultos = s.tiposOcultos || [];
+    for (let i = tiposLista.length - 1; i >= 0; i--) if (ocultos.indexOf(tiposLista[i]) >= 0) tiposLista.splice(i, 1);
+    const enUso = {};
+    s.modelos.forEach((m) => { if (m.tipo) enUso[m.tipo] = (enUso[m.tipo] || 0) + 1; });
+    const conTalla = ['Suelas', 'Plantillas', 'Tacones'];
+    const tiposProducto = tiposLista.map((t) => ({
+      label: t,
+      onPick: () => this.setState({ form: Object.assign({}, s.form, { tipo: t, unidad: conTalla.indexOf(t) >= 0 ? 'par' : 'unidad' }) }),
+      style: this.pill(f.tipo === t, 'var(--sura-azul-prof)') + ' padding: 8px 6px 8px 14px; font-size: 13px; display: inline-flex; align-items: center; gap: 6px;',
+      borrable: true,
+      xStyle: 'border: none; background: transparent; cursor: pointer; font-size: 15px; line-height: 1; padding: 0 6px; color: ' + (f.tipo === t ? 'var(--sura-blanco)' : 'var(--gris-350)') + ';',
+      onDel: (ev) => {
+        ev.stopPropagation();
+        if (enUso[t]) { this.toast('No se puede eliminar: ' + enUso[t] + ' producto(s) usan "' + t + '"'); return; }
+        this.setState({
+          tiposExtra: (s.tiposExtra || []).filter((x) => x !== t),
+          tiposOcultos: (s.tiposOcultos || []).concat(t),
+          form: Object.assign({}, s.form, { tipo: s.form && s.form.tipo === t ? '' : (s.form || {}).tipo })
+        });
+        this.toast('Tipo "' + t + '" eliminado');
+      }
+    }));
+    const unidadesVenta = [
+      { key: 'par', label: 'Por pares con talla', desc: 'Suelas, plantillas, tacones' },
+      { key: 'unidad', label: 'Por unidad', desc: 'Cordones, pegantes, hilos, herrajes' }
+    ].map((u) => ({
+      label: u.label, desc: u.desc, onPick: () => setForm('unidad', u.key),
+      style: 'flex: 1 1 190px; text-align: left; border-radius: 14px; padding: 14px 16px; cursor: pointer; transition: all 120ms cubic-bezier(0.22,1,0.36,1); border: 2px solid ' + (f.unidad === u.key ? 'var(--sura-azul-cielo)' : 'var(--sura-azul-divider)') + '; background: ' + (f.unidad === u.key ? 'var(--sura-azul-tint)' : 'var(--sura-blanco)') + ';'
+    }));
+    const fPorTalla = f.unidad !== 'unidad';
+    const fStock = fPorTalla ? f.tallas.reduce((a, t) => a + (Number(t.pares) || 0), 0) : Number(f.stock) || 0;
+    const fUtil = (Number(f.precio) || 0) - (Number(f.costo) || 0);
+    const resumenLineas = [
+      { label: fPorTalla ? 'Tallas cargadas' : 'Presentación', valor: fPorTalla ? String(f.tallas.length) : 'Por unidad', color: 'var(--gris-900)' },
+      { label: fPorTalla ? 'Pares totales' : 'Unidades', valor: fStock.toLocaleString('es-CO'), color: 'var(--gris-900)' },
+      { label: 'Precio', valor: this.cop(Number(f.precio) || 0), color: 'var(--gris-900)' },
+      { label: 'Utilidad', valor: this.cop(fUtil), color: fUtil > 0 ? 'var(--success-1)' : fUtil < 0 ? 'var(--danger-1)' : 'var(--gris-350)' },
+      { label: 'Valor en bodega', valor: this.cop(fStock * (Number(f.costo) || 0)), color: 'var(--gris-900)' }
+    ];
+
+    const e = s.entrada || { ref: null, proveedor: '', tallas: {} };
+    const modeloPicker = this.activos().map((m) => ({
+      ref: m.ref,
+      style: this.pill((s.modal === 'entrada' ? e.ref : (s.ajuste || {}).ref) === m.ref, 'var(--sura-azul-cielo)') + ' padding: 7px 12px; font-size: 12px; font-family: ui-monospace, monospace;',
+      onPick: () => {
+        if (s.modal === 'entrada') this.setState({ entrada: { ref: m.ref, proveedor: e.proveedor, tallas: {} } });
+        else this.setState({ ajuste: Object.assign({}, s.ajuste, { ref: m.ref, talla: this.porTalla(m) ? Object.keys(m.tallas)[0] : null, valor: '' }) });
+      }
+    }));
+    const eModelo = s.modelos.find((m) => m.ref === e.ref);
+    const ePorTalla = eModelo ? this.porTalla(eModelo) : true;
+    const entradaTallas = eModelo && ePorTalla ? Object.keys(eModelo.tallas).sort().map((t) => ({
+      talla: t, actual: eModelo.tallas[t], valor: e.tallas[t] || '',
+      onChange: (ev) => this.setState({ entrada: Object.assign({}, s.entrada, { tallas: Object.assign({}, s.entrada.tallas, { [t]: ev.target.value.replace(/[^0-9]/g, '') }) }) })
+    })) : [];
+    const entradaTotal = ePorTalla ? Object.keys(e.tallas).filter((k) => k !== '__u').reduce((a, k) => a + (Number(e.tallas[k]) || 0), 0) : Number(e.tallas.__u) || 0;
+
+    const aj = s.ajuste || { ref: null, talla: null, valor: '', motivo: 'Conteo físico' };
+    const ajModelo = s.modelos.find((m) => m.ref === aj.ref);
+    const ajPorTalla = ajModelo ? this.porTalla(ajModelo) : true;
+    const ajusteTallas = ajModelo && ajPorTalla ? Object.keys(ajModelo.tallas).sort().map((t) => ({
+      label: t + ' (' + ajModelo.tallas[t] + ')', style: this.pill(aj.talla === t, 'var(--sura-azul-cielo)') + ' padding: 7px 12px; font-size: 12px;',
+      onPick: () => this.setState({ ajuste: Object.assign({}, s.ajuste, { talla: t }) })
+    })) : [];
+    const motivos = ['Conteo físico', 'Rotura', 'Muestra', 'Pérdida'].map((m) => ({
+      label: m, style: this.pill(aj.motivo === m, 'var(--sura-azul-prof)') + ' padding: 7px 12px; font-size: 12px;',
+      onPick: () => this.setState({ ajuste: Object.assign({}, s.ajuste, { motivo: m }) })
+    }));
+    const ajActual = ajModelo ? (ajPorTalla ? (aj.talla ? Number(ajModelo.tallas[aj.talla]) : 0) : Number(ajModelo.stock || 0)) : 0;
+    const ajDif = aj.valor === '' ? null : Number(aj.valor) - ajActual;
+    const ajUn = ajModelo ? this.unidadTxt(ajModelo) : 'pares';
+    const ajDonde = ajPorTalla ? 'en talla ' + aj.talla : 'en existencia';
+    const ajusteResumen = !ajModelo ? 'Elige el producto que vas a ajustar.'
+      : ajDif === null ? 'Sistema: ' + ajActual + ' ' + ajUn + ' ' + ajDonde + '. Escribe cuántas contaste.'
+        : 'Sistema ' + ajActual + ' → contado ' + aj.valor + ' · diferencia ' + (ajDif > 0 ? '+' : '') + ajDif + ' ' + ajUn + ' por ' + aj.motivo.toLowerCase() + '.';
+
+    const fac = s.factura ? {
+      id: s.factura.id, fechaHora: this.fecha(s.factura.fecha) + ' ' + this.hhmm(s.factura.fecha),
+      vendedor: s.factura.vendedor, cliente: s.factura.cliente || 'Consumidor final', metodo: s.factura.metodo,
+      pares: s.factura.items.reduce((a, i) => a + i.pares, 0) + (s.factura.items.some((i) => i.unidad === 'unidad') ? '' : ' pares'),
+      conteoLabel: s.factura.items.some((i) => i.unidad === 'unidad') ? 'TOTAL ARTÍCULOS' : 'TOTAL PARES',
+      totalFmt: this.cop(s.factura.total),
+      items: s.factura.items.map((i) => ({
+        nombre: i.nombre, pares: i.pares, subtotalFmt: this.cop(i.pares * i.precio),
+        linea2: i.ref + (i.talla ? ' · talla ' + i.talla : '') + ' · ' + i.pares + ' ' + (i.unidad === 'unidad' ? (i.pares === 1 ? 'unidad' : 'unidades') : (i.pares === 1 ? 'par' : 'pares')) + ' × ' + this.cop(i.precio)
+      }))
+    } : { id: '', fechaHora: '', vendedor: '', cliente: '', metodo: '', pares: '', conteoLabel: 'TOTAL PARES', totalFmt: '', items: [] };
+
+    const mailInv = this.activos().map((m) => {
+      const vend = s.ventas.filter((v) => this.esHoy(v.fecha) && !v.devuelta).reduce((a, v) => a + v.items.filter((i) => i.ref === m.ref).reduce((x, i) => x + i.pares, 0), 0);
+      return { nombre: m.ref + ' · ' + m.nombre, vendidos: vend, quedan: this.paresDe(m) + ' ' + this.unidadTxt(m) };
+    });
+    const envios = [];
+    for (let i = 1; i <= 5; i++) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const t = s.ventas.filter((v) => !v.devuelta && new Date(v.fecha).toDateString() === d.toDateString()).reduce((a, v) => a + v.total, 0);
+      envios.push({ fecha: this.fecha(d.toISOString()), total: this.cop(t) });
+    }
+
+    const hoyStr = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+
+    return {
+      isLogin: false, isApp: true, stop: stop, isAdmin: isAdmin,
+      userNombre: s.user, userRol: isAdmin ? 'Administrador' : 'Vendedor', navItems: navItems,
+      onLogout: () => this.setState({ role: null, screen: 'panel', carrito: [], modal: null }),
+      isPanel: s.screen === 'panel', isVenta: s.screen === 'venta', isInventario: s.screen === 'inventario',
+      isMovs: s.screen === 'movs', isReportes: s.screen === 'reportes', isUsuarios: s.screen === 'usuarios', isCorreo: s.screen === 'correo',
+      hoyLargo: hoyStr.charAt(0).toUpperCase() + hoyStr.slice(1), horaCorte: s.hora,
+      heroMetrics: heroMetrics, alertas: alertas, sinAlertas: alertas.length === 0,
+      dias7: dias7, ventasHoy: ventasHoy, sinVentasHoy: ventasHoy.length === 0,
+      ventasHoyTitulo: ventasHoyAll.length > 6 ? 'Últimas ventas de hoy · ' + ventasHoyAll.length + ' facturas' : 'Ventas de hoy',
+
+      q: s.q, onQ: (ev) => this.setState({ q: ev.target.value }), catalogo: catalogo, catalogoCount: catalogo.length,
+      hayQ: s.q.length > 0, onLimpiarQ: () => this.setState({ q: '', filtroVenta: 'todos' }),
+      filtrosVenta: filtrosVenta, sinCatalogo: catalogo.length === 0,
+      catalogoResumen: catalogo.length + ' de ' + this.activos().length + ' modelos',
+      haySeleccion: !!sel, selNombre: sel ? sel.ref + ' · ' + sel.nombre + ' · ' + sel.color : '', tallas: tallas,
+      selPrecio: sel ? this.cop(sel.precio) : '', onLimpiarSel: () => this.setState({ selRef: null }),
+      selPorTalla: !!sel && this.porTalla(sel), selPorUnidad: !!sel && !this.porTalla(sel),
+      selStockTxt: sel ? this.paresDe(sel) + ' ' + this.unidadTxt(sel) + ' en bodega' : '',
+      selEnCarrito: sel ? enCarrito(sel.ref, null) : 0,
+      onUnidadAdd: () => sel && this.addCarrito(sel.ref, null, 1),
+      onUnidadSub: () => sel && this.addCarrito(sel.ref, null, -1),
+      carrito: carrito, carritoVacio: carrito.length === 0, carritoPares: carritoPares, carritoTotalFmt: this.cop(carritoTotal),
+      carritoConteoLabel: s.carrito.some((c) => c.unidad === 'unidad') ? 'Pares / unidades' : 'Pares totales',
+      metodos: ['Efectivo', 'Transferencia', 'Tarjeta'].map((m) => ({ label: m, onPick: () => this.setState({ metodo: m }), style: this.pill(s.metodo === m, 'var(--sura-azul-cielo)') + ' width: 100%; text-align: left; padding: 10px 16px;' })),
+      cliente: s.cliente, onCliente: (ev) => this.setState({ cliente: ev.target.value }),
+      onCobrar: () => this.cobrar(),
+      cobrarStyle: 'width: 100%; border: none; border-radius: 999px; padding: 14px; font-size: 15px; font-weight: 700; cursor: ' + (carrito.length ? 'pointer' : 'not-allowed') + '; background: ' + (carrito.length ? 'var(--sura-amarillo)' : 'var(--gris-100)') + '; color: ' + (carrito.length ? 'var(--sura-azul-oscuro)' : 'var(--gris-300)') + ';',
+
+      qInv: s.qInv, onQInv: (ev) => this.setState({ qInv: ev.target.value, invPag: 1 }), filtrosInv: filtrosInv, invRows: invRows,
+      invPagerTxt: invPager.texto, invPaginas: invPager.paginas, invPrevStyle: invPager.prevStyle, invNextStyle: invPager.nextStyle,
+      onInvPrev: invPager.onPrev, onInvNext: invPager.onNext,
+      invResumen: this.stockTotal().toLocaleString('es-CO') + ' unidades/pares en ' + this.activos().length + ' productos activos · ' + alertasArr.length + ' en alerta de stock · ' + (s.modelos.length - this.activos().length) + (s.modelos.length - this.activos().length === 1 ? ' archivado' : ' archivados'),
+      onNuevoModelo: () => this.abrirModelo(null),
+      onNuevaEntrada: () => this.setState({ modal: 'entrada', entrada: { ref: this.activos()[0].ref, proveedor: '', tallas: {} } }),
+      onNuevoAjuste: () => { const m0 = this.activos()[0]; this.setState({ modal: 'ajuste', ajuste: { ref: m0.ref, talla: this.porTalla(m0) ? Object.keys(m0.tallas)[0] : null, valor: '', motivo: 'Conteo físico' } }); },
+
+      movRows: s.movs.map((m) => ({
+        fecha: this.fecha(m.fecha), tipo: m.tipo, modelo: m.modelo, detalle: m.detalle, quien: m.quien,
+        pares: m.pares === 0 ? '—' : (m.pares > 0 ? '+' : '') + m.pares,
+        color: m.pares === 0 ? 'var(--gris-350)' : m.pares > 0 ? 'var(--success-1)' : 'var(--danger-1)',
+        badgeStyle: m.tipo === 'Entrada' ? this.badge('var(--success-1)', 'var(--success-2)', 'var(--success-border)') : m.tipo === 'Devolución' ? this.badge('var(--sura-azul-prof)', 'var(--sura-azul-soft)', 'var(--sura-azul-chip)') : m.tipo === 'Archivado' || m.tipo === 'Reactivado' ? this.badge('var(--gris-500)', 'var(--gris-100)', 'var(--gris-200)') : this.badge('var(--warning-1)', 'var(--warning-2)', 'var(--warning-border)')
+      })),
+      sinMovs: s.movs.length === 0,
+
+      repTitulo: isAdmin ? 'Historial de ventas' : 'Mis ventas',
+      repRango: 'Del ' + this.fecha(r.desde.toISOString()) + ' al ' + this.fecha(r.hasta.toISOString()) + (isAdmin ? '' : ' · solo tus facturas'),
+      periodos: [['dia', 'Día'], ['semana', 'Semana'], ['mes', 'Mes']].map((p) => ({
+        label: p[1], onPick: () => this.setState({ periodo: p[0], repPag: 1 }),
+        style: 'border: none; border-radius: 999px; padding: 9px 22px; font-size: 14px; font-weight: 700; cursor: pointer; background: ' + (s.periodo === p[0] ? 'var(--sura-azul-cielo)' : 'transparent') + '; color: ' + (s.periodo === p[0] ? 'var(--sura-blanco)' : 'var(--gris-500)') + ';'
+      })),
+      repMetrics: repMetrics, stats: stats, pagos: pagos, topModelos: topModelos,
+      repVentas: repVentas, sinRepVentas: repOrden.length === 0, repCount: repOrden.length + (repOrden.length === 1 ? ' factura' : ' facturas'),
+      repPagerTxt: repPager.texto, repPaginas: repPager.paginas, repPrevStyle: repPager.prevStyle, repNextStyle: repPager.nextStyle,
+      onRepPrev: repPager.onPrev, onRepNext: repPager.onNext,
+      onExportar: () => this.toast('CSV generado con ' + repOrden.length + ' facturas'),
+
+      usuarios: s.usuarios.map((u, i) => ({
+        nombre: u.nombre, correo: u.correo, rol: u.rol,
+        permisos: u.rol === 'Administrador' ? 'Inventario, ventas, reportes, usuarios y correo' : 'Registrar ventas y consultar inventario',
+        rolStyle: u.rol === 'Administrador' ? this.badge('var(--sura-azul-prof)', 'var(--sura-azul-soft)', 'var(--sura-azul-chip)') : this.badge('var(--gris-500)', 'var(--gris-100)', 'var(--gris-200)'),
+        estado: u.activo ? 'Activo' : 'Inactivo',
+        estadoStyle: this.pill(u.activo, 'var(--success-1)') + ' padding: 6px 16px; font-size: 12px;',
+        onToggle: () => this.setState({ usuarios: s.usuarios.map((x, j) => (j === i ? Object.assign({}, x, { activo: !x.activo }) : x)) })
+      })),
+      onNuevoUsuario: () => this.toast('Alta de usuarios: pendiente de definir en el siguiente sprint'),
+
+      correos: s.correos.map((c) => ({ email: c, onRm: () => this.setState({ correos: s.correos.filter((x) => x !== c) }) })),
+      nuevoCorreo: s.nuevoCorreo, onNuevoCorreoChange: (ev) => this.setState({ nuevoCorreo: ev.target.value }),
+      onAddCorreo: () => {
+        const v = s.nuevoCorreo.trim();
+        if (v.indexOf('@') < 0) { this.toast('Escribe un correo válido'); return; }
+        this.setState({ correos: s.correos.concat([v]), nuevoCorreo: '' }); this.toast('Destinatario agregado');
+      },
+      horas: ['18:00', '19:00', '20:00'].map((h) => ({ label: h, onPick: () => this.setState({ hora: h }), style: this.pill(s.hora === h, 'var(--sura-azul-cielo)') })),
+      envios: envios,
+
+      onPreviewCorreo: () => this.setState({ modal: 'correo' }),
+      onEnviarPrueba: () => { this.setState({ modal: null }); this.toast('Reporte enviado a ' + s.correos.length + ' destinatarios'); },
+      mailAsunto: 'Reporte del día · Peletería El Progreso · ' + this.fecha(new Date().toISOString()),
+      mailPara: s.correos.join(', '), mailFecha: this.fecha(new Date().toISOString()),
+      mailPares: String(hoyAgg.pares), mailTotal: this.cop(hoyAgg.total), mailNumVentas: String(hoyAgg.n),
+      mailStock: this.stockTotal().toLocaleString('es-CO'), mailInv: mailInv,
+      mailPdf: 'cierre-' + new Date().toISOString().slice(0, 10) + '.pdf',
+
+      showFactura: s.modal === 'factura', fac: fac, onImprimir: () => window.print(),
+      showModelo: s.modal === 'modelo', form: f, formTallas: formTallas,
+      tiposProducto: tiposProducto, unidadesVenta: unidadesVenta,
+      formPorTalla: fPorTalla, formPorUnidad: !fPorTalla,
+      formPorUnidadTxt: fPorTalla ? 'por par (COP)' : 'por unidad (COP)',
+      resumenNombre: f.nombre.trim() || 'Producto sin nombre',
+      resumenSub: (f.tipo || 'Sin tipo') + (f.color ? ' · ' + f.color : '') + (f.ref ? ' · ' + f.ref.toUpperCase() : ''),
+      resumenLineas: resumenLineas,
+      formHint: fPorTalla ? 'El stock se lleva talla por talla, siempre en pares.' : 'El stock se lleva como unidades sueltas.',
+      formMinHint: 'Avisa cuando queden ' + (Number(f.min) || 0) + ' ' + (fPorTalla ? 'pares' : 'unidades') + ' o menos',
+      nuevoTipo: s.nuevoTipo || '',
+      onNuevoTipo: (ev) => this.setState({ nuevoTipo: ev.target.value }),
+      onAddTipo: () => {
+        const t = (s.nuevoTipo || '').trim();
+        if (!t) { this.toast('Escribe el nombre del tipo'); return; }
+        const extra = (s.tiposExtra || []).slice();
+        if (tiposLista.indexOf(t) < 0) extra.push(t);
+        this.setState({ tiposExtra: extra, tiposOcultos: (s.tiposOcultos || []).filter((x) => x !== t), nuevoTipo: '', form: Object.assign({}, s.form, { tipo: t, unidad: 'unidad' }) });
+        this.toast('Tipo "' + t + '" agregado');
+      },
+      onMinMenos: () => setForm('min', String(Math.max(0, (Number(f.min) || 0) - 1))),
+      onMinMas: () => setForm('min', String((Number(f.min) || 0) + 1)),
+      onFormStock: (ev) => setForm('stock', ev.target.value.replace(/[^0-9]/g, '')),
+      formTitulo: s.form && s.form.original ? 'Actualizar ' + s.form.original : 'Nuevo producto',
+      formCta: s.form && s.form.original ? 'Guardar cambios' : 'Crear producto',
+      onFormRef: (ev) => setForm('ref', ev.target.value), onFormNombre: (ev) => setForm('nombre', ev.target.value),
+      onFormColor: (ev) => setForm('color', ev.target.value),
+      onFormPrecio: (ev) => setForm('precio', ev.target.value.replace(/[^0-9]/g, '')),
+      onFormCosto: (ev) => setForm('costo', ev.target.value.replace(/[^0-9]/g, '')),
+      onFormMin: (ev) => setForm('min', ev.target.value.replace(/[^0-9]/g, '')),
+      nuevaTalla: s.nuevaTalla, onNuevaTalla: (ev) => this.setState({ nuevaTalla: ev.target.value.replace(/[^0-9]/g, '') }),
+      onAddTalla: () => {
+        const t = s.nuevaTalla.trim();
+        if (!t || s.form.tallas.some((x) => x.talla === t)) { this.toast('Talla inválida o repetida'); return; }
+        this.setState({ form: Object.assign({}, s.form, { tallas: s.form.tallas.concat([{ talla: t, pares: '0' }]).sort((a, b) => Number(a.talla) - Number(b.talla)) }), nuevaTalla: '' });
+      },
+      onGuardarModelo: () => this.guardarModelo(),
+
+      showEntrada: s.modal === 'entrada', entrada: e, modeloPicker: modeloPicker, entradaTallas: entradaTallas, entradaTotal: entradaTotal,
+      entradaPorUnidad: !ePorTalla,
+      entradaTitulo: ePorTalla ? 'Pares que entran por talla' : 'Unidades que entran',
+      entradaUnidades: e.tallas.__u || '',
+      entradaStockTxt: eModelo ? 'hoy hay ' + this.paresDe(eModelo) + ' ' + this.unidadTxt(eModelo) : '',
+      entradaTotalTxt: entradaTotal + ' ' + (eModelo ? this.unidadTxt(eModelo) : 'pares'),
+      onEntradaUnidades: (ev) => this.setState({ entrada: Object.assign({}, s.entrada, { tallas: { __u: ev.target.value.replace(/[^0-9]/g, '') } }) }),
+      onEntradaProv: (ev) => this.setState({ entrada: Object.assign({}, s.entrada, { proveedor: ev.target.value }) }),
+      onGuardarEntrada: () => this.guardarEntrada(),
+
+      showAjuste: s.modal === 'ajuste', ajuste: aj, ajusteTallas: ajusteTallas, motivos: motivos, ajusteResumen: ajusteResumen,
+      ajustePorTalla: ajPorTalla,
+      ajusteLabel: (ajPorTalla ? 'Pares' : 'Unidades') + ' reales contadas',
+      onAjusteValor: (ev) => this.setState({ ajuste: Object.assign({}, s.ajuste, { valor: ev.target.value.replace(/[^0-9]/g, '') }) }),
+      onGuardarAjuste: () => this.guardarAjuste(),
+
+      showConfirm: !!s.confirm,
+      confirmTitulo: s.confirm && s.confirm.tipo === 'del' ? 'Eliminar modelo' : 'Registrar devolución',
+      confirmTexto: s.confirm && s.confirm.tipo === 'del'
+        ? 'Vas a eliminar "' + (s.confirm.nombre || '') + '" del catálogo junto con todo su stock. Esta acción no se puede deshacer.'
+        : 'Los pares de la factura ' + (s.confirm ? s.confirm.id : '') + ' vuelven al inventario y la venta deja de sumar en los reportes.',
+      confirmCta: s.confirm && s.confirm.tipo === 'del' ? 'Eliminar' : 'Confirmar devolución',
+      onConfirmar: () => {
+        if (!s.confirm) return;
+        if (s.confirm.tipo === 'del') {
+          this.setState({ modelos: s.modelos.filter((m) => m.ref !== s.confirm.ref), confirm: null });
+          this.toast('Modelo eliminado');
+        } else this.devolver(s.confirm.id);
+      },
+
+      showCorreoPrev: s.modal === 'correo',
+      onCloseModal: () => this.close(),
+      toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>
