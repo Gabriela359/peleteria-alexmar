@@ -4,8 +4,8 @@ import type { Caja } from '../types/database'
 
 const KEY = ['cajas'] as const
 
-// Ordenado por id desc: cajas[0] es "la caja actual" (abierta o recién
-// cerrada), sin depender de comparar fechas cliente-vs-servidor.
+// Ordenado por id desc para mostrar primero las cajas más recientes.
+// Los consumidores determinan la caja actual comparando la fecha operativa.
 export function useCajas() {
   return useQuery({
     queryKey: KEY,

@@ -3,8 +3,8 @@ import { useAuth } from '../state/auth'
 import { useUI } from '../state/ui'
 import { useCajas, useAbrirCaja, useCerrarCaja } from '../hooks/useCaja'
 import { useVentas } from '../hooks/useVentas'
-import { cop, esHoy, fecha, hhmm } from '../lib/format'
-import { obtenerResumenCaja } from '../lib/ventasCaja.js'
+import { cop, fecha, hhmm } from '../lib/format'
+import { fechaOperativaCaja, mapearErrorCajaVenta, obtenerCajaDelDia, obtenerResumenCaja } from '../lib/ventasCaja.js'
 import { Badge, Btn, Card, CardTitle, EmptyRow, KvRow } from './ui'
 
 // Apertura y cierre de caja (corte Z) del negocio: una sola caja
@@ -18,17 +18,16 @@ export default function CajaPanel() {
   const abrir = useAbrirCaja()
   const cerrar = useCerrarCaja()
 
-  // cajas viene ordenado por id desc: el primero es "la caja actual"
-  // (abierta, o la última que se cerró si hoy aún no se abre otra).
-  const actual = cajas[0] ?? null
+  const fechaHoy = fechaOperativaCaja()
+  const actual = obtenerCajaDelDia(cajas, fechaHoy)
   const puedeAbrir = !actual || actual.estado === 'cerrada'
-  const historial = cajas.slice(1)
+  const historial = cajas.filter((caja) => caja.fecha !== fechaHoy)
 
   const [fondo, setFondo] = useState('')
   const [contado, setContado] = useState('')
   const [enviando, setEnviando] = useState(false)
 
-  const ventasHoy = ventas.filter((v) => !v.devuelta && esHoy(v.fecha))
+  const ventasHoy = ventas.filter((v) => !v.devuelta && fechaOperativaCaja(new Date(v.fecha)) === fechaHoy)
   const { efectivo: efectivoHoy, transferencia: transferenciaHoy } = obtenerResumenCaja(ventasHoy)
   const esperadoEstimado = (actual?.fondo_inicial ?? 0) + efectivoHoy
 
@@ -40,7 +39,7 @@ export default function CajaPanel() {
       setFondo('')
       showToast('Caja abierta')
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'No se pudo abrir la caja')
+      showToast(mapearErrorCajaVenta(err).message)
     } finally {
       setEnviando(false)
     }
@@ -54,7 +53,7 @@ export default function CajaPanel() {
       setContado('')
       showToast('Caja cerrada · corte Z generado')
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'No se pudo cerrar la caja')
+      showToast(mapearErrorCajaVenta(err).message)
     } finally {
       setEnviando(false)
     }
@@ -64,7 +63,7 @@ export default function CajaPanel() {
     <Card className="mb-4">
       <div className="flex flex-wrap gap-3 items-center justify-between mb-3.5">
         <CardTitle className="mb-0">Caja del día</CardTitle>
-        {actual && <Badge tone={actual.estado === 'abierta' ? 'success' : 'neutral'}>{actual.estado === 'abierta' ? 'Abierta' : 'Cerrada'}</Badge>}
+        <Badge tone={actual?.estado === 'abierta' ? 'success' : actual ? 'neutral' : 'warning'}>{actual ? actual.estado === 'abierta' ? 'Abierta' : 'Cerrada' : 'Sin abrir hoy'}</Badge>
       </div>
 
       <div className="mb-4 grid gap-3 md:grid-cols-3">
@@ -140,7 +139,7 @@ export default function CajaPanel() {
         </div>
       )}
 
-      {!actual && <EmptyRow>Aún no se ha abierto ninguna caja.</EmptyRow>}
+      {!actual && <EmptyRow>Aún no se ha abierto una caja para hoy.</EmptyRow>}
 
       {isAdmin && historial.length > 0 && (
         <>

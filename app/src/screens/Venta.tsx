@@ -6,7 +6,7 @@ import { useProductos } from '../hooks/useProductos'
 import { useRegistrarVenta } from '../hooks/useVentas'
 import { useCajas } from '../hooks/useCaja'
 import { cop, paresDe, porTalla, unidadTxt } from '../lib/format'
-import { calcularTotalesCarrito, revisarVentaParaCaja } from '../lib/ventasCaja.js'
+import { calcularTotalesCarrito, mapearErrorCajaVenta, obtenerCajaDelDia, revisarVentaParaCaja } from '../lib/ventasCaja.js'
 import type { Producto, MetodoPago, VentaConItems } from '../types/database'
 import { SearchIcon } from '../components/Icons'
 import { Btn, Card, Pill } from '../components/ui'
@@ -29,12 +29,13 @@ export default function Venta() {
   const { data: productos = [] } = useProductos()
   const { data: cajas = [] } = useCajas()
   const registrarVenta = useRegistrarVenta()
-  const cajaAbierta = cajas[0]?.estado === 'abierta'
+  const cajaAbierta = obtenerCajaDelDia(cajas)?.estado === 'abierta'
 
   const [q, setQ] = useState('')
   const [filtro, setFiltro] = useState('todos')
   const [selRef, setSelRef] = useState<string | null>(null)
   const [carrito, setCarrito] = useState<ItemCarrito[]>([])
+  const [mostrarArticulos, setMostrarArticulos] = useState(false)
   const [metodo, setMetodo] = useState<MetodoPago>('Efectivo')
   const [cliente, setCliente] = useState('')
   const [enviando, setEnviando] = useState(false)
@@ -134,9 +135,9 @@ export default function Venta() {
       openModal('factura', venta)
       logger.info('VENTAS', 'Factura abierta', { ventaId: id, total: carritoTotal })
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'No se pudo registrar la venta'
-      logger.error('VENTAS', 'Error al registrar la venta', { msg, items: carrito.length, metodo })
-      showToast(msg)
+      const error = mapearErrorCajaVenta(err)
+      logger.error('VENTAS', 'Error al registrar la venta', { code: error.code, msg: error.message, items: carrito.length, metodo })
+      showToast(error.message)
     } finally {
       setEnviando(false)
       logger.info('VENTAS', 'Fin del flujo de cobro', { enviando: false, carritoActual: carrito.length })
@@ -303,77 +304,86 @@ export default function Venta() {
             <div className="rounded-full bg-sura-azul-tint px-2.5 py-1 text-[11px] font-bold text-sura-azul-prof">{carritoItems} artículo{carritoItems === 1 ? '' : 's'}</div>
           </div>
 
-          <div className="mb-4 max-h-[360px] overflow-y-auto pr-1">
-            <div className="grid gap-2.5">
-              {carrito.map((c, i) => {
-                const producto = productos.find((p) => p.ref === c.ref)
-                const itemLabel = c.unidad === 'par' ? (c.talla ? `Talla ${c.talla}` : 'Pares') : 'Unidad'
-                const productoFallback = {
-                  ref: c.ref,
-                  nombre: c.nombre,
-                  tipo: '',
-                  unidad: c.unidad,
-                  color: null,
-                  precio: c.precio,
-                  costo: c.costo,
-                  min: 0,
-                  tallas: {},
-                  stock: 0,
-                  foto_url: null,
-                  archivado: false,
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString(),
-                } as unknown as Producto
-                const productoActivo = producto ?? productoFallback
-                return (
-                  <div key={i} className="rounded-2xl border border-sura-azul-divider bg-gris-100/70 p-2.5">
-                    <div className="flex items-start gap-2.5">
-                      <div className="flex-[1_1_130px] min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="rounded-full bg-sura-azul-tint px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sura-azul-prof">{c.unidad === 'par' ? 'Par' : 'Unidad'}</span>
-                          <span className="text-[11px] text-gris-500">{c.ref}</span>
-                        </div>
-                        <div className="text-sm font-bold leading-snug">{c.nombre}</div>
-                        <div className="text-xs text-gris-500 mt-0.5">{itemLabel} · {cop(c.precio)} / {c.unidad === 'unidad' ? 'unidad' : 'par'}</div>
-                      </div>
-
-                      <button title="Quitar" onClick={() => setCarrito((prev) => prev.filter((x) => !(x.ref === c.ref && x.talla === c.talla)))} className="border-none bg-transparent cursor-pointer text-danger-1 text-base leading-none mt-0.5">×</button>
-                    </div>
-
-                    <div className="mt-2.5 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5">
-                        <button onClick={() => addCarrito(productoActivo, c.talla, -1)} className="w-6 h-6 rounded-full border border-gris-300 bg-sura-blanco cursor-pointer font-bold">−</button>
-                        <input
-                          type="number" min={0} inputMode="numeric" value={c.pares === 0 ? '' : c.pares}
-                          onFocus={(e) => { if (c.pares === 0) e.currentTarget.value = '' }}
-                          onChange={(e) => setCantidad(productoActivo, c.talla, Number(e.target.value || 0))}
-                          className="w-12 text-center font-bold tabular-nums border border-gris-300 rounded-md py-0.5 outline-none focus:border-sura-azul-cielo [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                        />
-                        <button onClick={() => addCarrito(productoActivo, c.talla, 1)} className="w-6 h-6 rounded-full border-none bg-sura-azul-cielo text-sura-blanco cursor-pointer font-bold">+</button>
-                      </div>
-
-                      <div className="text-right">
-                        <div className="text-[10px] uppercase tracking-wide text-gris-350">Subtotal</div>
-                        <div className="font-bold tabular-nums text-sm">{cop(c.pares * c.precio)}</div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-          {carrito.length === 0 && <div className="text-[13px] text-gris-350 pb-5">Agrega productos desde el catálogo.</div>}
-
           <div className="rounded-2xl bg-gris-150 border border-gris-200 px-3.5 py-3 mb-3.5">
             <div className="mb-3 flex items-center justify-between text-[11px] font-bold uppercase tracking-wide text-gris-350">
               <span>Resumen</span>
               <span>{metodo}</span>
             </div>
             <div className="grid gap-2.5 text-sm">
-              <div className="flex items-center justify-between rounded-xl bg-sura-blanco px-2.5 py-2 border border-gris-200">
-                <span className="text-gris-500">Artículos</span>
+              <button
+                type="button"
+                aria-expanded={mostrarArticulos}
+                onClick={() => setMostrarArticulos((mostrar) => !mostrar)}
+                className="flex w-full items-center justify-between rounded-xl bg-sura-blanco px-2.5 py-2 border border-gris-200 text-left cursor-pointer"
+              >
+                <span className="text-gris-500">Artículos <span className="text-[11px]">{mostrarArticulos ? '−' : '+'}</span></span>
                 <span className="font-bold tabular-nums">{carritoItems}</span>
-              </div>
+              </button>
+              {mostrarArticulos && (
+                <div className={`pr-1 ${carrito.length > 5 ? 'max-h-[300px] overflow-y-auto' : ''}`}>
+                  {carrito.length === 0 ? (
+                    <div className="py-3 text-center text-[13px] text-gris-350">Agrega productos desde el catálogo.</div>
+                  ) : (
+                    <div className="grid gap-2.5">
+                      {carrito.map((c, i) => {
+                        const producto = productos.find((p) => p.ref === c.ref)
+                        const itemLabel = c.unidad === 'par' ? (c.talla ? `Talla ${c.talla}` : 'Pares') : 'Unidad'
+                        const productoFallback = {
+                          ref: c.ref,
+                          nombre: c.nombre,
+                          tipo: '',
+                          unidad: c.unidad,
+                          color: null,
+                          precio: c.precio,
+                          costo: c.costo,
+                          min: 0,
+                          tallas: {},
+                          stock: 0,
+                          foto_url: null,
+                          archivado: false,
+                          created_at: new Date().toISOString(),
+                          updated_at: new Date().toISOString(),
+                        } as unknown as Producto
+                        const productoActivo = producto ?? productoFallback
+                        return (
+                          <div key={i} className="rounded-2xl border border-sura-azul-divider bg-gris-100/70 p-2.5">
+                            <div className="flex items-start gap-2.5">
+                              <div className="flex-[1_1_130px] min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="rounded-full bg-sura-azul-tint px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-sura-azul-prof">{c.unidad === 'par' ? 'Par' : 'Unidad'}</span>
+                                  <span className="text-[11px] text-gris-500">{c.ref}</span>
+                                </div>
+                                <div className="text-sm font-bold leading-snug">{c.nombre}</div>
+                                <div className="text-xs text-gris-500 mt-0.5">{itemLabel} · {cop(c.precio)} / {c.unidad === 'unidad' ? 'unidad' : 'par'}</div>
+                              </div>
+
+                              <button title="Quitar" onClick={() => setCarrito((prev) => prev.filter((x) => !(x.ref === c.ref && x.talla === c.talla)))} className="border-none bg-transparent cursor-pointer text-danger-1 text-base leading-none mt-0.5">×</button>
+                            </div>
+
+                            <div className="mt-2.5 flex items-center justify-between gap-2">
+                              <div className="flex items-center gap-1.5">
+                                <button onClick={() => addCarrito(productoActivo, c.talla, -1)} className="w-6 h-6 rounded-full border border-gris-300 bg-sura-blanco cursor-pointer font-bold">−</button>
+                                <input
+                                  type="number" min={0} inputMode="numeric" value={c.pares === 0 ? '' : c.pares}
+                                  onFocus={(e) => { if (c.pares === 0) e.currentTarget.value = '' }}
+                                  onChange={(e) => setCantidad(productoActivo, c.talla, Number(e.target.value || 0))}
+                                  className="w-12 text-center font-bold tabular-nums border border-gris-300 rounded-md py-0.5 outline-none focus:border-sura-azul-cielo [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                />
+                                <button onClick={() => addCarrito(productoActivo, c.talla, 1)} className="w-6 h-6 rounded-full border-none bg-sura-azul-cielo text-sura-blanco cursor-pointer font-bold">+</button>
+                              </div>
+
+                              <div className="text-right">
+                                <div className="text-[10px] uppercase tracking-wide text-gris-350">Subtotal</div>
+                                <div className="font-bold tabular-nums text-sm">{cop(c.pares * c.precio)}</div>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
               <div className="flex items-center justify-between rounded-xl bg-sura-blanco px-2.5 py-2 border border-gris-200">
                 <span className="text-gris-500">Pares</span>
                 <span className="font-bold tabular-nums text-sura-azul-prof">{carritoPares}</span>

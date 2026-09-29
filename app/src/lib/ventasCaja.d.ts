@@ -23,6 +23,9 @@ type ItemCarritoLike = {
   unidad?: 'par' | 'unidad'
 }
 
+export function fechaOperativaCaja(date?: Date): string
+export function obtenerCajaDelDia<T extends { fecha: string }>(cajas?: T[], fecha?: string): T | null
+
 export function calcularTotalesCarrito(carrito?: ItemCarritoLike[]): {
   items: number
   pares: number
@@ -49,3 +52,5 @@ export function contarUnidadesVenta(ventaItems?: Array<{ pares?: number; unidad?
 }
 
 export function textoCantidadVenta(ventaItems?: Array<{ pares?: number; unidad?: 'par' | 'unidad' }>): string
+
+export function mapearErrorCajaVenta(error: unknown): { code: string | null; message: string }

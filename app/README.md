@@ -34,14 +34,20 @@ el contenido de cada archivo (o usa la CLI de Supabase, ver más abajo):
 4. `supabase/migrations/20260913000004_storage.sql` — buckets de Storage
    (`productos`, público, fotos de catálogo; `reportes`, privado, snapshot
    del cierre diario) y sus políticas.
-5. `supabase/seed.sql` — tipos de producto + catálogo de ejemplo (16
+5. `supabase/migrations/20260913000005_caja.sql` — apertura, cierre y ventas
+  condicionadas a caja abierta.
+6. `supabase/migrations/20260913000006_auditoria.sql` — auditoría de ventas,
+  caja, inventario, usuarios y reportes.
+7. `supabase/migrations/20260913000007_timezone_caja.sql` — alinea la fecha
+  operativa de las funciones de caja con `America/Bogota`.
+8. `supabase/seed.sql` — tipos de producto + catálogo de ejemplo (16
    productos, igual que el prototipo). **Esta app no siembra ventas ni
    movimientos falsos** — a diferencia del prototipo de demostración, aquí
    el historial se construye solo con el uso real.
 
 Con la [CLI de Supabase](https://supabase.com/docs/guides/local-development/cli/getting-started)
 ya instalada y el proyecto enlazado (`supabase link --project-ref TU-REF`),
-los pasos 1–4 se aplican con:
+las migraciones se aplican con:
 
 ```bash
 supabase db push
@@ -133,6 +139,8 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
   - `20260913000003_rls.sql`
   - `20260913000004_storage.sql`
   - `20260913000005_caja.sql`
+  - `20260913000006_auditoria.sql`
+  - `20260913000007_timezone_caja.sql`
 - [ ] Confirmar que existen los enums: `rol_usuario`, `unidad_venta`,
   `metodo_pago`, `movimiento_tipo`, `estado_caja`.
 - [ ] Revisar que no haya funciones duplicadas ni triggers repetidos.
