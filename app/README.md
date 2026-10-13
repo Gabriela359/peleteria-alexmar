@@ -1,8 +1,8 @@
 # Peletería El Progreso · Inventario y Ventas
 
 Sistema de inventario y ventas para una peletería (venta de suelas, plantillas
-y demás insumos de zapatería), con dos roles — **vendedor** (registra ventas,
-consulta inventario) y **administrador** (todo lo anterior + CRUD de
+y demás insumos de zapatería), con dos roles — **vendedor** (registra ventas
+y consulta inventario) y **administrador** (todos los módulos, incluyendo
 inventario, movimientos, reportes, usuarios y correo diario).
 
 **Stack:** React + TypeScript + Vite + Tailwind CSS · Supabase (Postgres +
@@ -40,7 +40,12 @@ el contenido de cada archivo (o usa la CLI de Supabase, ver más abajo):
   caja, inventario, usuarios y reportes.
 7. `supabase/migrations/20260913000007_timezone_caja.sql` — alinea la fecha
   operativa de las funciones de caja con `America/Bogota`.
-8. `supabase/seed.sql` — tipos de producto + catálogo de ejemplo (16
+8. `supabase/migrations/20260913000008_user_deletion.sql` — permite eliminar
+   usuarios sin borrar sus ventas históricas.
+9. `supabase/migrations/20260913000009_envios_correo_destinatarios.sql` —
+   agrega los campos requeridos para guardar el historial y destinatarios de
+   los reportes de correo diario en proyectos con esquema anterior.
+10. `supabase/seed.sql` — tipos de producto + catálogo de ejemplo (16
    productos, igual que el prototipo). **Esta app no siembra ventas ni
    movimientos falsos** — a diferencia del prototipo de demostración, aquí
    el historial se construye solo con el uso real.
@@ -71,8 +76,9 @@ paso 1.
 
 ## 4 · Crea tu primer administrador
 
-Esta app no tiene un formulario de registro (por diseño: los usuarios los da
-de alta un administrador). Para el primero:
+No hay registro público. El primer administrador se crea una sola vez desde
+Supabase y, después, los administradores pueden dar de alta cuentas desde
+**Usuarios y roles**:
 
 1. **Authentication → Users → Add user** en el dashboard de Supabase, con su
    correo y contraseña. Esto dispara el trigger `handle_new_user` y crea su
@@ -81,9 +87,19 @@ de alta un administrador). Para el primero:
    ```sql
    update public.profiles set rol = 'admin' where correo = 'tu@correo.com';
    ```
-3. Los siguientes usuarios los puedes seguir creando igual desde
-   Authentication → Add user, y cambiarles el rol desde la pantalla
-   **Usuarios y roles** de la propia app (ya con un admin activo) o por SQL.
+3. En la aplicación, abre **Usuarios y roles → Registrar usuario**. Ingresa
+   nombre, correo, contraseña inicial y rol. La cuenta se crea en Supabase
+   Auth y su perfil queda guardado en `profiles`. La contraseña inicial debe
+   compartirse con el usuario por un canal seguro.
+
+La creación de usuarios usa el servidor Node y la llave secreta de Supabase.
+Configura `SUPABASE_SECRET_KEY` (llave `sb_secret_` de Project Settings →
+API Keys) en el `.env.local` del servidor; para proyectos antiguos también
+se acepta `SUPABASE_SERVICE_ROLE_KEY`. El Project ID y la llave pública
+`sb_publishable_` no sustituyen esta llave. No uses el prefijo `VITE_` ni
+expongas la llave secreta en el frontend. Ejecuta `npm run server` además de
+`npm run dev`. El servidor comprueba la sesión y el rol de administrador antes
+de crear cada cuenta.
 
 ## 5 · Instala y corre
 
@@ -103,9 +119,18 @@ npm run lint      # oxlint
   cierre a Storage (`bucket reportes`, privado), deja constancia en
   `envios_correo` y también dispara un servicio del backend por SMTP con
   Nodemailer. El destinatario por defecto es `gabrielaempresa572@gmail.com`,
-  y se puede sobreescribir por lista dinámica del panel. Para habilitarlo real,
+  y se puede sobreescribir por lista dinámica del panel. La sección de
+  destinatarios permite seleccionar cuentas activas desde `profiles`; la
+  selección se guarda en `destinatarios_correo`. Para habilitarlo real,
   completa `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` y
   `EMAIL_FROM` en `.env.local` y levanta el servidor con `npm run server`.
+- **Usuarios**: las cuentas se crean con Supabase Auth desde el endpoint
+  `/users` del servidor y el trigger de base de datos crea el perfil inicial.
+  El servidor asigna el rol solicitado y revierte la cuenta Auth si no logra
+  guardar el perfil. La eliminación permanente borra la cuenta Auth y su
+  perfil; las ventas históricas se conservan con el nombre registrado en la
+  factura y sin asociarse a una cuenta activa. Para esta opción se requiere
+  aplicar `20260913000008_user_deletion.sql`.
 - **Tipos de producto**: "eliminar" un tipo en realidad lo oculta
   (`tipos_producto.activo = false`); si algún producto todavía lo usa, se
   bloquea (mismo comportamiento que el prototipo).
@@ -141,6 +166,8 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
   - `20260913000005_caja.sql`
   - `20260913000006_auditoria.sql`
   - `20260913000007_timezone_caja.sql`
+  - `20260913000008_user_deletion.sql`
+  - `20260913000009_envios_correo_destinatarios.sql`
 - [ ] Confirmar que existen los enums: `rol_usuario`, `unidad_venta`,
   `metodo_pago`, `movimiento_tipo`, `estado_caja`.
 - [ ] Revisar que no haya funciones duplicadas ni triggers repetidos.

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { logger } from '../lib/logger'
 
 export type Screen = 'panel' | 'venta' | 'inventario' | 'movs' | 'reportes' | 'usuarios' | 'correo'
-export type ModalName = 'factura' | 'modelo' | 'entrada' | 'ajuste' | 'correo'
+export type ModalName = 'factura' | 'modelo' | 'entrada' | 'correo'
 export type LogLevel = 'info' | 'success' | 'warn' | 'error'
 
 export interface ConfirmState {

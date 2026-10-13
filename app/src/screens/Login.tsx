@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useAuth } from '../state/auth'
-import { LogoIcon } from '../components/Icons'
+import { EyeIcon, EyeOffIcon } from '../components/Icons'
 
 export default function Login() {
   const { signIn } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [mostrarPassword, setMostrarPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [enviando, setEnviando] = useState(false)
 
@@ -20,16 +21,16 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen grid place-items-center bg-linear-to-br from-sura-azul-oscuro to-sura-azul-prof p-10">
-      <div className="w-[420px] max-w-full bg-sura-blanco rounded-2xl p-8 shadow-2xl">
-        <div className="flex items-center gap-3 mb-7">
-          <div className="w-11 h-11 rounded-xl bg-sura-azul-cielo grid place-items-center shrink-0">
-            <LogoIcon />
-          </div>
-          <div>
-            <div className="text-lg font-bold leading-tight">Peletería El Progreso</div>
-            <div className="text-[13px] text-gris-350">Inventario y ventas de suelas · Bucaramanga</div>
-          </div>
+    <div className="relative min-h-screen grid place-items-center bg-linear-to-br from-sura-azul-oscuro to-sura-azul-prof p-5 sm:p-10">
+      <img
+        src="/alexmar-logo.png"
+        alt="Logo de Peletería Alexmar"
+        className="fixed top-4 left-4 sm:top-6 sm:left-6 z-10 h-16 w-16 sm:h-24 sm:w-24 rounded-2xl border border-sura-azul-chip bg-sura-blanco object-contain shadow-lg"
+      />
+      <div className="w-[420px] max-w-full bg-sura-blanco rounded-2xl p-6 sm:p-8 shadow-2xl">
+        <div className="mb-7 pl-16 sm:pl-24">
+          <div className="text-lg font-bold leading-tight text-sura-azul-oscuro">Peletería ALEXMAR</div>
+          <div className="text-[13px] text-gris-350">Inventario y ventas de suelas · Bucaramanga</div>
         </div>
 
         <form onSubmit={onSubmit} className="grid gap-4">
@@ -42,15 +43,26 @@ export default function Login() {
               placeholder="tu@correo.com"
             />
           </label>
-          <label className="grid gap-1.5">
+          <div className="grid gap-1.5">
             <span className="text-xs font-bold text-gris-500">Contraseña</span>
-            <input
-              type="password" required autoComplete="current-password" value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3.5 py-2.5 text-sm outline-none focus:border-b-sura-azul-cielo"
-              placeholder="••••••••"
-            />
-          </label>
+            <div className="relative">
+              <input
+                type={mostrarPassword ? 'text' : 'password'} required autoComplete="current-password" value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3.5 py-2.5 pr-11 text-sm outline-none focus:border-b-sura-azul-cielo"
+                placeholder="••••••••"
+              />
+              <button
+                type="button"
+                aria-label={mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                aria-pressed={mostrarPassword}
+                onClick={() => setMostrarPassword((mostrar) => !mostrar)}
+                className="absolute inset-y-0 right-0 grid w-11 place-items-center text-gris-500 hover:text-sura-azul-prof focus-visible:outline-2 focus-visible:outline-sura-azul-cielo"
+              >
+                {mostrarPassword ? <EyeOffIcon /> : <EyeIcon />}
+              </button>
+            </div>
+          </div>
 
           {error && (
             <div className="text-sm text-danger-1 bg-danger-2 border border-danger-border rounded-xl px-3.5 py-2.5">{error}</div>

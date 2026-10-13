@@ -22,37 +22,36 @@
   font-display: swap;
 }
 
-/* Tokens del sistema de diseño Sura Evoluciona, como variables de tema de
-   Tailwind v4 (generan las utilidades bg-, text- y border- automáticamente). */
+/* Paleta Alexmar basada en marfil, cuero y borgoña. */
 @theme {
   --font-display: "Sura Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  --color-sura-azul-cielo: #2D6DF6;
-  --color-sura-azul-cielo-hover: #255FDE;
-  --color-sura-azul-cielo-press: #1E4FB8;
-  --color-sura-azul-prof: #0033A0;
-  --color-sura-azul-prof-hover: #001E6C;
-  --color-sura-azul-oscuro: #00003F;
-  --color-sura-azul-oscuro-hover: #0B0B5A;
-  --color-sura-azul-soft: #DFEAFF;
-  --color-sura-azul-chip: #C8D9F3;
-  --color-sura-azul-tint: #EEF4FF;
-  --color-sura-azul-tint-light: #F6F9FF;
-  --color-sura-azul-divider: #E0E8FB;
+  --color-sura-azul-cielo: #9B622E;
+  --color-sura-azul-cielo-hover: #805024;
+  --color-sura-azul-cielo-press: #69401D;
+  --color-sura-azul-prof: #6B2024;
+  --color-sura-azul-prof-hover: #50171B;
+  --color-sura-azul-oscuro: #4B151B;
+  --color-sura-azul-oscuro-hover: #381015;
+  --color-sura-azul-soft: #EDE0CB;
+  --color-sura-azul-chip: #D9C4A5;
+  --color-sura-azul-tint: #F3EBDD;
+  --color-sura-azul-tint-light: #FAF7F0;
+  --color-sura-azul-divider: #E5D9C6;
 
-  --color-sura-amarillo: #E3E829;
-  --color-sura-amarillo-hover: #C5CB15;
+  --color-sura-amarillo: #C99A5D;
+  --color-sura-amarillo-hover: #B47C3E;
 
-  --color-sura-blanco: #FFFFFF;
-  --color-sura-negro: #0D0D0D;
+  --color-sura-blanco: #FFFCF6;
+  --color-sura-negro: #241A15;
 
-  --color-gris-100: #F4F4F4;
-  --color-gris-150: #F4F6FA;
-  --color-gris-200: #E7E7E7;
-  --color-gris-300: #B4B4B5;
-  --color-gris-350: #888B8D;
-  --color-gris-500: #3F3F41;
-  --color-gris-900: #0D0D0D;
+  --color-gris-100: #F4EFE5;
+  --color-gris-150: #F1EBDF;
+  --color-gris-200: #E5DCCB;
+  --color-gris-300: #C8BBA6;
+  --color-gris-350: #887967;
+  --color-gris-500: #4B3B2D;
+  --color-gris-900: #2C211A;
 
   --color-success-1: #067014;
   --color-success-2: #E6FAEF;

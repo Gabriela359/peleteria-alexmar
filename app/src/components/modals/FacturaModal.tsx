@@ -18,10 +18,9 @@ export default function FacturaModal() {
       <div onClick={(e) => e.stopPropagation()} className="grid gap-4 justify-items-center">
         <div id="tirilla" className="w-[302px] bg-sura-blanco px-[18px] py-5 font-mono text-xs text-gris-900 leading-[1.45] shadow-2xl">
           <div className="text-center mb-2.5">
-            <div className="font-display text-[15px] font-bold tracking-wide">PELETERÍA EL PROGRESO</div>
-            <div>NIT 901.442.118-3</div>
-            <div>Cra 15 # 34-22, Bucaramanga</div>
-            <div>Tel. 607 645 2210</div>
+            <div className="font-display text-[15px] font-bold tracking-wide">PELETERIA ALEXMAR</div>
+            <div>DIRECCION: CALLE 31 #13-49 Pasillo local 2 barrio centro</div>
+            <div>Tel. 304 2289463</div>
           </div>
           <div className="border-t border-b border-dashed border-gris-900 py-2 mb-2">
             <div className="flex justify-between"><span>Factura</span><span>{v.id}</span></div>
@@ -52,9 +51,7 @@ export default function FacturaModal() {
             <div className="flex justify-between mt-1"><span>Forma de pago</span><span>{v.metodo}</span></div>
           </div>
           <div className="text-center mt-3.5 pt-2.5 border-t border-dashed border-gris-900">
-            <div>Precios en pesos colombianos.</div>
-            <div>Cambios dentro de 8 días con esta tirilla.</div>
-            <div className="font-bold mt-1.5">¡Gracias por su compra!</div>
+            <div className="font-bold">¡Gracias por su compra!</div>
           </div>
         </div>
         <div className="flex gap-2.5">

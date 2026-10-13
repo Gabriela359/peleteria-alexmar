@@ -1,7 +1,6 @@
 import { useUI } from '../state/ui'
-import { useProductos } from '../hooks/useProductos'
 import { useMovimientos } from '../hooks/useMovimientos'
-import { fecha, porTalla } from '../lib/format'
+import { fecha } from '../lib/format'
 import { Badge, Btn, Card, EmptyRow } from '../components/ui'
 import type { MovimientoTipo } from '../types/database'
 
@@ -17,23 +16,17 @@ const ETIQUETA: Record<MovimientoTipo, string> = {
 
 export default function Movimientos() {
   const { openModal } = useUI()
-  const { data: productos = [] } = useProductos()
   const { data: movs = [] } = useMovimientos()
-  const activos = productos.filter((p) => !p.archivado)
 
   return (
     <div>
       <div className="flex flex-wrap gap-3 items-end justify-between mb-5">
         <div>
           <h1 className="text-2xl font-bold m-0 mb-1">Movimientos de inventario</h1>
-          <div className="text-sm text-gris-500">Entradas de proveedor, ajustes con motivo y devoluciones.</div>
+          <div className="text-sm text-gris-500">Consulta mercancía recibida, conteos corregidos y devoluciones.</div>
         </div>
         <div className="flex gap-2.5">
-          <Btn variant="outlineProf" onClick={() => {
-            const m0 = activos[0]
-            if (m0) openModal('ajuste', { ref: m0.ref, talla: porTalla(m0) ? Object.keys(m0.tallas)[0] : null })
-          }}>Registrar ajuste</Btn>
-          <Btn variant="cta" onClick={() => openModal('entrada')}>Entrada de mercancía</Btn>
+          <Btn variant="cta" onClick={() => openModal('entrada')}>Actualizar stock</Btn>
         </div>
       </div>
       <Card>

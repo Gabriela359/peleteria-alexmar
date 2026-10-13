@@ -126,7 +126,7 @@ export default function ModeloModal() {
         <div className="flex items-center gap-4 px-[clamp(12px,3vw,20px)] py-[clamp(12px,2.5vw,16px)] bg-sura-azul-oscuro text-sura-blanco">
           <div className="w-11 h-11 rounded-2xl bg-white/14 grid place-items-center shrink-0"><BoxIcon /></div>
           <div className="flex-1 min-w-0">
-            <div className="text-[19px] font-bold">{form.original ? 'Actualizar ' + form.original : 'Nuevo producto'}</div>
+            <div className="text-[19px] font-bold">{form.original ? 'Editar ' + form.original : 'Nuevo producto'}</div>
             <div className="text-[13px] opacity-80">Suelas, plantillas, pegantes, herrajes: todo lo que se vende en el local.</div>
           </div>
           <button onClick={closeModal} title="Cerrar" className="w-[34px] h-[34px] rounded-full border border-white/40 bg-transparent text-sura-blanco cursor-pointer text-[17px] leading-none">×</button>
@@ -136,7 +136,7 @@ export default function ModeloModal() {
           <div className="flex-[3_1_380px] min-w-0 grid gap-4">
 
             <div>
-              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">1 · Tipo de producto</div>
+              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">Tipo de producto</div>
               <div className="flex flex-wrap gap-2 mb-2.5">
                 {tiposVisibles.map((t) => (
                   <span
@@ -158,7 +158,7 @@ export default function ModeloModal() {
             </div>
 
             <div>
-              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">2 · Cómo se vende</div>
+              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">Cómo se vende</div>
               <div className="flex flex-wrap gap-2.5">
                 {[{ key: 'par' as const, label: 'Por pares con talla', desc: 'Suelas, plantillas, tacones' }, { key: 'unidad' as const, label: 'Por unidad', desc: 'Cordones, pegantes, hilos, herrajes' }].map((u) => (
                   <button key={u.key} onClick={() => setF('unidad', u.key)}
@@ -172,7 +172,7 @@ export default function ModeloModal() {
             </div>
 
             <div>
-              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">3 · Datos del producto</div>
+              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">Datos del producto</div>
               <div className="grid gap-3 grid-cols-[repeat(auto-fit,minmax(min(100%,150px),1fr))]">
                 <label className="grid gap-1.5 min-w-0"><span className="text-xs font-bold text-gris-500">Referencia</span>
                   <input value={form.ref} onChange={(e) => setF('ref', e.target.value)} placeholder="SU-101"
@@ -198,7 +198,7 @@ export default function ModeloModal() {
             </div>
 
             <div>
-              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">4 · Foto del producto</div>
+              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">Foto del producto</div>
               <div className="flex items-center gap-3">
                 <div className="w-16 h-16 rounded-xl border border-sura-azul-divider bg-sura-azul-tint-light grid place-items-center overflow-hidden shrink-0">
                   {form.foto_url ? <img src={form.foto_url} alt="" className="w-full h-full object-cover" /> : <ImageIcon />}
@@ -210,7 +210,8 @@ export default function ModeloModal() {
             </div>
 
             <div>
-              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">5 · Existencias y stock mínimo</div>
+              <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof mb-2">{form.original ? 'Existencias actuales' : 'Existencias iniciales'}</div>
+              {form.original && <div className="text-[13px] text-gris-500 mb-3">{fStock.toLocaleString('es-CO')} {fPorTalla ? 'pares' : 'unidades'} en bodega. Para cambiar esta cantidad, usa “Actualizar stock” en el inventario.</div>}
               <div className="flex flex-wrap gap-x-3.5 gap-y-2.5 items-center bg-sura-azul-tint-light border border-sura-azul-divider rounded-2xl px-3.5 py-3 mb-3">
                 <div className="flex-[1_1_170px] min-w-0">
                   <div className="text-[13px] font-bold">Stock mínimo</div>
@@ -224,7 +225,7 @@ export default function ModeloModal() {
                 </div>
               </div>
 
-              {!fPorTalla && (
+              {!form.original && !fPorTalla && (
                 <div className="flex items-center gap-3">
                   <input value={form.stock} onChange={(e) => setF('stock', digits(e.target.value))} placeholder="0"
                     className="w-[150px] border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-base outline-none text-right tabular-nums focus:border-b-sura-azul-cielo" />
@@ -232,7 +233,7 @@ export default function ModeloModal() {
                 </div>
               )}
 
-              {fPorTalla && (
+              {!form.original && fPorTalla && (
                 <div className="flex flex-wrap gap-2.5 items-start">
                   {form.tallas.map((t, idx) => (
                     <div key={idx} className="w-[92px] border border-sura-azul-divider rounded-2xl p-2.5 bg-sura-azul-tint-light">

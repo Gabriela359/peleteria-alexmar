@@ -20,7 +20,7 @@ const SCREENS_ADMIN: Record<Screen, ComponentType> = {
   reportes: Reportes, usuarios: Usuarios, correo: CorreoDiario,
 }
 const SCREENS_VENDEDOR: Partial<Record<Screen, ComponentType>> = {
-  venta: Venta, inventario: Inventario, reportes: Reportes,
+  venta: Venta, inventario: Inventario,
 }
 
 function CentroPantalla({ children }: { children: ReactNode }) {

@@ -46,7 +46,7 @@ export interface Producto {
 export interface Venta {
   id: string
   fecha: string
-  vendedor_id: string
+  vendedor_id: string | null
   vendedor_nombre: string
   metodo: MetodoPago
   cliente: string | null

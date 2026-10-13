@@ -3,9 +3,9 @@ import { useAuth } from '../state/auth'
 import { useUI } from '../state/ui'
 import { useArchivarProducto, useProductos } from '../hooks/useProductos'
 import { cop, pager, porTalla, unidadTxt, paresDe } from '../lib/format'
-import { Badge, Btn, Card, Pager, Pill } from '../components/ui'
+import { Badge, Btn, Card, EmptyRow, Pager, Pill } from '../components/ui'
 
-const FILTROS: [string, string][] = [['activos', 'Activos'], ['bajo', 'Stock bajo'], ['agotado', 'Agotados'], ['archivados', 'Archivados']]
+const FILTROS: [string, string][] = [['activos', 'Productos activos'], ['bajo', 'Por reponer'], ['agotado', 'Sin existencias'], ['archivados', 'Archivados']]
 const POR_PAGINA = 8
 
 export default function Inventario() {
@@ -25,8 +25,8 @@ export default function Inventario() {
     const filtrados = productos.filter(match).filter((m) => {
       if (filtro === 'archivados') return m.archivado
       if (m.archivado) return false
-      if (filtro === 'bajo') return paresDe(m) <= m.min
-      if (filtro === 'agotado') return porTalla(m) ? Object.values(m.tallas).some((v) => Number(v) === 0) : paresDe(m) === 0
+      if (filtro === 'bajo') return paresDe(m) > 0 && paresDe(m) <= m.min
+      if (filtro === 'agotado') return paresDe(m) === 0
       return true
     })
     const info = pager(filtrados.length, POR_PAGINA, pag)
@@ -34,8 +34,8 @@ export default function Inventario() {
     const activos = productos.filter((m) => !m.archivado)
     const alertasCount = activos.filter((m) => paresDe(m) <= m.min).length
     const archivadosCount = productos.length - activos.length
-    const resumen = activos.reduce((a, m) => a + paresDe(m), 0).toLocaleString('es-CO') + ' unidades/pares en ' + activos.length +
-      ' productos activos · ' + alertasCount + ' en alerta de stock · ' + archivadosCount + (archivadosCount === 1 ? ' archivado' : ' archivados')
+    const resumen = activos.length + (activos.length === 1 ? ' producto activo' : ' productos activos') +
+      ' · ' + alertasCount + ' necesitan reposición · ' + archivadosCount + (archivadosCount === 1 ? ' archivado' : ' archivados')
     return { rows, info, resumen }
   }, [productos, q, filtro, pag])
 
@@ -52,10 +52,15 @@ export default function Inventario() {
         <div>
           <h1 className="text-2xl font-bold m-0 mb-1">Inventario</h1>
           <div className="text-sm text-gris-500">{data.resumen}</div>
+          <div className="text-sm text-gris-500 mt-1">
+            {isAdmin
+              ? <>Busca un producto. Usa <strong>Editar producto</strong> para cambiar sus datos o <strong>Actualizar stock</strong> para registrar mercancía o corregir cantidades.</>
+              : 'Consulta las cantidades disponibles y usa los filtros para encontrar productos.'}
+          </div>
         </div>
         {isAdmin && (
           <div className="flex gap-2.5">
-            <Btn variant="outlineProf" onClick={() => openModal('entrada')}>Entrada de mercancía</Btn>
+            <Btn variant="outlineProf" disabled={!productos.some((m) => !m.archivado)} onClick={() => openModal('entrada')}>Actualizar stock</Btn>
             <Btn variant="cta" onClick={() => openModal('modelo', null)}>Nuevo producto</Btn>
           </div>
         )}
@@ -87,14 +92,22 @@ export default function Inventario() {
               </tr>
             </thead>
             <tbody>
+              {data.rows.length === 0 && (
+                <tr>
+                  <td colSpan={isAdmin ? 9 : 7} className="p-6 text-center text-sm text-gris-500">
+                    <EmptyRow>No hay productos para mostrar. Prueba otra búsqueda o cambia el filtro.</EmptyRow>
+                  </td>
+                </tr>
+              )}
               {data.rows.map((m) => {
                 const pares = paresDe(m)
-                const bajo = pares <= m.min
+                const agotado = pares === 0
+                const bajo = !agotado && pares <= m.min
                 const porT = porTalla(m)
                 const keys = porT ? Object.keys(m.tallas).sort() : []
                 const agotadas = porT ? keys.filter((k) => Number(m.tallas[k]) === 0).length : 0
-                const estado = m.archivado ? 'Archivado' : bajo ? 'Stock bajo' : agotadas ? agotadas + ' talla(s) en cero' : 'Disponible'
-                const tone = m.archivado ? 'neutral' : bajo ? 'danger' : agotadas ? 'warning' : 'success'
+                const estado = m.archivado ? 'Archivado' : agotado ? 'Sin existencias' : bajo ? 'Por reponer' : agotadas ? agotadas + (agotadas === 1 ? ' talla agotada' : ' tallas agotadas') : 'Disponible'
+                const tone = m.archivado ? 'neutral' : agotado ? 'danger' : bajo ? 'warning' : agotadas ? 'warning' : 'success'
                 return (
                   <tr key={m.ref} className="border-b border-sura-azul-divider">
                     <td className="p-3 font-mono text-[13px] text-sura-azul-prof">{m.ref}</td>
@@ -108,8 +121,8 @@ export default function Inventario() {
                     {isAdmin && (
                       <td className="p-3 text-right whitespace-nowrap">
                         <div className="flex gap-1.5 justify-end">
-                          <Btn size="sm" onClick={() => openModal('modelo', m.ref)}>Actualizar</Btn>
-                          <Btn size="sm" onClick={() => openModal('ajuste', { ref: m.ref, talla: porT ? keys[0] : null })}>Ajustar</Btn>
+                          <Btn size="sm" onClick={() => openModal('modelo', m.ref)}>Editar producto</Btn>
+                          {!m.archivado && <Btn size="sm" onClick={() => openModal('entrada', { ref: m.ref, talla: porT ? keys[0] : null })}>Actualizar stock</Btn>}
                           <Btn size="sm" className={m.archivado ? 'border-success-border! text-success-1!' : ''} onClick={() => onArchivar(m.ref, m.archivado)}>
                             {m.archivado ? 'Reactivar' : 'Archivar'}
                           </Btn>

@@ -1,14 +1,13 @@
 import { useAuth } from '../state/auth'
 import { useUI } from '../state/ui'
 import type { Screen } from '../state/ui'
-import { LogoIcon } from './Icons'
 
 const NAV_ADMIN: [Screen, string][] = [
   ['panel', 'Panel'], ['venta', 'Nueva venta'], ['inventario', 'Inventario'],
   ['movs', 'Movimientos'], ['reportes', 'Reportes'], ['usuarios', 'Usuarios'], ['correo', 'Correo diario'],
 ]
 const NAV_VENDEDOR: [Screen, string][] = [
-  ['venta', 'Nueva venta'], ['inventario', 'Inventario'], ['reportes', 'Mis ventas'],
+  ['venta', 'Nueva venta'], ['inventario', 'Inventario'],
 ]
 
 export default function Header() {
@@ -18,9 +17,14 @@ export default function Header() {
   const nav = isAdmin ? NAV_ADMIN : NAV_VENDEDOR
 
   return (
-    <header className="bg-sura-azul-cielo text-sura-blanco px-3 sm:px-6 py-2.5 flex items-center gap-x-5 gap-y-3 min-h-[60px] flex-wrap sticky top-0 z-40">
+    <header className="bg-sura-azul-oscuro text-sura-blanco px-3 sm:px-6 py-2.5 flex items-center gap-x-5 gap-y-3 min-h-[72px] flex-wrap sticky top-0 z-40 shadow-md">
       <div className="flex items-center gap-2.5 font-bold text-[15px] whitespace-nowrap">
-        <LogoIcon size={22} /> Peletería El Progreso
+        <img
+          src="/alexmar-logo.png"
+          alt="Logo de Peletería Alexmar"
+          className="h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-xl border border-sura-azul-chip bg-sura-blanco object-contain"
+        />
+        Peletería ALEXMAR
       </div>
       <nav className="flex items-center gap-1 flex-1 flex-wrap">
         {nav.map(([key, label]) => (
