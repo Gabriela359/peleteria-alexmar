@@ -28,7 +28,7 @@ export function useUserApiHealth() {
       if (!health.ok) throw new Error('El servidor de usuarios no está disponible.')
       return health
     },
-    retry: false,
+    retry: 1,
     staleTime: 30_000,
   })
 }
@@ -97,7 +97,10 @@ export function useCrearUsuario() {
       if (!result.user) throw new Error('El servidor no devolvió el usuario registrado')
       return result.user
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: KEY }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: KEY })
+      qc.invalidateQueries({ queryKey: USER_API_KEY })
+    },
   })
 }
 
