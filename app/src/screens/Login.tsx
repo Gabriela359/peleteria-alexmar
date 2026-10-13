@@ -21,18 +21,15 @@ export default function Login() {
   }
 
   return (
-    <div className="relative min-h-screen grid place-items-center bg-linear-to-br from-sura-azul-oscuro to-sura-azul-prof p-5 sm:p-10">
-      <img
-        src="/alexmar-logo.png"
-        alt="Logo de Peletería Alexmar"
-        className="fixed top-4 left-4 sm:top-6 sm:left-6 z-10 h-16 w-16 sm:h-24 sm:w-24 rounded-2xl border border-sura-azul-chip bg-sura-blanco object-contain shadow-lg"
-      />
-      <div className="w-[420px] max-w-full bg-sura-blanco rounded-2xl p-6 sm:p-8 shadow-2xl">
-        <div className="mb-7 pl-16 sm:pl-24">
-          <div className="text-lg font-bold leading-tight text-sura-azul-oscuro">Peletería ALEXMAR</div>
-          <div className="text-[13px] text-gris-350">Inventario y ventas de suelas · Bucaramanga</div>
+    <div className="grid min-h-screen place-items-center bg-linear-to-br from-sura-azul-oscuro to-sura-azul-prof p-4 sm:p-10">
+      <div className="w-full max-w-[420px] rounded-2xl bg-sura-blanco p-5 shadow-2xl sm:p-8">
+        <div className="mb-6 flex justify-center sm:mb-7">
+          <img
+            src="/alexmar-logo.png"
+            alt="Logo de Peletería Alexmar"
+            className="h-20 w-20 rounded-2xl border border-sura-azul-chip bg-sura-blanco object-contain shadow-sm sm:h-24 sm:w-24"
+          />
         </div>
-
         <form onSubmit={onSubmit} className="grid gap-4">
           <label className="grid gap-1.5">
             <span className="text-xs font-bold text-gris-500">Correo</span>

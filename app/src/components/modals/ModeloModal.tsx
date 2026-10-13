@@ -269,11 +269,11 @@ export default function ModeloModal() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2.5 justify-between items-center px-[clamp(12px,3vw,20px)] py-3 border-t border-sura-azul-divider bg-gris-100">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2.5 justify-between items-stretch sm:items-center px-[clamp(12px,3vw,20px)] py-3 border-t border-sura-azul-divider bg-gris-100">
           <div className="text-[13px] text-gris-500">{fPorTalla ? 'El stock se lleva talla por talla, siempre en pares.' : 'El stock se lleva como unidades sueltas.'}</div>
-          <div className="flex gap-2.5">
-            <Btn onClick={closeModal}>Cancelar</Btn>
-            <Btn variant="cta" disabled={guardando} onClick={() => void onGuardar()}>{form.original ? 'Guardar cambios' : 'Crear producto'}</Btn>
+          <div className="flex flex-col-reverse sm:flex-row gap-2.5">
+            <Btn className="w-full sm:w-auto" onClick={closeModal}>Cancelar</Btn>
+            <Btn className="w-full sm:w-auto" variant="cta" disabled={guardando} onClick={() => void onGuardar()}>{form.original ? 'Guardar cambios' : 'Crear producto'}</Btn>
           </div>
         </div>
       </div>

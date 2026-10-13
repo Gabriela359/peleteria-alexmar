@@ -42,9 +42,9 @@ export default function ConfirmModal() {
       <div onClick={(e) => e.stopPropagation()} className="w-[min(440px,100%)] max-h-[92vh] overflow-y-auto bg-sura-blanco rounded-2xl p-[clamp(16px,4vw,28px)] shadow-2xl">
         <h2 className="text-xl text-danger-1 m-0 mb-2">{titulo}</h2>
         <div className="text-sm text-gris-500 leading-relaxed mb-6">{texto}</div>
-        <div className="flex justify-end gap-2.5">
-          <Btn onClick={closeModal}>Cancelar</Btn>
-          <Btn variant="danger" disabled={enviando} onClick={() => void onConfirmar()}>{cta}</Btn>
+        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2.5">
+          <Btn className="w-full sm:w-auto" onClick={closeModal}>Cancelar</Btn>
+          <Btn className="w-full sm:w-auto" variant="danger" disabled={enviando} onClick={() => void onConfirmar()}>{cta}</Btn>
         </div>
       </div>
     </div>

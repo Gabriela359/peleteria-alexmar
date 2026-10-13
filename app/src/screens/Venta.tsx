@@ -157,18 +157,18 @@ export default function Venta() {
         </div>
       </div>
 
-      <div className="mb-4 grid gap-2 sm:grid-cols-3">
-        <div className="rounded-2xl border border-sura-azul-divider bg-sura-blanco px-4 py-3">
+      <div className="mb-4 grid grid-cols-3 gap-2">
+        <div className="min-w-0 rounded-2xl border border-sura-azul-divider bg-sura-blanco px-2 sm:px-4 py-2.5 sm:py-3">
           <div className="text-[11px] font-bold uppercase tracking-wide text-gris-350">Paso 1</div>
-          <div className="mt-1 text-sm font-bold text-sura-azul-prof">Busca el producto</div>
+          <div className="mt-1 text-xs sm:text-sm font-bold text-sura-azul-prof">Busca producto</div>
         </div>
-        <div className="rounded-2xl border border-sura-azul-divider bg-sura-blanco px-4 py-3">
+        <div className="min-w-0 rounded-2xl border border-sura-azul-divider bg-sura-blanco px-2 sm:px-4 py-2.5 sm:py-3">
           <div className="text-[11px] font-bold uppercase tracking-wide text-gris-350">Paso 2</div>
-          <div className="mt-1 text-sm font-bold text-sura-azul-prof">Ajusta cantidades</div>
+          <div className="mt-1 text-xs sm:text-sm font-bold text-sura-azul-prof">Cantidades</div>
         </div>
-        <div className="rounded-2xl border border-sura-azul-divider bg-sura-blanco px-4 py-3">
+        <div className="min-w-0 rounded-2xl border border-sura-azul-divider bg-sura-blanco px-2 sm:px-4 py-2.5 sm:py-3">
           <div className="text-[11px] font-bold uppercase tracking-wide text-gris-350">Paso 3</div>
-          <div className="mt-1 text-sm font-bold text-sura-azul-prof">Cobro y factura</div>
+          <div className="mt-1 text-xs sm:text-sm font-bold text-sura-azul-prof">Cobrar</div>
         </div>
       </div>
 
@@ -298,7 +298,7 @@ export default function Venta() {
           </Card>
         </div>
 
-        <Card className="flex-[1_1_320px] min-w-0 max-w-[420px] sticky top-[84px]">
+        <Card className="flex-[1_1_320px] min-w-0 max-w-[420px] static sm:sticky top-[84px]">
           <div className="flex items-center justify-between gap-3 mb-3.5">
             <div className="text-sm font-bold uppercase tracking-wide text-sura-azul-prof">Carrito</div>
             <div className="rounded-full bg-sura-azul-tint px-2.5 py-1 text-[11px] font-bold text-sura-azul-prof">{carritoItems} artículo{carritoItems === 1 ? '' : 's'}</div>
@@ -402,7 +402,7 @@ export default function Venta() {
           <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof my-1.5 mb-2">Forma de pago</div>
           <div className="flex flex-wrap gap-2 mb-2.5">
             {METODOS.map((m) => (
-              <Pill key={m} active={metodo === m} onClick={() => setMetodo(m)} className="w-full text-left px-4 py-2.5">{m}</Pill>
+              <Pill key={m} active={metodo === m} onClick={() => setMetodo(m)} className="flex-1 text-left px-4 py-2.5">{m}</Pill>
             ))}
           </div>
           <input value={cliente} onChange={(e) => setCliente(e.target.value)} placeholder="Cliente (opcional)"

@@ -6,7 +6,7 @@ export function cx(...parts: (string | false | null | undefined)[]): string {
 }
 
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx('bg-sura-blanco border border-sura-azul-divider rounded-2xl p-[clamp(14px,2.6vw,20px)]', className)}>{children}</div>
+  return <div className={cx('min-w-0 bg-sura-blanco border border-sura-azul-divider rounded-2xl p-[clamp(14px,2.6vw,20px)]', className)}>{children}</div>
 }
 
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {

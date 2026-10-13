@@ -67,6 +67,7 @@
 }
 
 html, body {
+  width: 100%;
   margin: 0;
   padding: 0;
   background: var(--color-gris-150);
@@ -77,10 +78,25 @@ html, body {
 #root { min-height: 100vh; }
 * { box-sizing: border-box; }
 input, button, select, textarea { font-family: inherit; }
+input, select, textarea { max-width: 100%; }
 button { -webkit-tap-highlight-color: transparent; }
 a { color: var(--color-sura-azul-cielo); text-decoration: none; }
 a:hover { color: var(--color-sura-azul-cielo-hover); text-decoration: underline; }
 ::placeholder { color: var(--color-gris-350); }
+
+@media (max-width: 639px) {
+  html, body, #root { max-width: 100%; overflow-x: clip; }
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select,
+  textarea { font-size: 16px; }
+  .overflow-x-auto {
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
+  .overflow-x-auto > table { min-width: 600px; }
+  .app-nav { scrollbar-width: none; }
+  .app-nav::-webkit-scrollbar { display: none; }
+}
 
 @media print {
   body * { visibility: hidden !important; }

@@ -50,7 +50,7 @@ function AppShell() {
   return (
     <div className="min-h-screen bg-gris-150">
       <Header />
-      <main className="px-3 sm:px-8 py-3.5 sm:py-6 pb-14">
+      <main className="min-w-0 px-2 sm:px-8 py-3.5 sm:py-6 pb-14">
         <ScreenComp />
       </main>
       <ModalRoot />

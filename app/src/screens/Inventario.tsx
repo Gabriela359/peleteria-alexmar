@@ -59,9 +59,9 @@ export default function Inventario() {
           </div>
         </div>
         {isAdmin && (
-          <div className="flex gap-2.5">
-            <Btn variant="outlineProf" disabled={!productos.some((m) => !m.archivado)} onClick={() => openModal('entrada')}>Actualizar stock</Btn>
-            <Btn variant="cta" onClick={() => openModal('modelo', null)}>Nuevo producto</Btn>
+          <div className="flex w-full flex-wrap gap-2.5 sm:w-auto">
+            <Btn className="flex-1 sm:flex-none" variant="outlineProf" disabled={!productos.some((m) => !m.archivado)} onClick={() => openModal('entrada')}>Actualizar stock</Btn>
+            <Btn className="flex-1 sm:flex-none" variant="cta" onClick={() => openModal('modelo', null)}>Nuevo producto</Btn>
           </div>
         )}
       </div>

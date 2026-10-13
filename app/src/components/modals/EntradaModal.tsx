@@ -144,11 +144,11 @@ export default function EntradaModal() {
             </div>
           </>
         )}
-        <div className="flex flex-wrap gap-3 justify-between items-center pt-[18px] border-t border-sura-azul-divider">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-between items-stretch sm:items-center pt-[18px] border-t border-sura-azul-divider">
           <div className="text-sm text-gris-500">{modo === 'entrada' ? <>Se sumarán: <strong className="text-lg text-gris-900">{total} {modelo ? unidadTxt(modelo) : 'pares'}</strong></> : 'La cantidad del sistema quedará reemplazada por el conteo.'}</div>
-          <div className="flex gap-2.5">
-            <Btn onClick={closeModal}>Cancelar</Btn>
-            <Btn variant="cta" disabled={enviando || !modelo} onClick={() => void onGuardar()}>{modo === 'entrada' ? 'Agregar al stock' : 'Guardar cantidad real'}</Btn>
+          <div className="flex flex-col-reverse sm:flex-row gap-2.5">
+            <Btn className="w-full sm:w-auto" onClick={closeModal}>Cancelar</Btn>
+            <Btn className="w-full sm:w-auto" variant="cta" disabled={enviando || !modelo} onClick={() => void onGuardar()}>{modo === 'entrada' ? 'Agregar al stock' : 'Guardar cantidad real'}</Btn>
           </div>
         </div>
       </div>
