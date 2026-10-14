@@ -92,6 +92,30 @@ function encodeBase64Lines(value) {
   return Buffer.from(value, 'utf8').toString('base64').replace(/.{1,76}/g, '$&\r\n').trimEnd()
 }
 
+async function sendWithGoogleAppsScript({ url, token, from, recipients, subject, text, html }) {
+  let response
+  try {
+    response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, from, to: recipients, subject, text, html }),
+      signal: AbortSignal.timeout(30_000),
+    })
+  } catch (error) {
+    if (error instanceof Error && error.name === 'TimeoutError') {
+      throw new Error('Google Apps Script tardó demasiado en responder')
+    }
+    throw new Error('No se pudo conectar con Google Apps Script')
+  }
+
+  const result = await response.json().catch(() => null)
+  if (!response.ok || !result?.ok) {
+    throw new Error(result?.error || `Google Apps Script rechazó el envío (HTTP ${response.status})`)
+  }
+
+  return { messageId: result.messageId || null, recipients }
+}
+
 async function sendWithGmailApi({ clientId, clientSecret, refreshToken, from, recipients, subject, text, html }) {
   const fromValue = String(from || '').replace(/[\r\n]/g, ' ')
   const fromMatch = fromValue.match(/^(.*?)\s*<([^<>]+)>$/)
@@ -182,6 +206,18 @@ export async function sendReportEmail({
     ...validAttachments,
     ...(reportPdf ? [{ filename: `reporte-${new Date().toISOString().slice(0, 10)}.pdf`, content: reportPdf, contentType: 'application/pdf' }] : []),
   ]
+
+  if (process.env.GOOGLE_APPS_SCRIPT_URL && process.env.GOOGLE_APPS_SCRIPT_TOKEN) {
+    return sendWithGoogleAppsScript({
+      url: process.env.GOOGLE_APPS_SCRIPT_URL,
+      token: process.env.GOOGLE_APPS_SCRIPT_TOKEN,
+      from: process.env.EMAIL_FROM,
+      recipients,
+      subject,
+      text,
+      html,
+    })
+  }
 
   if (process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET && process.env.GMAIL_REFRESH_TOKEN) {
     return sendWithGmailApi({

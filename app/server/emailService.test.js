@@ -94,6 +94,52 @@ test('sendReportEmail usa Gmail API con OAuth y no necesita SMTP', async () => {
   }
 })
 
+test('sendReportEmail usa Google Apps Script cuando está configurado', async () => {
+  const originalEnv = {
+    GOOGLE_APPS_SCRIPT_URL: process.env.GOOGLE_APPS_SCRIPT_URL,
+    GOOGLE_APPS_SCRIPT_TOKEN: process.env.GOOGLE_APPS_SCRIPT_TOKEN,
+    GMAIL_CLIENT_ID: process.env.GMAIL_CLIENT_ID,
+    GMAIL_CLIENT_SECRET: process.env.GMAIL_CLIENT_SECRET,
+    GMAIL_REFRESH_TOKEN: process.env.GMAIL_REFRESH_TOKEN,
+    EMAIL_FROM: process.env.EMAIL_FROM,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+  }
+  const originalFetch = globalThis.fetch
+  Object.assign(process.env, {
+    GOOGLE_APPS_SCRIPT_URL: 'https://script.google.com/macros/s/test/exec',
+    GOOGLE_APPS_SCRIPT_TOKEN: 'long-random-token',
+    EMAIL_FROM: 'sender@gmail.com',
+  })
+  delete process.env.GMAIL_CLIENT_ID
+  delete process.env.GMAIL_CLIENT_SECRET
+  delete process.env.GMAIL_REFRESH_TOKEN
+  delete process.env.RESEND_API_KEY
+  globalThis.fetch = async (url, options) => {
+    assert.equal(url, process.env.GOOGLE_APPS_SCRIPT_URL)
+    const payload = JSON.parse(options.body)
+    assert.equal(payload.token, 'long-random-token')
+    assert.equal(payload.from, 'sender@gmail.com')
+    assert.deepEqual(payload.to, ['gabrielaempresa572@gmail.com', 'destino@example.com'])
+    return new Response(JSON.stringify({ ok: true }), { status: 200 })
+  }
+
+  try {
+    const result = await sendReportEmail({
+      to: ['destino@example.com'],
+      subject: 'Reporte de prueba',
+      text: 'Resumen',
+      html: '<p>Resumen</p>',
+    })
+    assert.equal(result.recipients.length, 2)
+  } finally {
+    for (const [key, value] of Object.entries(originalEnv)) {
+      if (value === undefined) delete process.env[key]
+      else process.env[key] = value
+    }
+    globalThis.fetch = originalFetch
+  }
+})
+
 test('validateEmailApiRequest rechaza peticiones sin Authorization', async () => {
   const result = await validateEmailApiRequest({ headers: {} })
   assert.equal(result.ok, false)

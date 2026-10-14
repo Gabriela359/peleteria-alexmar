@@ -1,8 +1,10 @@
 import http from 'node:http'
 import dotenv from 'dotenv'
+import { createClient } from '@supabase/supabase-js'
 import { sendReportEmail } from './emailService.js'
 import { validateEmailApiRequest } from './emailApiAuth.js'
 import { createManagedUser, deleteManagedUser, UserApiError } from './userApi.js'
+import { buildReportPdf } from './reportPdf.js'
 
 dotenv.config({ path: '.env.local' })
 
@@ -24,6 +26,26 @@ async function readJson(req, maxBytes) {
   }
 }
 
+async function verifyActiveAdmin(user, authorization) {
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL
+  const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+  if (!supabaseUrl || !supabaseAnonKey) throw new UserApiError('Supabase no configurado en el backend', 503)
+
+  const client = createClient(supabaseUrl, supabaseAnonKey, {
+    global: { headers: { Authorization: authorization } },
+    auth: { autoRefreshToken: false, persistSession: false },
+  })
+  const { data: profile, error } = await client
+    .from('profiles')
+    .select('rol, activo')
+    .eq('id', user.id)
+    .maybeSingle()
+  if (error) throw new UserApiError('No se pudo verificar el permiso de administrador', 500)
+  if (!profile || profile.rol !== 'admin' || !profile.activo) {
+    throw new UserApiError('Solo un administrador activo puede descargar reportes', 403)
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const origin = typeof req.headers.origin === 'string' ? req.headers.origin : ''
   if (origin && !allowedOrigins.includes(origin)) {
@@ -36,6 +58,7 @@ const server = http.createServer(async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', origin || 'http://localhost:5173')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+  res.setHeader('Access-Control-Expose-Headers', 'X-Report-Template-Version')
 
   if (req.method === 'OPTIONS') {
     res.statusCode = 204
@@ -45,11 +68,6 @@ const server = http.createServer(async (req, res) => {
 
   const pathname = new URL(req.url || '/', 'http://localhost').pathname
   if (req.method === 'GET' && pathname === '/health') {
-    const gmailConfigured = !!(process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET &&
-      process.env.GMAIL_REFRESH_TOKEN && process.env.EMAIL_FROM)
-    const resendConfigured = !!(process.env.RESEND_API_KEY && process.env.EMAIL_FROM)
-    const smtpConfigured = !!(process.env.EMAIL_HOST && process.env.EMAIL_PORT &&
-      process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_FROM)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
     res.end(JSON.stringify({
@@ -57,8 +75,6 @@ const server = http.createServer(async (req, res) => {
       supabaseConfigured: !!((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) &&
         (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY)),
       userRegistrationConfigured: !!(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
-      emailConfigured: gmailConfigured || resendConfigured || smtpConfigured,
-      emailProvider: gmailConfigured ? 'gmail-api' : resendConfigured ? 'resend' : smtpConfigured ? 'smtp' : null,
     }))
     return
   }
@@ -72,7 +88,7 @@ const server = http.createServer(async (req, res) => {
 
   const deleteUserMatch = pathname.match(/^\/users\/([^/]+)$/)
   if (
-    (req.method === 'POST' && pathname !== '/' && pathname !== '/users') ||
+    (req.method === 'POST' && pathname !== '/' && pathname !== '/users' && pathname !== '/reports/pdf') ||
     (req.method === 'DELETE' && !deleteUserMatch)
   ) {
     res.statusCode = 404
@@ -111,6 +127,45 @@ const server = http.createServer(async (req, res) => {
       res.statusCode = 201
       res.setHeader('Content-Type', 'application/json')
       res.end(JSON.stringify({ ok: true, user }))
+      return
+    }
+
+    if (pathname === '/reports/pdf') {
+      await verifyActiveAdmin(authCheck.user, String(req.headers.authorization || ''))
+      const report = payload.report
+      if (
+        !report ||
+        typeof report !== 'object' ||
+        Array.isArray(report) ||
+        typeof report.fecha !== 'string' ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(report.fecha) ||
+        typeof report.total !== 'number' ||
+        !Number.isFinite(report.total) ||
+        typeof report.cantidadVentas !== 'number' ||
+        !Number.isInteger(report.cantidadVentas) ||
+        report.cantidadVentas < 0 ||
+        !Array.isArray(report.inventario) ||
+        report.inventario.some((item) =>
+          !item ||
+          typeof item !== 'object' ||
+          typeof item.nombre !== 'string' ||
+          typeof item.vendidos !== 'number' ||
+          !Number.isFinite(item.vendidos) ||
+          typeof item.totalVenta !== 'number' ||
+          !Number.isFinite(item.totalVenta) ||
+          typeof item.quedan !== 'string'
+        )
+      ) {
+        throw new UserApiError('Los datos del reporte no son válidos')
+      }
+
+      const pdf = await buildReportPdf(report)
+      res.statusCode = 200
+      res.setHeader('Content-Type', 'application/pdf')
+      res.setHeader('X-Report-Template-Version', '2')
+      res.setHeader('Content-Disposition', `attachment; filename="reporte-diario-${report.fecha}.pdf"`)
+      res.setHeader('Content-Length', pdf.length)
+      res.end(pdf)
       return
     }
 

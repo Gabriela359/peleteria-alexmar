@@ -5,7 +5,7 @@ import type { Screen } from '../state/ui'
 
 const NAV_ADMIN: [Screen, string][] = [
   ['panel', 'Panel'], ['venta', 'Nueva venta'], ['inventario', 'Inventario'],
-  ['movs', 'Movimientos'], ['reportes', 'Reportes'], ['usuarios', 'Usuarios'], ['correo', 'Correo diario'],
+  ['movs', 'Movimientos'], ['reportes', 'Reportes'], ['usuarios', 'Usuarios'], ['reporte-diario', 'Reporte diario'],
 ]
 const NAV_VENDEDOR: [Screen, string][] = [
   ['venta', 'Nueva venta'], ['inventario', 'Inventario'],

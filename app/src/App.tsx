@@ -9,7 +9,7 @@ import Inventario from './screens/Inventario'
 import Movimientos from './screens/Movimientos'
 import Reportes from './screens/Reportes'
 import Usuarios from './screens/Usuarios'
-import CorreoDiario from './screens/CorreoDiario'
+import ReporteDiario from './screens/ReporteDiario'
 import ModalRoot from './components/ModalRoot'
 import Toast from './components/Toast'
 import type { Screen } from './state/ui'
@@ -17,7 +17,7 @@ import type { ComponentType, ReactNode } from 'react'
 
 const SCREENS_ADMIN: Record<Screen, ComponentType> = {
   panel: Panel, venta: Venta, inventario: Inventario, movs: Movimientos,
-  reportes: Reportes, usuarios: Usuarios, correo: CorreoDiario,
+  reportes: Reportes, usuarios: Usuarios, 'reporte-diario': ReporteDiario,
 }
 const SCREENS_VENDEDOR: Partial<Record<Screen, ComponentType>> = {
   venta: Venta, inventario: Inventario,

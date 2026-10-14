@@ -12,17 +12,17 @@ function decodePdfText(pdf) {
   return Buffer.from(hexSegments, 'hex').toString('latin1')
 }
 
-test('buildReportPdf genera un PDF completo con resumen y inventario', async () => {
+test('buildReportPdf conserva el detalle de productos y muestra solo la tarjeta de total vendido', async () => {
   const pdf = await buildReportPdf({
     fecha: '2026-09-21',
-    destinatarios: ['gabrielaempresa572@gmail.com'],
     total: 1250,
-    pares: 20,
-    stockTotal: 56,
-    inventario: [
-      { nombre: 'GA-0810 · Herrajes de adidas', vendidos: 0, quedan: '45 unidades' },
-      { nombre: 'ZU-0616 · Suela de zapato nike', vendidos: 0, quedan: '11 pares' },
-    ],
+    cantidadVentas: 3,
+    inventario: [{
+      nombre: 'GA-0810 · Herrajes',
+      vendidos: 2,
+      totalVenta: 1250,
+      quedan: '45 unidades',
+    }],
   })
 
   const text = decodePdfText(pdf)
@@ -30,10 +30,35 @@ test('buildReportPdf genera un PDF completo con resumen y inventario', async () 
   assert.ok(Buffer.isBuffer(pdf))
   assert.match(pdf.toString('latin1').slice(0, 5), /^%PDF-/)
   assert.match(text, /Reporte diario|Reporte del día/)
-  assert.match(text, /VENDIDO|Vendido/)
-  assert.match(text, /PARES|Pares/)
-  assert.match(text, /EN INVENTARIO|En inventario/)
+  assert.match(text, /TOTAL VENDIDO/)
+  assert.match(text, /\$1\.250/)
+  assert.match(text, /Productos vendidos e inventario/)
+  assert.match(text, /Cantidad/)
+  assert.match(text, /Total vendido/)
+  assert.match(text, /Queda en inventario/)
   assert.match(text, /GA-0810/)
-  assert.match(text, /ZU-0616/)
-  assert.match(text, /Herrajes de adidas/)
+  assert.match(text, /45 unidades/)
+  assert.doesNotMatch(text, /EN INVENTARIO/)
+})
+
+test('buildReportPdf pagina los productos y mantiene el detalle de inventario', async () => {
+  const pdf = await buildReportPdf({
+    fecha: '2026-09-21',
+    total: 78000,
+    cantidadVentas: 12,
+    inventario: Array.from({ length: 40 }, (_, index) => ({
+      nombre: `Producto ${index + 1}`,
+      vendidos: index,
+      totalVenta: index * 1000,
+      quedan: `${100 - index} pares`,
+    })),
+  })
+  const text = decodePdfText(pdf)
+  const pageCount = [...pdf.toString('latin1').matchAll(/\/Type\s*\/Page\b/g)].length
+
+  assert.ok(pageCount > 1)
+  assert.match(text, /TOTAL VENDIDO/)
+  assert.match(text, /Producto 40/)
+  assert.match(text, /continuación/)
+  assert.doesNotMatch(text, /EN INVENTARIO/)
 })

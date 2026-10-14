@@ -3,7 +3,7 @@
 Sistema de inventario y ventas para una peletería (venta de suelas, plantillas
 y demás insumos de zapatería), con dos roles — **vendedor** (registra ventas
 y consulta inventario) y **administrador** (todos los módulos, incluyendo
-inventario, movimientos, reportes, usuarios y correo diario).
+inventario, movimientos, reportes, usuarios y descarga de reportes diarios).
 
 **Stack:** React + TypeScript + Vite + Tailwind CSS · Supabase (Postgres +
 Auth + Storage).
@@ -32,8 +32,8 @@ el contenido de cada archivo (o usa la CLI de Supabase, ver más abajo):
    trigger que crea el perfil de cada usuario nuevo.
 3. `supabase/migrations/20260913000003_rls.sql` — Row Level Security.
 4. `supabase/migrations/20260913000004_storage.sql` — buckets de Storage
-   (`productos`, público, fotos de catálogo; `reportes`, privado, snapshot
-   del cierre diario) y sus políticas.
+   (`productos`, público, fotos de catálogo; `reportes`, privado, usado por
+   compatibilidad con snapshots anteriores) y sus políticas.
 5. `supabase/migrations/20260913000005_caja.sql` — apertura, cierre y ventas
   condicionadas a caja abierta.
 6. `supabase/migrations/20260913000006_auditoria.sql` — auditoría de ventas,
@@ -43,8 +43,8 @@ el contenido de cada archivo (o usa la CLI de Supabase, ver más abajo):
 8. `supabase/migrations/20260913000008_user_deletion.sql` — permite eliminar
    usuarios sin borrar sus ventas históricas.
 9. `supabase/migrations/20260913000009_envios_correo_destinatarios.sql` —
-   agrega los campos requeridos para guardar el historial y destinatarios de
-   los reportes de correo diario en proyectos con esquema anterior.
+   conserva compatibilidad con instalaciones anteriores; la descarga de PDF
+   no usa destinatarios ni registra envíos.
 10. `supabase/seed.sql` — tipos de producto + catálogo de ejemplo (16
    productos, igual que el prototipo). **Esta app no siembra ventas ni
    movimientos falsos** — a diferencia del prototipo de demostración, aquí
@@ -71,8 +71,8 @@ psql "$(supabase db url --db-url)" -f supabase/seed.sql
 cp .env.example .env.local
 ```
 
-y completa `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` con los datos del
-paso 1.
+y completa las variables indicadas en `.env.example`. La descarga del PDF no
+utiliza SMTP ni credenciales de correo.
 
 ## 4 · Crea tu primer administrador
 
@@ -114,31 +114,17 @@ npm run lint      # oxlint
 
 - **Fotos de producto** se suben a Storage (`bucket productos`, público) desde
   el formulario de Nuevo/Actualizar producto.
-- **Correo diario**: "Ver y enviar prueba" arma la vista previa con datos
-  reales de Supabase y, al presionar "Enviar ahora", sube un snapshot JSON del
-  cierre a Storage (`bucket reportes`, privado), deja constancia en
-  `envios_correo` y envía el reporte desde el backend. En Render Free se puede
-  usar Gmail API configurando `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`,
-  `GMAIL_REFRESH_TOKEN` y `EMAIL_FROM` con la cuenta Gmail autorizada. Habilita
-  Gmail API en Google Cloud, crea un cliente OAuth y obtiene un refresh token
-  con el scope `https://www.googleapis.com/auth/gmail.send`. Guarda estos
-  valores únicamente en Render, nunca en Vercel ni en variables `VITE_*`.
-  Para generar las credenciales: habilita Gmail API en un proyecto de Google
-  Cloud, configura la pantalla de consentimiento OAuth, crea un OAuth Client ID
-  y autoriza la cuenta remitente con el scope indicado (por ejemplo, desde
-  OAuth 2.0 Playground usando el cliente propio). Copia Client ID, Client
-  Secret y Refresh Token como variables privadas en Render. Si la aplicación
-  OAuth queda en modo de prueba, Google puede hacer expirar el refresh token;
-  revisa el estado de publicación y las reglas vigentes de Google antes de
-  usarlo de forma continua.
-  Alternativamente, Resend requiere un dominio propio verificado. Render Free
-  bloquea SMTP saliente en los puertos 25, 465 y 587; en otros servidores se
-  puede usar SMTP con `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` y
-  `EMAIL_FROM` (para STARTTLS por el puerto 587, `EMAIL_SECURE=false`). El
-  destinatario por defecto es `gabrielaempresa572@gmail.com`, y se puede
-  sobreescribir por lista dinámica del panel. La sección de destinatarios
-  permite seleccionar cuentas activas desde `profiles`; la selección se
-  guarda en `destinatarios_correo`.
+- **Reporte diario**: permite elegir una fecha y revisar los productos vendidos
+  con cantidad, total y existencias actuales. El PDF muestra solo la tarjeta
+  del total vendido y debajo el detalle de productos e inventario, sin tarjetas
+  resumen de pares o inventario. El endpoint autenticado `POST /reports/pdf`
+  del servidor Node genera el PDF y solo permite la descarga a administradores
+  activos. Hay que desplegar la versión actual del backend para que incluya la
+  tabla; la aplicación detecta si el servidor todavía responde con una plantilla
+  antigua. El servidor también debe estar disponible junto con la aplicación;
+  `VITE_EMAIL_API_URL` configura su dirección (por defecto
+  `http://localhost:3001`). Aunque el nombre de esta variable conserva "EMAIL"
+  por compatibilidad, apunta al backend general.
 - **Usuarios**: las cuentas se crean con Supabase Auth desde el endpoint
   `/users` del servidor y el trigger de base de datos crea el perfil inicial.
   El servidor asigna el rol solicitado y revierte la cuenta Auth si no logra
@@ -182,7 +168,7 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
   - `20260913000006_auditoria.sql`
   - `20260913000007_timezone_caja.sql`
   - `20260913000008_user_deletion.sql`
-  - `20260913000009_envios_correo_destinatarios.sql`
+  - `20260913000009_envios_correo_destinatarios.sql` (compatibilidad con instalaciones anteriores)
 - [ ] Confirmar que existen los enums: `rol_usuario`, `unidad_venta`,
   `metodo_pago`, `movimiento_tipo`, `estado_caja`.
 - [ ] Revisar que no haya funciones duplicadas ni triggers repetidos.
@@ -212,8 +198,12 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
 - [ ] Definir `VITE_SUPABASE_ANON_KEY`.
 - [ ] Revisar que la app no use claves secretas en el frontend.
 - [ ] Confirmar que el dominio de producción esté permitido en Supabase Auth.
-- [ ] Si se usa correo real en Render, configurar Gmail API o Resend en el
-  servicio del backend; nunca poner credenciales privadas en Vercel.
+- [ ] Configurar `VITE_EMAIL_API_URL` con la dirección del backend y comprobar
+  que el servidor pueda acceder a Supabase.
+- [ ] En el backend, definir `SUPABASE_URL` y `SUPABASE_ANON_KEY`. Definir
+  `SUPABASE_SECRET_KEY` solo si se registran usuarios desde la aplicación.
+- [ ] No hace falta configurar `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`,
+  `EMAIL_PASS` ni otras credenciales de correo para descargar reportes PDF.
 
 ### 6.5 · Datos iniciales
 
@@ -242,13 +232,13 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
 - [ ] Probar ajuste manual.
 - [ ] Revisar que `movimientos` quede consistente con ventas, entradas y devoluciones.
 
-### 6.8 · Reportes, facturas y correo
+### 6.8 · Reportes y facturas
 
 - [ ] Validar que la pantalla de reportes muestre facturas y caja con formato limpio.
 - [ ] Probar exportación CSV.
 - [ ] Revisar visualización de detalle de factura.
-- [ ] Probar correo diario con un envío real de prueba.
-- [ ] Verificar que el snapshot se suba al bucket `reportes` y quede en `envios_correo`.
+- [ ] Descargar el reporte diario en PDF para hoy y para una fecha anterior.
+- [ ] Revisar que el PDF incluya el inventario completo en una o varias páginas.
 
 ### 6.9 · Pruebas finales antes de go-live
 
@@ -276,4 +266,4 @@ render visual de todas las pantallas y modales (con datos vacíos, sin
 backend). Antes de usarlo en producción, aplica las migraciones en un
 proyecto de prueba y recorre al menos una vez el flujo completo: crear
 usuario → iniciar sesión → crear producto (con foto) → vender → ver factura →
-reportes → devolución → correo diario.
+reportes → devolución → descargar reporte diario.

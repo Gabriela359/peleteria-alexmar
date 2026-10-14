@@ -5,7 +5,6 @@ import { useProductos } from '../hooks/useProductos'
 import { useVentas } from '../hooks/useVentas'
 import { cop, delta, detalle, esHoy, fecha, hhmm, hoyLargo, paresDe } from '../lib/format'
 import { textoCantidadVenta } from '../lib/ventasCaja.js'
-import { useConfiguracion } from '../hooks/useCorreo'
 import { AlertTriangleIcon } from '../components/Icons'
 import { Btn, Card, CardTitle, EmptyRow } from '../components/ui'
 
@@ -13,11 +12,10 @@ const NOM_DIA = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
 
 export default function Panel() {
   const { profile } = useAuth()
-  const { openModal } = useUI()
+  const { openModal, setScreen } = useUI()
   const isAdmin = profile?.rol === 'admin'
   const { data: productos = [] } = useProductos()
   const { data: ventas = [] } = useVentas()
-  const { data: config } = useConfiguracion()
 
   const data = useMemo(() => {
     const hoy = new Date(); hoy.setHours(0, 0, 0, 0)
@@ -72,9 +70,9 @@ export default function Panel() {
       <div className="flex flex-wrap gap-3 items-end justify-between mb-5">
         <div>
           <h1 className="text-2xl font-bold m-0 mb-1">Panel del día</h1>
-          <div className="text-sm text-gris-500">{hoyLargo()} · corte automático a las {config?.hora_envio ?? '—'}</div>
+          <div className="text-sm text-gris-500">{hoyLargo()}</div>
         </div>
-        <Btn variant="cta" onClick={() => openModal('correo')}>Ver reporte diario</Btn>
+        <Btn variant="cta" onClick={() => setScreen('reporte-diario')}>Descargar reporte diario</Btn>
       </div>
 
       <div className="grid gap-4 mb-5 grid-cols-[repeat(auto-fit,minmax(min(100%,210px),1fr))]">
