@@ -117,13 +117,28 @@ npm run lint      # oxlint
 - **Correo diario**: "Ver y enviar prueba" arma la vista previa con datos
   reales de Supabase y, al presionar "Enviar ahora", sube un snapshot JSON del
   cierre a Storage (`bucket reportes`, privado), deja constancia en
-  `envios_correo` y también dispara un servicio del backend por SMTP con
-  Nodemailer. El destinatario por defecto es `gabrielaempresa572@gmail.com`,
-  y se puede sobreescribir por lista dinámica del panel. La sección de
-  destinatarios permite seleccionar cuentas activas desde `profiles`; la
-  selección se guarda en `destinatarios_correo`. Para habilitarlo real,
-  completa `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` y
-  `EMAIL_FROM` en `.env.local` y levanta el servidor con `npm run server`.
+  `envios_correo` y envía el reporte desde el backend. En Render Free se puede
+  usar Gmail API configurando `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`,
+  `GMAIL_REFRESH_TOKEN` y `EMAIL_FROM` con la cuenta Gmail autorizada. Habilita
+  Gmail API en Google Cloud, crea un cliente OAuth y obtiene un refresh token
+  con el scope `https://www.googleapis.com/auth/gmail.send`. Guarda estos
+  valores únicamente en Render, nunca en Vercel ni en variables `VITE_*`.
+  Para generar las credenciales: habilita Gmail API en un proyecto de Google
+  Cloud, configura la pantalla de consentimiento OAuth, crea un OAuth Client ID
+  y autoriza la cuenta remitente con el scope indicado (por ejemplo, desde
+  OAuth 2.0 Playground usando el cliente propio). Copia Client ID, Client
+  Secret y Refresh Token como variables privadas en Render. Si la aplicación
+  OAuth queda en modo de prueba, Google puede hacer expirar el refresh token;
+  revisa el estado de publicación y las reglas vigentes de Google antes de
+  usarlo de forma continua.
+  Alternativamente, Resend requiere un dominio propio verificado. Render Free
+  bloquea SMTP saliente en los puertos 25, 465 y 587; en otros servidores se
+  puede usar SMTP con `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_USER`, `EMAIL_PASS` y
+  `EMAIL_FROM` (para STARTTLS por el puerto 587, `EMAIL_SECURE=false`). El
+  destinatario por defecto es `gabrielaempresa572@gmail.com`, y se puede
+  sobreescribir por lista dinámica del panel. La sección de destinatarios
+  permite seleccionar cuentas activas desde `profiles`; la selección se
+  guarda en `destinatarios_correo`.
 - **Usuarios**: las cuentas se crean con Supabase Auth desde el endpoint
   `/users` del servidor y el trigger de base de datos crea el perfil inicial.
   El servidor asigna el rol solicitado y revierte la cuenta Auth si no logra
@@ -197,8 +212,8 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
 - [ ] Definir `VITE_SUPABASE_ANON_KEY`.
 - [ ] Revisar que la app no use claves secretas en el frontend.
 - [ ] Confirmar que el dominio de producción esté permitido en Supabase Auth.
-- [ ] Si se usa correo real, completar `EMAIL_HOST`, `EMAIL_PORT`,
-  `EMAIL_USER`, `EMAIL_PASS` y `EMAIL_FROM` en `.env.local`.
+- [ ] Si se usa correo real en Render, configurar Gmail API o Resend en el
+  servicio del backend; nunca poner credenciales privadas en Vercel.
 
 ### 6.5 · Datos iniciales
 

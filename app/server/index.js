@@ -45,6 +45,11 @@ const server = http.createServer(async (req, res) => {
 
   const pathname = new URL(req.url || '/', 'http://localhost').pathname
   if (req.method === 'GET' && pathname === '/health') {
+    const gmailConfigured = !!(process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET &&
+      process.env.GMAIL_REFRESH_TOKEN && process.env.EMAIL_FROM)
+    const resendConfigured = !!(process.env.RESEND_API_KEY && process.env.EMAIL_FROM)
+    const smtpConfigured = !!(process.env.EMAIL_HOST && process.env.EMAIL_PORT &&
+      process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_FROM)
     res.statusCode = 200
     res.setHeader('Content-Type', 'application/json')
     res.end(JSON.stringify({
@@ -52,6 +57,8 @@ const server = http.createServer(async (req, res) => {
       supabaseConfigured: !!((process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL) &&
         (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY)),
       userRegistrationConfigured: !!(process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY),
+      emailConfigured: gmailConfigured || resendConfigured || smtpConfigured,
+      emailProvider: gmailConfigured ? 'gmail-api' : resendConfigured ? 'resend' : smtpConfigured ? 'smtp' : null,
     }))
     return
   }
@@ -121,6 +128,11 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ ok: true, messageId: result.messageId, recipients: result.recipients }))
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error desconocido'
+    console.error('Error procesando solicitud de API', {
+      pathname,
+      code: error && typeof error === 'object' && 'code' in error ? error.code : undefined,
+      message,
+    })
     res.statusCode = error instanceof UserApiError ? error.status : 500
     res.setHeader('Content-Type', 'application/json')
     res.end(JSON.stringify({ ok: false, error: message }))

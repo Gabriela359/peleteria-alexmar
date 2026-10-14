@@ -104,15 +104,6 @@ export function useRegistrarEnvioCorreo() {
         .map((email) => String(email || '').trim())
         .filter(Boolean)
 
-      const { error } = await supabase.from('envios_correo').insert({
-        fecha: new Date().toISOString().slice(0, 10),
-        total: Number(args.total || 0),
-        pares: Number(args.pares || 0),
-        destinatarios: recipients,
-        storage_path: path,
-      })
-      if (error) throw error
-
       const emailApiUrl = (import.meta.env.VITE_EMAIL_API_URL ?? 'http://localhost:3001').replace(/\/$/, '')
       const snapshot = (args.snapshot as any) || {}
       const snapshotText = JSON.stringify(snapshot, null, 2)
@@ -216,19 +207,41 @@ export function useRegistrarEnvioCorreo() {
       }
 
       const { data: { session } } = await supabase.auth.getSession()
-      const response = await fetch(`${emailApiUrl}/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-        },
-        body: JSON.stringify(emailPayload),
-      })
+      const controller = new AbortController()
+      const timeoutId = window.setTimeout(() => controller.abort(), 90_000)
+      let response: Response
+      try {
+        response = await fetch(`${emailApiUrl}/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+          },
+          body: JSON.stringify(emailPayload),
+          signal: controller.signal,
+        })
+      } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          throw new Error('El servidor tardó demasiado en confirmar el envío. Revisa si llegó el correo antes de volver a intentarlo.')
+        }
+        throw new Error('No se pudo conectar con el servidor de correo. Verifica que Render esté activo e inténtalo de nuevo.')
+      } finally {
+        window.clearTimeout(timeoutId)
+      }
 
       const data = await response.json().catch(() => null)
       if (!response.ok) {
         throw new Error(data?.error || 'No se pudo enviar el correo')
       }
+
+      const { error } = await supabase.from('envios_correo').insert({
+        fecha: new Date().toISOString().slice(0, 10),
+        total: Number(args.total || 0),
+        pares: Number(args.pares || 0),
+        destinatarios: recipients,
+        storage_path: path,
+      })
+      if (error) throw error
 
       return data
     },

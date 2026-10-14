@@ -120,7 +120,9 @@ export default function CorreoPreviewModal() {
           </div>
           <div className="flex justify-end gap-2.5">
             <Btn onClick={closeModal}>Cerrar</Btn>
-            <Btn variant="cta" disabled={enviando} onClick={() => void onEnviar()}>Enviar ahora</Btn>
+            <Btn variant="cta" disabled={enviando} onClick={() => void onEnviar()}>
+              {enviando ? 'Enviando correo…' : 'Enviar ahora'}
+            </Btn>
           </div>
         </div>
       </div>
