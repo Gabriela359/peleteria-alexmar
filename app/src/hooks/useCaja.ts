@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { fechaMinimaHistorial } from '../lib/format'
 import type { Caja } from '../types/database'
 
 const KEY = ['cajas'] as const
@@ -7,10 +8,15 @@ const KEY = ['cajas'] as const
 // Ordenado por id desc para mostrar primero las cajas más recientes.
 // Los consumidores determinan la caja actual comparando la fecha operativa.
 export function useCajas() {
+  const desde = fechaMinimaHistorial()
   return useQuery({
-    queryKey: KEY,
+    queryKey: [...KEY, desde],
     queryFn: async (): Promise<Caja[]> => {
-      const { data, error } = await supabase.from('cajas').select('*').order('id', { ascending: false })
+      const { data, error } = await supabase
+        .from('cajas')
+        .select('*')
+        .gte('fecha', desde)
+        .order('id', { ascending: false })
       if (error) throw error
       return data
     },

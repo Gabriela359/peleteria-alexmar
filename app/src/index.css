@@ -80,6 +80,25 @@ html, body {
 input, button, select, textarea { font-family: inherit; }
 input, select, textarea { max-width: 100%; }
 button { -webkit-tap-highlight-color: transparent; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+select,
+textarea {
+  border-radius: 0.65rem;
+  transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+select:focus,
+textarea:focus {
+  border-color: var(--color-sura-azul-cielo);
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-sura-azul-cielo) 16%, transparent);
+}
+table { border-collapse: separate; border-spacing: 0; }
+thead th { background: var(--color-gris-100); }
+thead th:first-child { border-top-left-radius: 0.55rem; }
+thead th:last-child { border-top-right-radius: 0.55rem; }
+tbody tr { transition: background-color 120ms ease; }
+tbody tr:hover { background-color: var(--color-sura-azul-tint-light); }
 a { color: var(--color-sura-azul-cielo); text-decoration: none; }
 a:hover { color: var(--color-sura-azul-cielo-hover); text-decoration: underline; }
 ::placeholder { color: var(--color-gris-350); }

@@ -18,26 +18,17 @@ export interface Profile {
   created_at: string
 }
 
-export interface TipoProducto {
-  id: string
-  nombre: string
-  con_talla: boolean
-  activo: boolean
-  created_at: string
-}
-
 export interface Producto {
   ref: string
   nombre: string
-  tipo: string
   unidad: Unidad
+  modo_stock: 'total' | 'talla'
   color: string | null
   precio: number
   costo: number
   min: number
   tallas: Record<string, number>
   stock: number
-  foto_url: string | null
   archivado: boolean
   created_at: string
   updated_at: string
@@ -59,7 +50,7 @@ export interface Venta {
 export interface VentaItem {
   id: number
   venta_id: string
-  ref: string
+  ref: string | null
   nombre: string
   talla: string | null
   unidad: Unidad
@@ -126,7 +117,6 @@ export interface Database {
   public: {
     Tables: {
       profiles: TableDef<Profile, Omit<Profile, 'created_at'>, Partial<Pick<Profile, 'nombre' | 'rol' | 'activo'>>>
-      tipos_producto: TableDef<TipoProducto, Omit<TipoProducto, 'id' | 'created_at'>>
       productos: TableDef<Producto, Omit<Producto, 'created_at' | 'updated_at'>>
       ventas: TableDef<Venta, Omit<Venta, 'created_at'>>
       venta_items: TableDef<VentaItem, Omit<VentaItem, 'id'>>
@@ -145,15 +135,19 @@ export interface Database {
       }
       registrar_devolucion: { Args: { p_venta_id: string }; Returns: void }
       registrar_entrada: {
-        Args: { p_ref: string; p_tallas: Record<string, number>; p_proveedor: string | null }
+        Args: { p_ref: string; p_modo_stock: 'total' | 'talla'; p_tallas: Record<string, number>; p_stock: number; p_proveedor: string | null }
+        Returns: void
+      }
+      crear_producto: {
+        Args: { p_ref: string; p_nombre: string; p_color: string | null; p_precio: number; p_costo: number; p_min: number; p_modo_stock: 'total' | 'talla'; p_tallas: Record<string, number>; p_stock: number }
         Returns: void
       }
       registrar_ajuste: {
-        Args: { p_ref: string; p_talla: string | null; p_valor: number; p_motivo: string }
+        Args: { p_ref: string; p_modo_stock: 'total' | 'talla'; p_tallas: Record<string, number>; p_stock: number; p_talla: string | null; p_valor: number; p_motivo: string }
         Returns: void
       }
       archivar_producto: { Args: { p_ref: string; p_archivado: boolean }; Returns: void }
-      ocultar_tipo_producto: { Args: { p_nombre: string; p_ocultar: boolean }; Returns: void }
+      eliminar_producto: { Args: { p_ref: string }; Returns: void }
       abrir_caja: { Args: { p_fondo_inicial: number }; Returns: Caja }
       cerrar_caja: { Args: { p_efectivo_contado: number }; Returns: Caja }
     }

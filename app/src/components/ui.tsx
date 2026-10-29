@@ -6,14 +6,14 @@ export function cx(...parts: (string | false | null | undefined)[]): string {
 }
 
 export function Card({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={cx('min-w-0 bg-sura-blanco border border-sura-azul-divider rounded-2xl p-[clamp(14px,2.6vw,20px)]', className)}>{children}</div>
+  return <div className={cx('min-w-0 bg-sura-blanco border border-sura-azul-divider rounded-xl p-[clamp(16px,2.4vw,24px)] shadow-[0_2px_8px_rgba(75,21,27,0.045)]', className)}>{children}</div>
 }
 
 export function CardTitle({ children, className }: { children: ReactNode; className?: string }) {
   return <div className={cx('text-sm font-bold uppercase tracking-wide text-sura-azul-prof mb-3.5', className)}>{children}</div>
 }
 
-const BTN_BASE = 'inline-flex items-center justify-center gap-1.5 rounded-full font-bold whitespace-nowrap transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60'
+const BTN_BASE = 'inline-flex items-center justify-center gap-1.5 rounded-lg font-bold whitespace-nowrap transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60'
 const BTN_VARIANTS = {
   cta: 'bg-sura-amarillo text-sura-azul-oscuro hover:bg-sura-amarillo-hover disabled:hover:bg-sura-amarillo',
   primary: 'bg-sura-azul-cielo text-sura-blanco hover:bg-sura-azul-cielo-hover',

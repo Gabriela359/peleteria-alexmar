@@ -36,6 +36,7 @@ describe('ventasCaja helpers', () => {
         ref: 'SU-101',
         nombre: 'Modelo A',
         unidad: 'par',
+        modo_stock: 'talla',
         tallas: { '38': 1 },
         stock: 0,
         precio: 150,
@@ -44,6 +45,23 @@ describe('ventasCaja helpers', () => {
 
     assert.equal(result.ok, false)
     assert.match(result.error, /No hay suficiente stock/i)
+  })
+
+  it('permite vender stock total sin talla y exige talla para stock desglosado', () => {
+    const stockTotal = revisarVentaParaCaja({
+      cajaAbierta: true,
+      carrito: [{ ref: 'SU-200', talla: null, pares: 3 }],
+      productos: [{ ref: 'SU-200', nombre: 'Suela total', unidad: 'par', modo_stock: 'total', tallas: {}, stock: 5 }],
+    })
+    const stockPorTalla = revisarVentaParaCaja({
+      cajaAbierta: true,
+      carrito: [{ ref: 'SU-201', talla: null, pares: 1 }],
+      productos: [{ ref: 'SU-201', nombre: 'Suela por talla', unidad: 'par', modo_stock: 'talla', tallas: { '38': 5 }, stock: 0 }],
+    })
+
+    assert.deepEqual(stockTotal, { ok: true })
+    assert.equal(stockPorTalla.ok, false)
+    if (!stockPorTalla.ok) assert.match(stockPorTalla.error, /seleccionar la talla/i)
   })
 
   it('separa correctamente pares y unidades en ventas mixtas', () => {

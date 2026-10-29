@@ -1,60 +1,104 @@
 import { useState } from 'react'
 import { useUI } from '../../state/ui'
 import { useProductos, useRegistrarAjuste, useRegistrarEntrada } from '../../hooks/useProductos'
-import { porTalla, unidadTxt, paresDe } from '../../lib/format'
+import { paresDe } from '../../lib/format'
 import { Btn } from '../ui'
 
-function digits(v: string) { return v.replace(/[^0-9]/g, '') }
+function digits(value: string) { return value.replace(/[^0-9]/g, '') }
 
-interface Payload { ref?: string; talla?: string | null }
+function parseRango(value: string): string[] | null {
+  const match = value.trim().match(/^(\d{1,2})\s*(?:-|–)\s*(\d{1,2})$/)
+  if (!match) return null
+  const desde = Number(match[1]), hasta = Number(match[2])
+  if (desde < 1 || hasta > 99 || desde > hasta || hasta - desde > 50) return null
+  return Array.from({ length: hasta - desde + 1 }, (_, index) => String(desde + index))
+}
+
+interface Payload { ref?: string }
 
 export default function EntradaModal() {
   const { modalPayload, closeModal, showToast } = useUI()
   const { data: productos = [] } = useProductos()
   const registrarEntrada = useRegistrarEntrada()
   const registrarAjuste = useRegistrarAjuste()
-  const activos = productos.filter((p) => !p.archivado)
+  const activos = productos.filter((product) => !product.archivado)
   const inicial = modalPayload as Payload | null
-
   const [ref, setRef] = useState(inicial?.ref ?? activos[0]?.ref ?? '')
   const [modo, setModo] = useState<'entrada' | 'conteo'>('entrada')
-  const [talla, setTalla] = useState<string | null>(inicial?.talla ?? null)
+  const modeloInicial = activos.find((product) => product.ref === (inicial?.ref ?? activos[0]?.ref))
+  const [modoStock, setModoStock] = useState<'total' | 'talla'>(modeloInicial?.modo_stock ?? 'total')
+  const [rango, setRango] = useState('')
+  const [stock, setStock] = useState('')
   const [proveedor, setProveedor] = useState('')
   const [tallas, setTallas] = useState<Record<string, string>>({})
-  const [conteo, setConteo] = useState('')
+  const [talla, setTalla] = useState<string | null>(null)
+  const [valor, setValor] = useState('')
   const [motivo, setMotivo] = useState('Conteo físico')
   const [enviando, setEnviando] = useState(false)
 
-  const modelo = productos.find((p) => p.ref === ref)
-  const porT = modelo ? porTalla(modelo) : true
-  const tallasDisponibles = modelo && porT ? Object.keys(modelo.tallas).sort() : []
-  const tallaSeleccionada = talla && tallasDisponibles.includes(talla) ? talla : tallasDisponibles[0] ?? null
-  const actual = modelo ? (porT ? Number(modelo.tallas[tallaSeleccionada ?? ''] ?? 0) : Number(modelo.stock ?? 0)) : 0
+  const modelo = productos.find((product) => product.ref === ref)
+  const tallasGuardadas = modelo ? Object.keys(modelo.tallas).sort((a, b) => Number(a) - Number(b)) : []
+  const tallasActuales = tallasGuardadas.length ? tallasGuardadas : parseRango(rango) ?? []
+  const cantidadTallas = tallasActuales.reduce((sum, size) => sum + (Number(tallas[size]) || 0), 0)
+  const actual = modelo ? paresDe(modelo) : 0
 
-  const total = porT
-    ? Object.entries(tallas).filter(([k]) => k !== '__u').reduce((a, [, v]) => a + (Number(v) || 0), 0)
-    : Number(tallas.__u) || 0
+  function seleccionarProducto(nextRef: string) {
+    const seleccionado = activos.find((product) => product.ref === nextRef)
+    setRef(nextRef)
+    setModoStock(seleccionado?.modo_stock ?? 'total')
+    setRango('')
+    setStock('')
+    setProveedor('')
+    setTallas({})
+    setValor('')
+    setTalla(null)
+  }
 
   async function onGuardar() {
     if (!modelo) return
-    if (modo === 'entrada' && total <= 0) { showToast('Indica cuántas ' + unidadTxt(modelo) + ' entran'); return }
-    if (modo === 'conteo' && conteo === '') { showToast('Escribe la cantidad real que contaste'); return }
-    if (modo === 'conteo' && porT && !tallaSeleccionada) { showToast('Elige una talla para corregir'); return }
+    const tallasPayload = Object.fromEntries(tallasActuales.map((size) => [size, Number(tallas[size]) || 0]))
+    if (modoStock === 'talla' && !tallasActuales.length) {
+      showToast('Escribe un rango de tallas válido, por ejemplo 34-40')
+      return
+    }
+    if (modo === 'entrada' && modoStock === 'total' && Number(stock) <= 0) {
+      showToast('Indica cuántos pares entran')
+      return
+    }
+    if (modo === 'entrada' && modoStock === 'talla' && cantidadTallas <= 0) {
+      showToast('Indica cuántos pares entran por talla')
+      return
+    }
+    if (modo === 'conteo' && modoStock === 'total' && valor === '') {
+      showToast('Escribe la cantidad real que contaste')
+      return
+    }
     setEnviando(true)
     try {
       if (modo === 'entrada') {
-        const payload = porT
-          ? Object.fromEntries(Object.entries(tallas).filter(([k, v]) => k !== '__u' && Number(v) > 0).map(([k, v]) => [k, Number(v)]))
-          : { __u: Number(tallas.__u) || 0 }
-        await registrarEntrada.mutateAsync({ ref: modelo.ref, tallas: payload, proveedor: proveedor.trim() || null })
-        showToast('Existencias aumentadas · +' + total + ' ' + unidadTxt(modelo))
+        await registrarEntrada.mutateAsync({
+          ref: modelo.ref,
+          modo_stock: modoStock,
+          tallas: modoStock === 'talla' ? tallasPayload : {},
+          stock: modoStock === 'total' ? Number(stock) : 0,
+          proveedor: proveedor.trim() || null,
+        })
+        showToast('Existencias actualizadas')
       } else {
-        await registrarAjuste.mutateAsync({ ref: modelo.ref, talla: porT ? tallaSeleccionada : null, valor: Number(conteo), motivo })
+        await registrarAjuste.mutateAsync({
+          ref: modelo.ref,
+          modo_stock: modoStock,
+          tallas: modoStock === 'talla' ? tallasPayload : {},
+          stock: modoStock === 'total' ? Number(valor) : 0,
+          talla: modoStock === 'talla' ? talla : null,
+          valor: Number(valor) || 0,
+          motivo,
+        })
         showToast('Existencias corregidas')
       }
       closeModal()
-    } catch (err) {
-      showToast(err instanceof Error ? err.message : 'No se pudieron guardar las existencias')
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'No se pudieron guardar las existencias')
     } finally {
       setEnviando(false)
     }
@@ -62,94 +106,98 @@ export default function EntradaModal() {
 
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,63,0.55)] z-[90] grid place-items-center p-[clamp(8px,3vw,32px)] overflow-auto" onClick={closeModal}>
-      <div onClick={(e) => e.stopPropagation()} className="w-[min(560px,95vw)] max-h-[92vh] overflow-y-auto bg-sura-blanco rounded-2xl p-[clamp(12px,3vw,20px)] shadow-2xl">
+      <div onClick={(event) => event.stopPropagation()} className="w-[min(600px,95vw)] max-h-[92vh] overflow-y-auto bg-sura-blanco rounded-2xl p-[clamp(12px,3vw,20px)] shadow-2xl">
         <h2 className="text-xl text-sura-azul-prof m-0 mb-1">Actualizar stock</h2>
-        <div className="text-[13px] text-gris-500 mb-4">Elige si llegó mercancía o si vas a corregir la cantidad después de contar.</div>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,210px),1fr))] gap-2 mb-4">
-          {([{ key: 'entrada', label: 'Llegó mercancía', desc: 'Sumar las unidades o pares recibidos' }, { key: 'conteo', label: 'Conté lo que hay', desc: 'Reemplazar el stock por la cantidad real' }] as const).map((opcion) => (
-            <button key={opcion.key} onClick={() => { setModo(opcion.key); setTallas({}); setConteo('') }}
-              aria-pressed={modo === opcion.key}
-              className={`text-left rounded-xl border-2 px-3 py-2.5 cursor-pointer ${modo === opcion.key ? 'border-sura-azul-cielo bg-sura-azul-tint' : 'border-sura-azul-divider bg-sura-blanco'}`}>
-              <span className="block text-sm font-bold">{opcion.label}</span>
-              <span className="block text-xs text-gris-500 mt-0.5">{opcion.desc}</span>
+        <div className="text-[13px] text-gris-500 mb-4">Registra la entrada o corrige el conteo del producto.</div>
+
+        <div className="grid grid-cols-2 gap-2 mb-4">
+          {([{ key: 'entrada', label: 'Llegó mercancía' }, { key: 'conteo', label: 'Conteo real' }] as const).map((option) => (
+            <button key={option.key} onClick={() => { setModo(option.key); setStock(''); setTallas({}); setValor('') }} aria-pressed={modo === option.key}
+              className={`rounded-xl border-2 px-3 py-2.5 text-sm font-bold cursor-pointer ${modo === option.key ? 'border-sura-azul-cielo bg-sura-azul-tint' : 'border-sura-azul-divider bg-sura-blanco'}`}>
+              {option.label}
             </button>
           ))}
         </div>
+
         <div className="grid gap-3.5 mb-4 grid-cols-[repeat(auto-fit,minmax(min(100%,210px),1fr))]">
           <label className="grid gap-1.5 min-w-0"><span className="text-xs font-bold text-gris-500">Producto</span>
-            <select value={ref} onChange={(e) => { const seleccionado = activos.find((m) => m.ref === e.target.value); setRef(e.target.value); setTalla(seleccionado && porTalla(seleccionado) ? Object.keys(seleccionado.tallas).sort()[0] ?? null : null); setTallas({}); setConteo('') }}
+            <select value={ref} onChange={(event) => seleccionarProducto(event.target.value)}
               className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-sm outline-none w-full focus:border-b-sura-azul-cielo">
-              {activos.map((m) => <option key={m.ref} value={m.ref}>{m.ref} · {m.nombre}</option>)}
+              {activos.map((product) => <option key={product.ref} value={product.ref}>{product.ref} · {product.nombre}</option>)}
             </select>
           </label>
+          <div className="grid gap-1.5 min-w-0">
+            <span className="text-xs font-bold text-gris-500">Forma de control</span>
+            <div className="flex gap-2">
+              {([
+                { key: 'total', label: 'Total' },
+                { key: 'talla', label: 'Por talla' },
+              ] as const).map((option) => (
+                <button key={option.key} onClick={() => { setModoStock(option.key); setStock(''); setTallas({}); setValor('') }} aria-pressed={modoStock === option.key}
+                  className={`flex-1 rounded-xl border px-3 py-2 text-sm font-bold cursor-pointer ${modoStock === option.key ? 'border-sura-azul-cielo bg-sura-azul-tint text-sura-azul-prof' : 'border-gris-300 bg-sura-blanco text-gris-500'}`}>
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
           {modo === 'entrada' && (
-            <label className="grid gap-1.5 min-w-0"><span className="text-xs font-bold text-gris-500">Proveedor (opcional)</span>
-              <input value={proveedor} onChange={(e) => setProveedor(e.target.value)} placeholder="Nombre del proveedor"
+            <label className="grid gap-1.5 max-w-sm mb-4"><span className="text-xs font-bold text-gris-500">Proveedor (opcional)</span>
+              <input value={proveedor} onChange={(event) => setProveedor(event.target.value)} placeholder="Nombre del proveedor"
                 className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-sm outline-none w-full focus:border-b-sura-azul-cielo" />
             </label>
           )}
         </div>
-        {modo === 'entrada' ? (
-          <>
-            <div className="text-sm font-bold text-sura-azul-prof mb-2.5">{porT ? '¿Cuántos pares llegaron de cada talla?' : '¿Cuántas unidades llegaron?'}</div>
-            {!porT && modelo && (
-              <div className="flex items-center gap-3.5 mb-[18px]">
-                <input value={tallas.__u ?? ''} onChange={(e) => setTallas({ __u: digits(e.target.value) })} placeholder="0"
-                  className="w-[140px] border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-base outline-none text-right tabular-nums focus:border-b-sura-azul-cielo" />
-                <span className="text-[13px] text-gris-500">Actualmente hay {paresDe(modelo)} {unidadTxt(modelo)}</span>
-              </div>
-            )}
-            {porT && modelo && (
-              <div className="flex flex-wrap gap-2.5 mb-[18px]">
-                {tallasDisponibles.map((t) => (
-                  <label key={t} className="w-[84px] border border-sura-azul-divider rounded-xl p-2.5 bg-sura-azul-tint-light">
-                    <span className="block text-[13px] font-bold mb-0.5">Talla {t}</span>
-                    <span className="block text-[11px] text-gris-500 mb-1.5">Hay {modelo.tallas[t]}</span>
-                    <input aria-label={'Pares recibidos talla ' + t} value={tallas[t] ?? ''} onChange={(e) => setTallas((s) => ({ ...s, [t]: digits(e.target.value) }))}
-                      className="w-full border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-2 py-1.5 text-sm outline-none text-right focus:border-b-sura-azul-cielo" />
-                  </label>
-                ))}
-              </div>
-            )}
-          </>
+
+        {modoStock === 'total' ? (
+          <div className="grid gap-1.5 mb-4">
+            <label className="grid gap-1.5 max-w-xs"><span className="text-xs font-bold text-gris-500">{modo === 'entrada' ? 'Pares que ingresan' : 'Cantidad total contada'}</span>
+              <input value={modo === 'entrada' ? stock : valor} onChange={(event) => modo === 'entrada' ? setStock(digits(event.target.value)) : setValor(digits(event.target.value))} placeholder="0"
+                className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-sm outline-none w-full text-right tabular-nums focus:border-b-sura-azul-cielo" />
+            </label>
+            {modo === 'entrada' && modelo?.modo_stock === 'talla' && <div className="text-xs text-gris-500">El total actual por talla se sumará a esta cantidad y pasará a control total.</div>}
+            {modo === 'conteo' && modelo?.modo_stock === 'talla' && <div className="text-xs text-gris-500">El conteo total reemplazará las cantidades existentes por talla.</div>}
+          </div>
         ) : (
           <>
-            {porT && (
-              <div className="mb-3.5">
-                <div className="text-xs font-bold text-gris-500 mb-1.5">Talla que contaste</div>
-                <div className="flex flex-wrap gap-1.5">
-                  {tallasDisponibles.map((t) => (
-                    <button key={t} onClick={() => { setTalla(t); setConteo('') }}
-                      className={`rounded-full px-3 py-1.5 text-xs font-bold border cursor-pointer ${tallaSeleccionada === t ? 'border-sura-azul-cielo bg-sura-azul-cielo text-sura-blanco' : 'border-gris-300 bg-sura-blanco text-gris-500'}`}>
-                      {t} · hay {modelo?.tallas[t] ?? 0}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            {modelo?.modo_stock === 'total' && <div className="text-xs text-gris-500 mb-2">Este desglose reemplazará el stock total actual ({actual} pares).</div>}
+            {modo === 'entrada' && modelo?.modo_stock === 'total' && <div className="text-xs text-gris-500 mb-2">Al ingresar cantidades por talla, estas reemplazarán el total que no tiene desglose.</div>}
+            {!tallasGuardadas.length && (
+              <label className="grid gap-1.5 max-w-xs mb-3.5"><span className="text-xs font-bold text-gris-500">Rango de tallas</span>
+                <input value={rango} onChange={(event) => { setRango(event.target.value); setTallas({}) }} placeholder="34-40"
+                  className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-sm outline-none w-full focus:border-b-sura-azul-cielo" />
+              </label>
             )}
-            <div className="grid gap-3.5 mb-4 grid-cols-[repeat(auto-fit,minmax(min(100%,190px),1fr))]">
-              <label className="grid gap-1.5 min-w-0"><span className="text-xs font-bold text-gris-500">Cantidad real que contaste ({modelo ? unidadTxt(modelo) : 'unidades'})</span>
-                <input value={conteo} onChange={(e) => setConteo(digits(e.target.value))} placeholder="Escribe la cantidad"
-                  className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-sm outline-none w-full text-right tabular-nums focus:border-b-sura-azul-cielo" />
-              </label>
-              <label className="grid gap-1.5 min-w-0"><span className="text-xs font-bold text-gris-500">Motivo</span>
-                <select value={motivo} onChange={(e) => setMotivo(e.target.value)}
-                  className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-sm outline-none w-full focus:border-b-sura-azul-cielo">
-                  {['Conteo físico', 'Rotura', 'Muestra', 'Pérdida'].map((opcion) => <option key={opcion}>{opcion}</option>)}
-                </select>
-              </label>
+            {modo === 'conteo' && <div className="text-xs text-gris-500 mb-2">Escribe el conteo real de cada talla. Este desglose reemplazará las existencias anteriores.</div>}
+            <div className="flex flex-wrap gap-2.5 mb-4">
+              {tallasActuales.map((size) => (
+                <label key={size} className="w-[84px] border border-sura-azul-divider rounded-xl p-2.5 bg-sura-azul-tint-light">
+                  <span className="block text-[13px] font-bold mb-0.5">Talla {size}</span>
+                  <span className="block text-[11px] text-gris-500 mb-1.5">Hay {modelo?.tallas[size] ?? 0}</span>
+                  <input aria-label={(modo === 'entrada' ? 'Pares que ingresan talla ' : 'Conteo real talla ') + size}
+                    value={tallas[size] ?? ''} onChange={(event) => setTallas((current) => ({ ...current, [size]: digits(event.target.value) }))}
+                    className="w-full border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-2 py-1.5 text-sm outline-none text-right focus:border-b-sura-azul-cielo" />
+                </label>
+              ))}
             </div>
-            <div className="bg-sura-azul-tint border border-sura-azul-chip rounded-xl px-3.5 py-3 text-[13px] text-sura-azul-prof mb-[18px]">
-              En el sistema hay {actual} {modelo ? unidadTxt(modelo) : 'unidades'}. {conteo !== '' && `Quedarán ${conteo} ${modelo ? unidadTxt(modelo) : 'unidades'}.`}
-            </div>
+            <div className="text-xs text-gris-500 mb-4">Total {modo === 'entrada' ? 'que ingresa' : 'contado'}: {cantidadTallas} pares</div>
           </>
         )}
-        <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-between items-stretch sm:items-center pt-[18px] border-t border-sura-azul-divider">
-          <div className="text-sm text-gris-500">{modo === 'entrada' ? <>Se sumarán: <strong className="text-lg text-gris-900">{total} {modelo ? unidadTxt(modelo) : 'pares'}</strong></> : 'La cantidad del sistema quedará reemplazada por el conteo.'}</div>
-          <div className="flex flex-col-reverse sm:flex-row gap-2.5">
-            <Btn className="w-full sm:w-auto" onClick={closeModal}>Cancelar</Btn>
-            <Btn className="w-full sm:w-auto" variant="cta" disabled={enviando || !modelo} onClick={() => void onGuardar()}>{modo === 'entrada' ? 'Agregar al stock' : 'Guardar cantidad real'}</Btn>
-          </div>
+
+        {modo === 'conteo' && (
+          <label className="grid gap-1.5 mb-4 max-w-xs"><span className="text-xs font-bold text-gris-500">Motivo</span>
+            <select value={motivo} onChange={(event) => setMotivo(event.target.value)}
+              className="border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3 py-2.5 text-sm outline-none w-full focus:border-b-sura-azul-cielo">
+              {['Conteo físico', 'Rotura', 'Muestra', 'Pérdida'].map((option) => <option key={option}>{option}</option>)}
+            </select>
+          </label>
+        )}
+
+        <div className="bg-sura-azul-tint border border-sura-azul-chip rounded-xl px-3.5 py-3 text-[13px] text-sura-azul-prof mb-[18px]">
+          Stock actual: {actual} pares. {modo === 'entrada' && modoStock === 'total' && modelo?.modo_stock === 'total' && `Quedarán ${actual + (Number(stock) || 0)} pares.`}
+        </div>
+        <div className="flex flex-col-reverse sm:flex-row gap-2.5 justify-end pt-[18px] border-t border-sura-azul-divider">
+          <Btn onClick={closeModal}>Cancelar</Btn>
+          <Btn variant="cta" disabled={enviando || !modelo} onClick={() => void onGuardar()}>{enviando ? 'Guardando…' : modo === 'entrada' ? 'Guardar entrada' : 'Guardar conteo'}</Btn>
         </div>
       </div>
     </div>

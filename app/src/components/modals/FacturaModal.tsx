@@ -41,7 +41,7 @@ export default function FacturaModal() {
                 <span className="w-[62px] text-right">{cop(it.pares * it.precio)}</span>
               </div>
               <div className="text-gris-500">
-                {it.ref + (it.talla ? ' · talla ' + it.talla : '') + ' · ' + it.pares + ' ' + (it.unidad === 'unidad' ? (it.pares === 1 ? 'unidad' : 'unidades') : (it.pares === 1 ? 'par' : 'pares')) + ' × ' + cop(it.precio)}
+                {(it.ref ? it.ref + ' · ' : '') + (it.talla ? 'talla ' + it.talla + ' · ' : '') + it.pares + ' ' + (it.unidad === 'unidad' ? (it.pares === 1 ? 'unidad' : 'unidades') : (it.pares === 1 ? 'par' : 'pares')) + ' × ' + cop(it.precio)}
               </div>
             </div>
           ))}

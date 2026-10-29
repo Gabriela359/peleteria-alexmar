@@ -36,7 +36,15 @@ export default function AjusteModal() {
     if (valor === '' || isNaN(Number(valor))) { showToast('Escribe las ' + unidadTxt(modelo) + ' que contaste'); return }
     setEnviando(true)
     try {
-      await registrar.mutateAsync({ ref: modelo.ref, talla: porT ? talla : null, valor: Number(valor), motivo })
+      await registrar.mutateAsync({
+        ref: modelo.ref,
+        modo_stock: modelo.modo_stock,
+        tallas: {},
+        stock: porT ? 0 : Number(valor),
+        talla: porT ? talla : null,
+        valor: Number(valor),
+        motivo,
+      })
       showToast('Ajuste guardado')
       closeModal()
     } catch (err) {

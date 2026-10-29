@@ -9,6 +9,7 @@ type ProductoCajaLike = {
   ref: string
   nombre: string
   unidad: 'par' | 'unidad'
+  modo_stock: 'total' | 'talla'
   tallas?: Record<string, number>
   stock?: number
   precio?: number

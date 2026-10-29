@@ -21,7 +21,7 @@ export default function Inventario() {
 
   const data = useMemo(() => {
     const qq = q.toLowerCase()
-    const match = (m: typeof productos[number]) => (m.ref + ' ' + m.nombre + ' ' + m.tipo + ' ' + (m.color ?? '')).toLowerCase().includes(qq)
+    const match = (m: typeof productos[number]) => (m.ref + ' ' + m.nombre + ' ' + (m.color ?? '')).toLowerCase().includes(qq)
     const filtrados = productos.filter(match).filter((m) => {
       if (filtro === 'archivados') return m.archivado
       if (m.archivado) return false
@@ -54,13 +54,12 @@ export default function Inventario() {
           <div className="text-sm text-gris-500">{data.resumen}</div>
           <div className="text-sm text-gris-500 mt-1">
             {isAdmin
-              ? <>Busca un producto. Usa <strong>Editar producto</strong> para cambiar sus datos o <strong>Actualizar stock</strong> para registrar mercancía o corregir cantidades.</>
+              ? <>Busca un producto. Usa <strong>Editar producto</strong> para cambiar sus datos y las acciones de cada producto para actualizar su stock.</>
               : 'Consulta las cantidades disponibles y usa los filtros para encontrar productos.'}
           </div>
         </div>
         {isAdmin && (
           <div className="flex w-full flex-wrap gap-2.5 sm:w-auto">
-            <Btn className="flex-1 sm:flex-none" variant="outlineProf" disabled={!productos.some((m) => !m.archivado)} onClick={() => openModal('entrada')}>Actualizar stock</Btn>
             <Btn className="flex-1 sm:flex-none" variant="cta" onClick={() => openModal('modelo', null)}>Nuevo producto</Btn>
           </div>
         )}
@@ -69,7 +68,7 @@ export default function Inventario() {
       <Card>
         <div className="flex flex-wrap gap-x-3 gap-y-2.5 items-center mb-4">
           <input
-            value={q} onChange={(e) => { setQ(e.target.value); setPag(1) }} placeholder="Buscar referencia, producto, tipo o color"
+            value={q} onChange={(e) => { setQ(e.target.value); setPag(1) }}             placeholder="Buscar referencia, producto o color"
             className="flex-[1_1_220px] min-w-0 border border-gris-300 border-b-2 border-b-gris-500 rounded-t-xl px-3.5 py-2.5 text-sm outline-none focus:border-b-sura-azul-cielo"
           />
           {FILTROS.map(([key, label]) => (
@@ -82,7 +81,7 @@ export default function Inventario() {
               <tr className="bg-gris-100 text-left">
                 <th className="p-3 text-xs uppercase tracking-wide text-gris-500 font-semibold">Ref.</th>
                 <th className="p-3 text-xs uppercase tracking-wide text-gris-500 font-semibold">Producto</th>
-                <th className="p-3 text-xs uppercase tracking-wide text-gris-500 font-semibold">Tipo · color</th>
+                <th className="p-3 text-xs uppercase tracking-wide text-gris-500 font-semibold">Color</th>
                 <th className="p-3 text-xs uppercase tracking-wide text-gris-500 font-semibold">Presentación</th>
                 <th className="p-3 text-xs uppercase tracking-wide text-gris-500 font-semibold text-right">Stock</th>
                 <th className="p-3 text-xs uppercase tracking-wide text-gris-500 font-semibold text-right">Precio</th>
@@ -94,7 +93,7 @@ export default function Inventario() {
             <tbody>
               {data.rows.length === 0 && (
                 <tr>
-                  <td colSpan={isAdmin ? 9 : 7} className="p-6 text-center text-sm text-gris-500">
+                  <td colSpan={isAdmin ? 8 : 6} className="p-6 text-center text-sm text-gris-500">
                     <EmptyRow>No hay productos para mostrar. Prueba otra búsqueda o cambia el filtro.</EmptyRow>
                   </td>
                 </tr>
@@ -104,7 +103,7 @@ export default function Inventario() {
                 const agotado = pares === 0
                 const bajo = !agotado && pares <= m.min
                 const porT = porTalla(m)
-                const keys = porT ? Object.keys(m.tallas).sort() : []
+                const keys = Object.keys(m.tallas).sort((a, b) => Number(a) - Number(b))
                 const agotadas = porT ? keys.filter((k) => Number(m.tallas[k]) === 0).length : 0
                 const estado = m.archivado ? 'Archivado' : agotado ? 'Sin existencias' : bajo ? 'Por reponer' : agotadas ? agotadas + (agotadas === 1 ? ' talla agotada' : ' tallas agotadas') : 'Disponible'
                 const tone = m.archivado ? 'neutral' : agotado ? 'danger' : bajo ? 'warning' : agotadas ? 'warning' : 'success'
@@ -112,10 +111,10 @@ export default function Inventario() {
                   <tr key={m.ref} className="border-b border-sura-azul-divider">
                     <td className="p-3 font-mono text-[13px] text-sura-azul-prof">{m.ref}</td>
                     <td className="p-3 font-bold">{m.nombre}</td>
-                    <td className="p-3 text-gris-500">{m.tipo} · {m.color}</td>
-                    <td className="p-3 text-gris-500 text-[13px]">{porT ? 'Tallas ' + keys[0] + '–' + keys[keys.length - 1] + ' (' + keys.length + ')' : 'Por unidad'}</td>
+                    <td className="p-3 text-gris-500">{m.color || '—'}</td>
+                    <td className="p-3 text-gris-500 text-[13px]">{(porT || keys.length) ? 'Tallas ' + keys[0] + '–' + keys[keys.length - 1] + (porT ? ' (' + keys.length + ')' : ' · total') : 'Total de referencia'}</td>
                     <td className="p-3 text-right tabular-nums font-bold">{pares.toLocaleString('es-CO')} {unidadTxt(m)}</td>
-                    <td className="p-3 text-right tabular-nums whitespace-nowrap">{cop(m.precio)} <span className="text-xs text-gris-350">{porT ? '/ par' : '/ und'}</span></td>
+                    <td className="p-3 text-right tabular-nums whitespace-nowrap">{cop(m.precio)} <span className="text-xs text-gris-350">{m.unidad === 'unidad' ? '/ und' : '/ par'}</span></td>
                     {isAdmin && <td className="p-3 text-right tabular-nums text-success-1">{cop(m.precio - m.costo)}</td>}
                     <td className="p-3"><Badge tone={tone}>{estado}</Badge></td>
                     {isAdmin && (

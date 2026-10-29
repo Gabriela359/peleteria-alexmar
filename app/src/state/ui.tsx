@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useRef, useState } fro
 import type { ReactNode } from 'react'
 import { logger } from '../lib/logger'
 
-export type Screen = 'panel' | 'venta' | 'inventario' | 'movs' | 'reportes' | 'usuarios' | 'reporte-diario'
+export type Screen = 'panel' | 'venta' | 'inventario' | 'movs' | 'reportes' | 'usuarios'
 export type ModalName = 'factura' | 'modelo' | 'entrada'
 export type LogLevel = 'info' | 'success' | 'warn' | 'error'
 

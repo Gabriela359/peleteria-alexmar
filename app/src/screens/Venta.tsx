@@ -52,15 +52,12 @@ export default function Venta() {
 
   const data = useMemo(() => {
     const qq = q.toLowerCase()
-    const match = (m: Producto) => (m.ref + ' ' + m.nombre + ' ' + m.tipo + ' ' + (m.color ?? '')).toLowerCase().includes(qq)
+    const match = (m: Producto) => (m.ref + ' ' + m.nombre + ' ' + (m.color ?? '')).toLowerCase().includes(qq)
     const disponibles = activos.filter(match).filter((m) => {
       if (filtro === 'todos') return true
-      if (filtro === 'disponibles') return paresDe(m) > 0
-      return m.tipo === filtro
+      return paresDe(m) > 0
     })
-    const tiposCat: string[] = []
-    activos.forEach((m) => { if (!tiposCat.includes(m.tipo)) tiposCat.push(m.tipo) })
-    const filtros: [string, string][] = [['todos', 'Todos'], ['disponibles', 'Con stock'], ...tiposCat.map((x): [string, string] => [x, x])]
+    const filtros: [string, string][] = [['todos', 'Todos'], ['disponibles', 'Con stock']]
     return { disponibles, filtros }
   }, [activos, q, filtro])
 
@@ -226,10 +223,10 @@ export default function Venta() {
           {sel && !porTalla(sel) && (
             <Card className="border-2 border-sura-azul-cielo flex flex-wrap gap-4 items-center justify-between">
               <div className="min-w-0">
-                <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof">Paso 2 · cuántas unidades</div>
+                <div className="text-xs font-bold uppercase tracking-wide text-sura-azul-prof">Paso 2 · cantidad total: {unidadTxt(sel)}</div>
                 <div className="text-[17px] font-bold mt-1">{sel.ref} · {sel.nombre} · {sel.color}</div>
                 <div className="mt-2 flex flex-wrap gap-2 text-[12px]">
-                  <span className="rounded-full bg-sura-azul-tint px-2.5 py-1 font-bold text-sura-azul-prof">{cop(sel.precio)} / unidad</span>
+                  <span className="rounded-full bg-sura-azul-tint px-2.5 py-1 font-bold text-sura-azul-prof">{cop(sel.precio)} / {unidadTxt(sel) === 'unidades' ? 'unidad' : 'par'}</span>
                   <span className="rounded-full bg-gris-100 px-2.5 py-1 font-bold text-gris-500">Stock: {paresDe(sel)} {unidadTxt(sel)}</span>
                 </div>
               </div>
@@ -279,7 +276,7 @@ export default function Venta() {
                   >
                     <span className="flex-[1_1_190px] min-w-0 grid gap-0.5">
                       <span className="text-sm font-bold break-words">{m.nombre}</span>
-                      <span className="text-xs text-gris-500"><span className="font-mono text-sura-azul-prof">{m.ref}</span> · {m.tipo} · {m.color}</span>
+                      <span className="text-xs text-gris-500"><span className="font-mono text-sura-azul-prof">{m.ref}</span> · {m.color || 'Sin color'}</span>
                     </span>
                     <span className={`flex-none text-right text-[13px] tabular-nums whitespace-nowrap ${pares === 0 ? 'text-danger-1' : pares <= m.min ? 'text-warning-1' : 'text-gris-500'}`}>
                       {pares === 0 ? 'agotado' : pares + ' ' + unidadTxt(m)}
@@ -331,19 +328,18 @@ export default function Venta() {
                         const productoFallback = {
                           ref: c.ref,
                           nombre: c.nombre,
-                          tipo: '',
                           unidad: c.unidad,
+                          modo_stock: c.talla ? 'talla' as const : 'total' as const,
                           color: null,
                           precio: c.precio,
                           costo: c.costo,
                           min: 0,
                           tallas: {},
                           stock: 0,
-                          foto_url: null,
                           archivado: false,
                           created_at: new Date().toISOString(),
                           updated_at: new Date().toISOString(),
-                        } as unknown as Producto
+                        }
                         const productoActivo = producto ?? productoFallback
                         return (
                           <div key={i} className="rounded-2xl border border-sura-azul-divider bg-gris-100/70 p-2.5">

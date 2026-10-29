@@ -24,25 +24,44 @@ export function esHoy(iso: string): boolean {
   return d.toDateString() === h.toDateString()
 }
 
+export const DIAS_RETENCION_HISTORIAL = 90
+
+export function fechaBogota(date = new Date()): string {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/Bogota',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(date)
+  const value = (type: string) => parts.find((part) => part.type === type)?.value
+  return `${value('year')}-${value('month')}-${value('day')}`
+}
+
+export function fechaMinimaHistorial(date = new Date()): string {
+  const [year, month, day] = fechaBogota(date).split('-').map(Number)
+  const minimo = new Date(Date.UTC(year, month - 1, day - DIAS_RETENCION_HISTORIAL))
+  return `${minimo.getUTCFullYear()}-${String(minimo.getUTCMonth() + 1).padStart(2, '0')}-${String(minimo.getUTCDate()).padStart(2, '0')}`
+}
+
 export function hoyLargo(): string {
   const s = new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
   return s.charAt(0).toUpperCase() + s.slice(1)
 }
 
-export function porTalla(m: Pick<Producto, 'unidad'>): boolean {
-  return m.unidad !== 'unidad'
+export function porTalla(m: Pick<Producto, 'modo_stock'>): boolean {
+  return m.modo_stock === 'talla'
 }
 export function unidadTxt(m: Pick<Producto, 'unidad'>): string {
-  return porTalla(m) ? 'pares' : 'unidades'
+  return m.unidad === 'unidad' ? 'unidades' : 'pares'
 }
-export function paresDe(m: Pick<Producto, 'unidad' | 'tallas' | 'stock'>): number {
+export function paresDe(m: Pick<Producto, 'modo_stock' | 'tallas' | 'stock'>): number {
   return porTalla(m)
     ? Object.values(m.tallas || {}).reduce((a, v) => a + Number(v || 0), 0)
     : Number(m.stock || 0)
 }
 
 export function detalle(v: VentaConItems): string {
-  return v.venta_items.map((i) => i.nombre + (i.talla ? ' T' + i.talla : '') + ' ×' + i.pares).join(' · ')
+  return v.venta_items.map((i) => (i.ref ? i.ref + ' · ' : '') + i.nombre + (i.talla ? ' T' + i.talla : '') + ' ×' + i.pares).join(' · ')
 }
 
 export interface Rango { desde: Date; hasta: Date; desdePrev: Date; hastaPrev: Date; dias: number }

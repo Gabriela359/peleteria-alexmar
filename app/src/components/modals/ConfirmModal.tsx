@@ -14,7 +14,7 @@ export default function ConfirmModal() {
   const esDel = confirm.tipo === 'del'
   const titulo = esDel ? 'Eliminar modelo' : 'Registrar devolución'
   const texto = esDel
-    ? `Vas a eliminar "${confirm.nombre ?? ''}" del catálogo junto con todo su stock. Esta acción no se puede deshacer.`
+    ? `Vas a eliminar "${confirm.nombre ?? ''}" del inventario. Se conservarán las facturas y movimientos históricos, pero ya no estarán vinculados al producto. Esta acción no se puede deshacer.`
     : `Los pares de la factura ${confirm.id} vuelven al inventario y la venta deja de sumar en los reportes.`
   const cta = esDel ? 'Eliminar' : 'Confirmar devolución'
 
@@ -22,10 +22,12 @@ export default function ConfirmModal() {
     if (!confirm) return
     setEnviando(true)
     try {
-      if (esDel && confirm.ref) {
+      if (esDel) {
+        if (!confirm.ref) throw new Error('No se encontró la referencia del producto')
         await eliminar.mutateAsync(confirm.ref)
-        showToast('Modelo eliminado')
-      } else if (confirm.id) {
+        showToast('Producto eliminado; se conservaron sus registros históricos')
+      } else {
+        if (!confirm.id) throw new Error('No se encontró la factura para registrar la devolución')
         await devolver.mutateAsync(confirm.id)
         showToast('Devolución registrada')
       }

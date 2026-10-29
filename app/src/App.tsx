@@ -9,7 +9,6 @@ import Inventario from './screens/Inventario'
 import Movimientos from './screens/Movimientos'
 import Reportes from './screens/Reportes'
 import Usuarios from './screens/Usuarios'
-import ReporteDiario from './screens/ReporteDiario'
 import ModalRoot from './components/ModalRoot'
 import Toast from './components/Toast'
 import type { Screen } from './state/ui'
@@ -17,7 +16,7 @@ import type { ComponentType, ReactNode } from 'react'
 
 const SCREENS_ADMIN: Record<Screen, ComponentType> = {
   panel: Panel, venta: Venta, inventario: Inventario, movs: Movimientos,
-  reportes: Reportes, usuarios: Usuarios, 'reporte-diario': ReporteDiario,
+  reportes: Reportes, usuarios: Usuarios,
 }
 const SCREENS_VENDEDOR: Partial<Record<Screen, ComponentType>> = {
   venta: Venta, inventario: Inventario,
@@ -48,10 +47,12 @@ function AppShell() {
   const ScreenComp = screens[screen] ?? (isAdmin ? Panel : Venta)
 
   return (
-    <div className="min-h-screen bg-gris-150">
+    <div className="min-h-screen bg-gris-150 md:pl-[252px]">
       <Header />
-      <main className="min-w-0 px-2 sm:px-8 py-3.5 sm:py-6 pb-14">
-        <ScreenComp />
+      <main className="min-w-0 px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[1600px]">
+          <ScreenComp />
+        </div>
       </main>
       <ModalRoot />
       <Toast />

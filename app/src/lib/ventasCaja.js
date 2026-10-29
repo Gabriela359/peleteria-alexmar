@@ -117,15 +117,15 @@ export function revisarVentaParaCaja({ cajaAbierta, carrito = [], productos = []
       return { ok: false, error: `La cantidad de ${producto.nombre} no es válida` }
     }
 
-    if (producto.unidad === 'par' && (!item.talla || !String(item.talla).trim())) {
+    if (producto.modo_stock === 'talla' && (!item.talla || !String(item.talla).trim())) {
       return { ok: false, error: `Debes seleccionar la talla de ${producto.nombre}` }
     }
 
-    if (producto.unidad === 'unidad' && item.talla) {
-      return { ok: false, error: `El producto ${producto.nombre} se vende por unidades, no por talla` }
+    if (producto.modo_stock === 'total' && item.talla) {
+      return { ok: false, error: `El producto ${producto.nombre} controla una cantidad total y no requiere talla` }
     }
 
-    const disponible = producto.unidad === 'par'
+    const disponible = producto.modo_stock === 'talla'
       ? Number(producto.tallas?.[item.talla ?? ''] ?? 0)
       : Number(producto.stock ?? 0)
 

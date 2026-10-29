@@ -3,7 +3,7 @@
 Sistema de inventario y ventas para una peletería (venta de suelas, plantillas
 y demás insumos de zapatería), con dos roles — **vendedor** (registra ventas
 y consulta inventario) y **administrador** (todos los módulos, incluyendo
-inventario, movimientos, reportes, usuarios y descarga de reportes diarios).
+inventario, movimientos, reportes, usuarios y descarga de reportes en PDF).
 
 **Stack:** React + TypeScript + Vite + Tailwind CSS · Supabase (Postgres +
 Auth + Storage).
@@ -28,7 +28,7 @@ el contenido de cada archivo (o usa la CLI de Supabase, ver más abajo):
 1. `supabase/migrations/20260913000001_schema.sql` — tablas, enums, índices.
 2. `supabase/migrations/20260913000002_functions.sql` — funciones de negocio
    (`registrar_venta`, `registrar_entrada`, `registrar_ajuste`,
-   `registrar_devolucion`, `archivar_producto`, `ocultar_tipo_producto`) y el
+   `registrar_devolucion`, `archivar_producto`) y el
    trigger que crea el perfil de cada usuario nuevo.
 3. `supabase/migrations/20260913000003_rls.sql` — Row Level Security.
 4. `supabase/migrations/20260913000004_storage.sql` — buckets de Storage
@@ -45,7 +45,25 @@ el contenido de cada archivo (o usa la CLI de Supabase, ver más abajo):
 9. `supabase/migrations/20260913000009_envios_correo_destinatarios.sql` —
    conserva compatibilidad con instalaciones anteriores; la descarga de PDF
    no usa destinatarios ni registra envíos.
-10. `supabase/seed.sql` — tipos de producto + catálogo de ejemplo (16
+10. `supabase/migrations/20260913000010_inventario_por_talla.sql` — elimina
+    los tipos de producto y la columna de fotos, incorpora control de stock total o por talla y
+    actualiza ventas, entradas, conteos, movimientos y eliminación de
+    productos. Storage no permite borrar objetos con SQL: después de aplicar
+    la migración, elimina los objetos existentes y el bucket `productos`
+    desde **Storage** en el dashboard de Supabase.
+11. `supabase/migrations/20260913000011_fix_eliminar_producto_auditoria.sql`
+    — corrige la firma de la función de eliminación.
+12. `supabase/migrations/20260913000012_fix_eliminar_producto_sin_auditoria.sql`
+    — elimina la dependencia de la tabla opcional `auditoria_eventos`.
+13. `supabase/migrations/20260913000013_fix_archivar_producto_movimiento_tipo.sql`
+    — convierte explícitamente el tipo de movimiento al enum de PostgreSQL.
+14. `supabase/migrations/20260913000014_retencion_reportes_90_dias.sql`
+    — limita los reportes PDF a los últimos 90 días y programa la eliminación
+    diaria y permanente de facturas y cortes Z vencidos. Requiere que la
+    extensión `pg_cron` esté disponible en Supabase; al aplicarla, borra
+    inmediatamente los registros con más de 90 días y configura la purga a
+    las 03:15 (hora de la base de datos).
+15. `supabase/seed.sql` — catálogo de ejemplo (16
    productos, igual que el prototipo). **Esta app no siembra ventas ni
    movimientos falsos** — a diferencia del prototipo de demostración, aquí
    el historial se construye solo con el uso real.
@@ -112,10 +130,13 @@ npm run lint      # oxlint
 
 ## Notas de diseño
 
-- **Fotos de producto** se suben a Storage (`bucket productos`, público) desde
-  el formulario de Nuevo/Actualizar producto.
-- **Reporte diario**: permite elegir una fecha y revisar los productos vendidos
-  con cantidad, total y existencias actuales. El PDF muestra solo la tarjeta
+- El stock de los productos puede controlarse como cantidad total o por talla.
+  Las ventas solicitan una talla solo para los productos con existencias
+  desglosadas por talla.
+- **Reportes**: permite elegir una fecha para revisar los productos vendidos
+  con cantidad, total y existencias actuales, y descargar el PDF. Solo permite
+  fechas entre hoy y 90 días atrás; las facturas y los cortes Z vencen y se
+  eliminan permanentemente después de 90 días. El PDF muestra solo la tarjeta
   del total vendido y debajo el detalle de productos e inventario, sin tarjetas
   resumen de pares o inventario. El endpoint autenticado `POST /reports/pdf`
   del servidor Node genera el PDF y solo permite la descarga a administradores
@@ -132,9 +153,6 @@ npm run lint      # oxlint
   perfil; las ventas históricas se conservan con el nombre registrado en la
   factura y sin asociarse a una cuenta activa. Para esta opción se requiere
   aplicar `20260913000008_user_deletion.sql`.
-- **Tipos de producto**: "eliminar" un tipo en realidad lo oculta
-  (`tipos_producto.activo = false`); si algún producto todavía lo usa, se
-  bloquea (mismo comportamiento que el prototipo).
 - Todas las mutaciones que tocan stock (venta, entrada, ajuste, devolución,
   archivar) pasan por funciones de Postgres `SECURITY DEFINER` que validan el
   rol del usuario y dejan el movimiento registrado — no hay lógica de negocio
@@ -169,6 +187,8 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
   - `20260913000007_timezone_caja.sql`
   - `20260913000008_user_deletion.sql`
   - `20260913000009_envios_correo_destinatarios.sql` (compatibilidad con instalaciones anteriores)
+  - `20260913000010_inventario_por_talla.sql` y las correcciones `20260913000011` a `20260913000013`
+  - `20260913000014_retencion_reportes_90_dias.sql` (requiere `pg_cron` disponible)
 - [ ] Confirmar que existen los enums: `rol_usuario`, `unidad_venta`,
   `metodo_pago`, `movimiento_tipo`, `estado_caja`.
 - [ ] Revisar que no haya funciones duplicadas ni triggers repetidos.
@@ -207,11 +227,9 @@ Antes de poner la app en vivo, sigue esta checklist de despliegue y validación.
 
 ### 6.5 · Datos iniciales
 
-- [ ] Crear tipos de producto base.
-- [ ] Cargar stock inicial real de pares y unidades.
+- [ ] Cargar stock inicial real, en cantidad total o por talla.
 - [ ] Revisar tallas y stock por producto.
-- [ ] Crear al menos 1 producto por `par` y 1 por `unidad`.
-- [ ] Probar la venta de cada tipo para confirmar que los cálculos son correctos.
+- [ ] Probar ventas con stock total y con stock por talla.
 
 ### 6.6 · Caja, ventas y devoluciones
 
@@ -260,10 +278,11 @@ sesión → abrir caja → vender → revisar factura → devolver → cerrar ca
 
 Este build se hizo en un sandbox sin Docker ni acceso a un proyecto Supabase
 real, así que **no se pudo ejecutar el SQL contra una base de datos de
-verdad** ni probar el flujo de auth/RLS/Storage de punta a punta. Sí se
+verdad** ni probar el flujo de auth/RLS de punta a punta. Sí se
 verificó: `tsc -b` sin errores, `vite build` de producción sin errores, y
 render visual de todas las pantallas y modales (con datos vacíos, sin
 backend). Antes de usarlo en producción, aplica las migraciones en un
 proyecto de prueba y recorre al menos una vez el flujo completo: crear
-usuario → iniciar sesión → crear producto (con foto) → vender → ver factura →
+usuario → iniciar sesión → crear productos con stock total y por talla →
+vender en ambos modos → ver factura →
 reportes → devolución → descargar reporte diario.

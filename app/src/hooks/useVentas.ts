@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { fechaMinimaHistorial } from '../lib/format'
 import type { MetodoPago, VentaConItems } from '../types/database'
 
 const KEY = ['ventas'] as const
@@ -8,12 +9,14 @@ const KEY = ['ventas'] as const
 // Para un volumen alto de facturas conviene paginar/filtrar por fecha en el
 // servidor; se deja así porque encaja con el tamaño real de un local de barrio.
 export function useVentas() {
+  const desde = fechaMinimaHistorial()
   return useQuery({
-    queryKey: KEY,
+    queryKey: [...KEY, desde],
     queryFn: async (): Promise<VentaConItems[]> => {
       const { data, error } = await supabase
         .from('ventas')
         .select('*, venta_items(*)')
+        .gte('fecha', `${desde}T00:00:00-05:00`)
         .order('fecha', { ascending: false })
       if (error) throw error
       return data as VentaConItems[]

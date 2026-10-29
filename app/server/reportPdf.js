@@ -45,14 +45,14 @@ export async function buildReportPdf(report) {
     function drawContinuationPage() {
       doc.addPage()
       drawPageBackground()
-      doc.fillColor('#f5f7ff').font('Helvetica-Bold').fontSize(17).text('Reporte diario · continuación', left + 26, 52)
+      doc.fillColor('#f5f7ff').font('Helvetica-Bold').fontSize(17).text('Reporte del día · continuación', left + 26, 52)
       doc.fillColor('#dfe8ff').font('Helvetica').fontSize(11).text(`Fecha: ${fecha}`, left + 26, 80)
       drawTableHeader(118)
       return 145
     }
 
     drawPageBackground()
-    doc.fillColor('#f5f7ff').font('Helvetica-Bold').fontSize(22).text('Reporte diario', left + 26, 54)
+    doc.fillColor('#f5f7ff').font('Helvetica-Bold').fontSize(22).text('Reporte del día', left + 26, 54)
     doc.fillColor('#dfe8ff').font('Helvetica').fontSize(12).text(`Fecha: ${fecha}`, left + 26, 88)
     drawSummaryCard(doc, left + 26, 120, contentWidth - 52, 'TOTAL VENDIDO', money(total))
 

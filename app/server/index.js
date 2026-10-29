@@ -5,6 +5,7 @@ import { sendReportEmail } from './emailService.js'
 import { validateEmailApiRequest } from './emailApiAuth.js'
 import { createManagedUser, deleteManagedUser, UserApiError } from './userApi.js'
 import { buildReportPdf } from './reportPdf.js'
+import { fechaReportePermitida } from './reportRetention.js'
 
 dotenv.config({ path: '.env.local' })
 
@@ -139,6 +140,7 @@ const server = http.createServer(async (req, res) => {
         Array.isArray(report) ||
         typeof report.fecha !== 'string' ||
         !/^\d{4}-\d{2}-\d{2}$/.test(report.fecha) ||
+        !fechaReportePermitida(report.fecha) ||
         typeof report.total !== 'number' ||
         !Number.isFinite(report.total) ||
         typeof report.cantidadVentas !== 'number' ||
@@ -156,14 +158,14 @@ const server = http.createServer(async (req, res) => {
           typeof item.quedan !== 'string'
         )
       ) {
-        throw new UserApiError('Los datos del reporte no son válidos')
+        throw new UserApiError('Los datos del reporte no son válidos o la fecha está fuera de los últimos 90 días')
       }
 
       const pdf = await buildReportPdf(report)
       res.statusCode = 200
       res.setHeader('Content-Type', 'application/pdf')
       res.setHeader('X-Report-Template-Version', '2')
-      res.setHeader('Content-Disposition', `attachment; filename="reporte-diario-${report.fecha}.pdf"`)
+      res.setHeader('Content-Disposition', `attachment; filename="reporte-${report.fecha}.pdf"`)
       res.setHeader('Content-Length', pdf.length)
       res.end(pdf)
       return
